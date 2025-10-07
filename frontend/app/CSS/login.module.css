@@ -1,0 +1,163 @@
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  width: 420px;
+  margin: 50px auto;
+  padding: 40px 35px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.header {
+  text-align: center;
+  font-size: 2.2rem;
+  color: rgb(101, 101, 206);
+  font-weight: 700;
+  font-family: cursive;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+.inputForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 15px 0px;
+  position:relative;
+}
+
+.inputForm label {
+  font-size: 0.9rem;
+  color: #4a5568;
+  margin-bottom: 6px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+.inputWrapper{
+  position: relative;
+  width: 100%;
+}
+.inputIcon{
+  position: absolute;
+ left: 15px;
+ top: 50px;
+}
+.inputForm input {
+  padding: 15px 15px 15px 45px;
+  border: 2px solid  #e2e8f0;
+  width: 100%;
+  border-radius: 14px;
+  outline: none;
+  background: #ffffff;
+  color: #2d3748;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.inputForm input::placeholder {
+  color: #cbd5e0;
+  font-weight: 400;
+}
+
+.inputForm input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px rgba(74, 144, 226, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.formAction {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 30px 0px 20px;
+}
+
+.formAction button {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  background: rgb(10, 152, 199);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.formAction button:hover {
+  background: rgb(75, 169, 201);
+  transform: translateY(-3px);
+}
+
+.formAction button:active {
+  transform: translateY(-1px);
+}
+
+.formAction span {
+  font-size: 0.9rem;
+  color:  red;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.formAction span:hover {
+  color: red;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.divider {
+  text-align: center;
+  margin: 25px 0;
+  color: gray;
+}
+
+.dividerText {
+  padding: 0 15px;
+  font-size: 0.9rem;
+}
+
+.socialButton{
+  padding:10px;
+  margin: 10px 0px;
+  border: 1px solid rgb(136, 135, 135);
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+}
+.socialButton:hover{
+  background-color: rgb(250, 249, 249);
+}
+
+.signupPrompt{
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+
+}
+
+.signupLink{
+  color: lightgreen;
+  text-decoration: none;
+  margin-left:  5px;
+  transition: all 0.3s ease;
+}
+.signupLink:hover{
+  color: rgb(73, 230, 73);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

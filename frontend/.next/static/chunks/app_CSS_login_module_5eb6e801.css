@@ -1,0 +1,170 @@
+/* [project]/app/CSS/login.module.css [app-client] (css) */
+.login-module__3-2lPW__loginForm {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border: none;
+  border-radius: 20px;
+  flex-direction: column;
+  width: 420px;
+  margin: 50px auto;
+  padding: 40px 35px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, .1);
+}
+
+.login-module__3-2lPW__header {
+  text-align: center;
+  color: #6565ce;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
+  font-family: cursive;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.login-module__3-2lPW__inputForm {
+  flex-direction: column;
+  width: 100%;
+  margin: 15px 0;
+  display: flex;
+  position: relative;
+}
+
+.login-module__3-2lPW__inputForm label {
+  color: #4a5568;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: .9rem;
+  font-weight: 500;
+  display: flex;
+}
+
+.login-module__3-2lPW__inputWrapper {
+  width: 100%;
+  position: relative;
+}
+
+.login-module__3-2lPW__inputIcon {
+  position: absolute;
+  top: 50px;
+  left: 15px;
+}
+
+.login-module__3-2lPW__inputForm input {
+  color: #2d3748;
+  box-sizing: border-box;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  outline: none;
+  width: 100%;
+  padding: 15px 15px 15px 45px;
+  font-size: 1rem;
+  transition: all .3s;
+}
+
+.login-module__3-2lPW__inputForm input::placeholder {
+  color: #cbd5e0;
+  font-weight: 400;
+}
+
+.login-module__3-2lPW__inputForm input:focus {
+  background: rgba(255, 255, 255, .15);
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px rgba(74, 144, 226, .4);
+}
+
+.login-module__3-2lPW__formAction {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 30px 0 20px;
+  display: flex;
+}
+
+.login-module__3-2lPW__formAction button {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #0a98c7;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.login-module__3-2lPW__formAction button:hover {
+  background: #4ba9c9;
+  transform: translateY(-3px);
+}
+
+.login-module__3-2lPW__formAction button:active {
+  transform: translateY(-1px);
+}
+
+.login-module__3-2lPW__formAction span {
+  color: red;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: .9rem;
+  text-decoration: none;
+  transition: color .3s ease-in-out;
+}
+
+.login-module__3-2lPW__formAction span:hover {
+  color: red;
+  text-underline-offset: 3px;
+  background: rgba(255, 255, 255, .1);
+  text-decoration: underline;
+}
+
+.login-module__3-2lPW__divider {
+  text-align: center;
+  color: gray;
+  margin: 25px 0;
+}
+
+.login-module__3-2lPW__dividerText {
+  padding: 0 15px;
+  font-size: .9rem;
+}
+
+.login-module__3-2lPW__socialButton {
+  cursor: pointer;
+  border: 1px solid #888787;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  transition: all .3s ease-in;
+}
+
+.login-module__3-2lPW__socialButton:hover {
+  background-color: #faf9f9;
+}
+
+.login-module__3-2lPW__signupPrompt {
+  text-align: center;
+  margin-top: 20px;
+  font-size: .9rem;
+}
+
+.login-module__3-2lPW__signupLink {
+  color: #90ee90;
+  margin-left: 5px;
+  text-decoration: none;
+  transition: all .3s;
+}
+
+.login-module__3-2lPW__signupLink:hover {
+  color: #49e649;
+  text-underline-offset: 3px;
+  text-decoration: underline;
+}
+
+/*# sourceMappingURL=app_CSS_login_module_5eb6e801.css.map*/

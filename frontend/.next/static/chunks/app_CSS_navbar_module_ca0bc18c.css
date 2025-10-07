@@ -1,0 +1,35 @@
+/* [project]/app/CSS/navbar.module.css [app-client] (css) */
+.navbar-module__0TPdZG__NavbarContainer {
+  background-color: #fff;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 10px;
+  display: flex;
+}
+
+.navbar-module__0TPdZG__logoutGroup {
+  margin-left: auto;
+  padding-right: 5px;
+}
+
+.navbar-module__0TPdZG__logoutButton {
+  color: #f0f8ff;
+  cursor: pointer;
+  background-color: #f86060;
+  border-radius: 12px;
+  padding: 5px 10px;
+  font-weight: 450;
+  transition: all .3s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .1);
+}
+
+.navbar-module__0TPdZG__logoutButton:active {
+  transform: translateY(-1px);
+}
+
+.navbar-module__0TPdZG__logoutButton:hover {
+  background: red;
+  transform: translateY(-3px);
+}
+
+/*# sourceMappingURL=app_CSS_navbar_module_ca0bc18c.css.map*/
