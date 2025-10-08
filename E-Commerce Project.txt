@@ -1,0 +1,27 @@
+Backend (Spring Boot)
+
+Microservices → You’ll learn service decomposition, inter-service communication (REST/gRPC), API gateway usage, and scalability.
+
+Redis → Teaches caching strategies, session management, and performance tuning.
+
+WebSocket → Real-time communication (e.g., inventory updates, cart sync).
+
+Elasticsearch → Full-text search, filtering, and analytics.
+
+Kafka/RabbitMQ → Event-driven design, async processing, and decoupling services.
+
+Docker → Containerization, environment consistency, deployment readiness.
+
+👉 This combination will make you confident in designing high-performance distributed systems.
+
+🔹 Frontend (Next.js)
+
+SSR → Improves SEO and load performance.
+
+PWA → Mobile-first approach, offline capabilities, push notifications.
+
+WebSocket integration → Sync cart/notifications in real time.
+
+Next.js Image optimization → Performance-focused UI/UX.
+
+Service workers → Offline-first design and caching strategies.
