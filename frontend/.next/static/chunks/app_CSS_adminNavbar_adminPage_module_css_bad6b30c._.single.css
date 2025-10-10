@@ -1,0 +1,20 @@
+/* [project]/app/CSS/adminNavbar/adminPage.module.css [app-client] (css) */
+.adminPage-module__CiVa3W__adminLayout {
+  flex-direction: column;
+  height: 100vh;
+  display: flex;
+}
+
+.adminPage-module__CiVa3W__adminContent {
+  flex: 1;
+  display: flex;
+}
+
+.adminPage-module__CiVa3W__mainContent {
+  background-color: #f8fafc;
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/*# sourceMappingURL=app_CSS_adminNavbar_adminPage_module_css_bad6b30c._.single.css.map*/

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/CSS/adminNavbar/adminPage.module.css"],"sourcesContent":[".adminLayout {\n    display: flex;\n    flex-direction: column;\n    height: 100vh;\n}\n\n.adminContent{\n    display: flex;\n    flex:1;\n}\n\n.mainContent{\n    flex: 1;\n    padding: 20px;\n    overflow-y: auto;\n    background-color: #f8fafc;\n}\n\n.pageContent{\n    \n}"],"names":[],"mappings":"AAAA;;;;;;AAMA;;;;;AAKA"}}]
+}

@@ -1,0 +1,39 @@
+/* [project]/app/CSS/adminNavbar/navbar.module.css [app-client] (css) */
+.navbar-module__eAp2dq__staggeredBar {
+  cursor: pointer;
+  border-radius: 50%;
+  margin-right: 180px;
+  padding: 10px;
+  transition: all .3s ease-in;
+}
+
+.navbar-module__eAp2dq__staggeredBar:hover {
+  background-color: #d8d2d2;
+}
+
+.navbar-module__eAp2dq__navbar {
+  align-items: center;
+  padding: 10px;
+  display: flex;
+}
+
+.navbar-module__eAp2dq__navlist {
+  align-items: center;
+  margin-left: 20px;
+  display: flex;
+}
+
+.navbar-module__eAp2dq__navlistItem {
+  margin: 10px;
+}
+
+.navbar-module__eAp2dq__search {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 6px;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, .2);
+}
+
+/*# sourceMappingURL=app_CSS_adminNavbar_navbar_module_css_bad6b30c._.single.css.map*/

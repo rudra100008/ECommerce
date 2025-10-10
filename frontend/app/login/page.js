@@ -28,11 +28,12 @@ export default function LoginPage() {
         try {
             const response = await api.post(`${baseURL}/api/auth/login`, user);
             console.log("Login Response: ", response.data)
+            const {redirectUrl} = response.data;
             setUser({
                 email: '',
                 password: ''
             });
-            router.push("/")
+            router.push(redirectUrl);
         } catch (error) {
             console.log("Login Error: ", error)
             if (error.response.data && error.response.status === 400) {

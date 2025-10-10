@@ -1,0 +1,106 @@
+.container {
+    width: 200px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    transition: all 0.3s ease-in-out;
+    overflow-x: hidden;
+    border-right: 1px solid #e2e8f0;
+    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+}
+
+.container.closed {
+    width: 100px;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    height: 100vh;
+}
+
+.navlist {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 4px;
+    transition: all 0.3s ease;
+}
+
+.navlistitem {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    border-radius: 12px;
+    width: 100%;
+   
+    transition: all 0.3scubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    position: relative;
+    background-color: transparent;
+}
+
+.navlistitem:hover {
+    background-color: #f0f0f0;
+    transform: translateX(4px);
+}
+
+.navlistitem .navItemContainer {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    width: 100%;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+
+.navlistitem span {
+    color: rgb(63, 63, 63);
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.navlistitem:hover .navItemContainer,
+.navlistitem:hover span {
+    color: rgb(141, 139, 139);
+}
+.navlistitem .faIcon{
+    transition: all 0.3s ease;
+    color: #64748b;
+}
+
+/* Closed state styles */
+.container.closed .navlistitem {
+    width: 100%;
+    padding: 14px;
+    justify-content: center;
+    border-radius: 14px;
+    position:relative;
+}
+
+.container.closed .navlistitem .navItemContainer {
+    justify-content: center;
+    gap: 0;
+}
+
+.container.closed .navlistitem span {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    margin: 0;
+    transform: translateX(-10px);
+}
+
+.container.closed .navlistitem .faIcon {
+    margin: 0;
+    transform: scale(1.15);
+}
+
+/* Smooth hover effects in closed state */
+.container.closed .navlistitem:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.08);
+}
+
