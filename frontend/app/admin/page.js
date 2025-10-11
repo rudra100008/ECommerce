@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import AdminNavbar from "../AdminComponent/AdminNavbar"
 import AdminSideNavbar from "../AdminComponent/AdminSideNavbar"
 import style from '../CSS/adminNavbar/adminPage.module.css'
@@ -11,29 +11,35 @@ export default function AdminPage() {
     const [itemClicked,setItemClicked] = useState('');
 
     const toggleSideBar = () =>{
-        console.log("SideBarOpen: ",isSideBarOpen)
         setIsSideBarOpen(prev=> !prev);
     }
+    useEffect(()=>{
+        if(itemClicked){
+            localStorage.setItem('adminSelectedTab',itemClicked);
+            console.log("ItemClicked",itemClicked);
+        }
+    },[itemClicked])
+
+    useEffect(()=>{
+        const selectedTab = localStorage.getItem("adminSelectedTab");
+        if(selectedTab){
+            setItemClicked(selectedTab);
+        }else{
+            setItemClicked('dashboard'); //default
+        }
+    },[])
     return (
         <div className={style.adminLayout}>
             <AdminNavbar showSideBar={toggleSideBar} />
             <div className={style.adminContent}>
-                <AdminSideNavbar isSideBarOpen={isSideBarOpen} setItemClicked={setItemClicked} />
+                <AdminSideNavbar isSideBarOpen={isSideBarOpen} setItemClicked={setItemClicked} itemClicked={itemClicked} />
                 <main className={style.mainContent}>
-                    {/* Your page content goes here */}
+
+                    {/*page content */}
                     <div className={style.pageContent}>
-                        {
-                            itemClicked === 'dashboard' &&
-                            <Dashboard />
-                        }
-                        {
-                            itemClicked === 'product' &&
-                            <Product />
-                        }
-                        {
-                            itemClicked === 'profile' &&
-                            <Profile />
-                        }
+                        { itemClicked === 'dashboard' &&<Dashboard /> }
+                        {  itemClicked === 'product' &&   <Product /> }
+                        { itemClicked === 'profile' &&  <Profile />}
                     </div>
                 </main>
             </div>

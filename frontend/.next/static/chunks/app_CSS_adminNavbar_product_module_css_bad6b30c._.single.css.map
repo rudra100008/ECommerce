@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/CSS/adminNavbar/product.module.css"],"sourcesContent":["\n\n.container{\n\n}\n\n.productButton{\n    border: 1px solid blue;\n    padding: 10px 14px;\n    border-radius: 12px;\n    color: white;\n    font-size: large;\n    font-weight: 600;\n    background-color: rgb(61, 61, 236);\n    cursor: pointer;\n    box-shadow: 0px 10px 15px rgba(0,0,0,0.2);\n    transition: all 0.3s ease;\n}"],"names":[],"mappings":"AAMA"}}]
+}

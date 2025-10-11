@@ -62,13 +62,21 @@
     white-space: nowrap;
     flex-shrink: 0;
 }
-.navlistitem:hover .navItemContainer,
-.navlistitem:hover span {
-    color: rgb(141, 139, 139);
+.navlistitem.active {
+    background-color: #fffbeb; /* Add background to make active state more visible */
+}
+
+.navlistitem.active .faIcon,
+.navlistitem.active .navItemContainer span {
+    color: #d97706  !important; /* Use !important temporarily to test */
 }
 .navlistitem .faIcon{
     transition: all 0.3s ease;
     color: #64748b;
+}
+.navlistitem.active .navItemContainer .faIcon
+.navlistitem.active .navItemContainer span{
+    color: blue;
 }
 
 /* Closed state styles */

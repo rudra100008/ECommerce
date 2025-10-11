@@ -1,0 +1,15 @@
+/* [project]/app/CSS/adminNavbar/product.module.css [app-client] (css) */
+.product-module__mKE9aG__productButton {
+  color: #fff;
+  cursor: pointer;
+  background-color: #3d3dec;
+  border: 1px solid #00f;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: large;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, .2);
+}
+
+/*# sourceMappingURL=app_CSS_adminNavbar_product_module_css_bad6b30c._.single.css.map*/

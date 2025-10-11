@@ -63,13 +63,21 @@
   transition: all .3s;
 }
 
-.sideNavbar-module__vbVPNW__navlistitem:hover .sideNavbar-module__vbVPNW__navItemContainer, .sideNavbar-module__vbVPNW__navlistitem:hover span {
-  color: #8d8b8b;
+.sideNavbar-module__vbVPNW__navlistitem.sideNavbar-module__vbVPNW__active {
+  background-color: #fffbeb;
+}
+
+.sideNavbar-module__vbVPNW__navlistitem.sideNavbar-module__vbVPNW__active .sideNavbar-module__vbVPNW__faIcon, .sideNavbar-module__vbVPNW__navlistitem.sideNavbar-module__vbVPNW__active .sideNavbar-module__vbVPNW__navItemContainer span {
+  color: #d97706 !important;
 }
 
 .sideNavbar-module__vbVPNW__navlistitem .sideNavbar-module__vbVPNW__faIcon {
   color: #64748b;
   transition: all .3s;
+}
+
+.sideNavbar-module__vbVPNW__navlistitem.sideNavbar-module__vbVPNW__active .sideNavbar-module__vbVPNW__navItemContainer .sideNavbar-module__vbVPNW__faIcon .sideNavbar-module__vbVPNW__navlistitem.sideNavbar-module__vbVPNW__active .sideNavbar-module__vbVPNW__navItemContainer span {
+  color: #00f;
 }
 
 .sideNavbar-module__vbVPNW__container.sideNavbar-module__vbVPNW__closed .sideNavbar-module__vbVPNW__navlistitem {

@@ -1,0 +1,73 @@
+/* [project]/app/CSS/adminNavbar/AddProductForm/categoryForm.module.css [app-client] (css) */
+
+
+/* [project]/app/CSS/adminNavbar/AddProductForm/productForm.module.css [app-client] (css) */
+.productForm-module__Lz_Pra__inputGroup {
+  flex-direction: row;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__productImage {
+  padding: 20px;
+}
+
+.productForm-module__Lz_Pra__fileInput {
+  border: 1px dashed #ccc;
+  margin: 20px 0;
+  padding: 10px;
+}
+
+.productForm-module__Lz_Pra__fileInput:focus {
+  border-color: #007bff;
+}
+
+.productForm-module__Lz_Pra__imagePreviews {
+  margin: 20px 0;
+}
+
+.productForm-module__Lz_Pra__previewGrid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, lfr));
+  gap: 15px;
+  margin-top: 15px;
+  display: grid;
+}
+
+.productForm-module__Lz_Pra__previewItem {
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.productForm-module__Lz_Pra__previewImage {
+  object-fit: cover;
+  border-radius: 4px;
+  width: 100%;
+  height: 120px;
+}
+
+.productForm-module__Lz_Pra__imageName {
+  color: #666;
+  word-break: break-all;
+  margin-top: 8px;
+  font-size: 12px;
+  display: block;
+}
+
+.productForm-module__Lz_Pra__noImages {
+  text-align: center;
+  color: #888;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  margin: 20px 0;
+  padding: 40px;
+}
+
+.productForm-module__Lz_Pra__label {
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 600;
+  display: block;
+}
+
+/*# sourceMappingURL=app_CSS_adminNavbar_AddProductForm_5651487b._.css.map*/
