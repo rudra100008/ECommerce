@@ -1,4 +1,4 @@
-package com.E_Commerce.Entity;
+package com.E_Commerce.DTO;
 
 
 import jakarta.validation.constraints.Email;

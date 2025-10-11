@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,6 +80,10 @@ public class GlobalException {
     public ResponseEntity<?> handleUserNameNotFoundException(UsernameNotFoundException e,WebRequest request){
         return errorResponse(HttpStatus.NOT_FOUND,e.getMessage(),request);
     }
+    @ExceptionHandler(ImageValidException.class)
+    public ResponseEntity<?> handleImageValidException(ImageValidException e,WebRequest request){
+        return  errorResponse(HttpStatus.BAD_REQUEST,e.getMessage(),request);
+    }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e,WebRequest request){
         return  errorResponse(
@@ -85,6 +91,10 @@ public class GlobalException {
                 "Access Denied: You don't have permission to access this resource.",
                 request
         );
+    }
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> handleIOException(IOException e,WebRequest request){
+        return errorResponse(HttpStatus.BAD_REQUEST,e.getMessage(),request);
     }
 
 }

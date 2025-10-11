@@ -1,17 +1,18 @@
 package com.E_Commerce.Controller;
 
 import com.E_Commerce.DTO.UserDTO;
-import com.E_Commerce.Entity.AuthRequest;
-import com.E_Commerce.Entity.AuthResponse;
+import com.E_Commerce.DTO.AuthRequest;
+import com.E_Commerce.DTO.AuthResponse;
 import com.E_Commerce.Entity.Role;
-import com.E_Commerce.Entity.RoleRequest;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.RoleRepository;
 import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Securty.CustomUserDetailsService;
+import com.E_Commerce.Securty.JwtAuthenticationHandler;
 import com.E_Commerce.Securty.JwtUtil;
 import com.E_Commerce.Services.UserService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -42,13 +44,15 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final JwtAuthenticationHandler authenticationHandler;
 
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody AuthRequest authRequest,
             BindingResult result,
-            HttpServletResponse servletResponse
+            HttpServletResponse servletResponse,
+            HttpServletRequest servletRequest
             )
     {
         if(result.hasErrors()){
@@ -57,30 +61,26 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
         try {
-            authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getEmail(),
                             authRequest.getPassword()
                     )
             );
+            authenticationHandler.onAuthenticationSuccess(servletRequest,servletResponse,authentication);
+           Object attribute = servletRequest.getAttribute("AUTH_RESPONSE_DATA");
+           Map<String,Object> responseData = null;
+           if(attribute instanceof Map<?,?>){
+               responseData =(Map<String, Object>) attribute;
+           }else{
+               responseData = new HashMap<>();
+           }
+            return ResponseEntity.ok(responseData);
         }catch (Exception e){
             Map<String,String> errorResponse =  new HashMap<>();
             errorResponse.put("message","Invalid email or password.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
-        final String token = jwtUtil.generateToken(userDetails);
-
-        Cookie cookie = new Cookie("token",token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge(24*60*60);//1 day
-        servletResponse.addCookie(cookie);
-        Map<String,String> response = new HashMap<>();
-        response.put("email", authRequest.getEmail());
-        response.put("message","Login Successful");
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signup")

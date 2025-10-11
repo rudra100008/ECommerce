@@ -37,5 +37,6 @@ public class Order {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-
+    @Embedded
+    private ShippingAddress shippingAddress;
 }

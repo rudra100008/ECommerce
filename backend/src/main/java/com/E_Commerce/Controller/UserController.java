@@ -40,6 +40,7 @@ public class UserController {
             responseBody.put("email", user.getEmail());
             responseBody.put("username", user.getUsername());
             responseBody.put("profileImageUrl",user.getProfileImageUrl());
+            responseBody.put("roles",user.getRoles());
             return  ResponseEntity.ok(responseBody);
         } else if (principal instanceof DefaultOAuth2User) {
             DefaultOAuth2User oAuth2User = (DefaultOAuth2User) principal;
@@ -49,6 +50,7 @@ public class UserController {
             responseBody.put("email", user.getEmail());
             responseBody.put("username", user.getUsername());
             responseBody.put("profileImageUrl",user.getProfileImageUrl());
+            responseBody.put("roles",user.getRoles());
             return  ResponseEntity.ok(responseBody);
         }
         return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

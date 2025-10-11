@@ -28,7 +28,7 @@ public class Product {
     private String sku;
     private Boolean isActive = true;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "category_id",nullable = false)
     private Category category;
 
