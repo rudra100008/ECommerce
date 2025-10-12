@@ -1,73 +1,230 @@
 /* [project]/app/CSS/adminNavbar/AddProductForm/categoryForm.module.css [app-client] (css) */
+.categoryForm-module__Th2wEq__categoryForm {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  flex-direction: column;
+  justify-content: center;
+  width: 500px;
+  margin: 100px auto;
+  padding: 30px 20px;
+  display: flex;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .1);
+}
 
+.categoryForm-module__Th2wEq__title h3 {
+  color: gray;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: x-large;
+  font-weight: 600;
+}
 
-/* [project]/app/CSS/adminNavbar/AddProductForm/productForm.module.css [app-client] (css) */
-.productForm-module__Lz_Pra__inputGroup {
-  flex-direction: row;
+.categoryForm-module__Th2wEq__label {
+  color: #4a5568;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: .9rem;
+  font-weight: 500;
   display: flex;
 }
 
-.productForm-module__Lz_Pra__productImage {
-  padding: 20px;
+.categoryForm-module__Th2wEq__inputGroup {
+  flex-direction: column;
+  margin: 10px;
+  display: flex;
 }
 
-.productForm-module__Lz_Pra__fileInput {
-  border: 1px dashed #ccc;
-  margin: 20px 0;
-  padding: 10px;
+.categoryForm-module__Th2wEq__inputWrapper {
+  position: relative;
 }
 
-.productForm-module__Lz_Pra__fileInput:focus {
-  border-color: #007bff;
+.categoryForm-module__Th2wEq__tagIcon {
+  position: absolute;
+  top: 20px;
+  left: 15px;
 }
 
-.productForm-module__Lz_Pra__imagePreviews {
-  margin: 20px 0;
-}
-
-.productForm-module__Lz_Pra__previewGrid {
-  grid-template-columns: repeat(auto-fill, minmax(150px, lfr));
-  gap: 15px;
-  margin-top: 15px;
-  display: grid;
-}
-
-.productForm-module__Lz_Pra__previewItem {
-  text-align: center;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 10px;
-}
-
-.productForm-module__Lz_Pra__previewImage {
-  object-fit: cover;
-  border-radius: 4px;
-  width: 100%;
-  height: 120px;
-}
-
-.productForm-module__Lz_Pra__imageName {
-  color: #666;
-  word-break: break-all;
-  margin-top: 8px;
-  font-size: 12px;
-  display: block;
-}
-
-.productForm-module__Lz_Pra__noImages {
-  text-align: center;
-  color: #888;
-  border: 2px dashed #ddd;
+.categoryForm-module__Th2wEq__textInput {
+  color: #2d3748;
+  box-sizing: border-box;
+  background: #fff;
+  border: 2px solid gray;
   border-radius: 8px;
-  margin: 20px 0;
-  padding: 40px;
+  outline: none;
+  width: 80%;
+  padding: 15px 15px 15px 45px;
+  font-size: 1rem;
+  transition: all .3s ease-in-out;
 }
 
-.productForm-module__Lz_Pra__label {
-  color: #333;
-  margin-bottom: 8px;
+.categoryForm-module__Th2wEq__textInput::placeholder {
+  color: #cbd5e0;
+  font-weight: 400;
+}
+
+.categoryForm-module__Th2wEq__textInput:focus {
+  background: rgba(255, 255, 255, .15);
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px rgba(74, 144, 226, .4);
+}
+
+.categoryForm-module__Th2wEq__ButtonGroup {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 30px 0 20px;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__nextButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #62c96a;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
   font-weight: 600;
-  display: block;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.categoryForm-module__Th2wEq__backButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #dd5651;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+/* [project]/app/CSS/adminNavbar/AddProductForm/productForm.module.css [app-client] (css) */
+.productForm-module__Lz_Pra__productForm {
+  background-color: #fff;
+  border: 1px solid gray;
+  border-radius: 12px;
+  width: 600px;
+  margin: auto;
+  padding: 10px 10px 10px 30px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .2);
+}
+
+.productForm-module__Lz_Pra__header h3 {
+  text-align: center;
+  color: #6565ce;
+  letter-spacing: 1px;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.productForm-module__Lz_Pra__InputGroup {
+  flex-direction: column;
+  width: 100%;
+  margin: 15px 0;
+  display: flex;
+  position: relative;
+}
+
+.productForm-module__Lz_Pra__InputGroup label {
+  color: #4a5568;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: .9rem;
+  font-weight: 500;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__inputWrapper {
+  width: 100%;
+  position: relative;
+}
+
+.productForm-module__Lz_Pra__inputWrapper input[type="text"], .productForm-module__Lz_Pra__inputWrapper input[type="number"] {
+  color: #2d3748;
+  box-sizing: border-box;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  outline: none;
+  width: 100%;
+  padding: 15px 15px 15px 45px;
+  font-size: 1rem;
+  transition: all .3s;
+}
+
+.productForm-module__Lz_Pra__inputWrapper input[type="text"]::placeholder, .productForm-module__Lz_Pra__inputWrapper input[type="number"]::placeholder {
+  color: #cbd5e0;
+  font-weight: 400;
+}
+
+.productForm-module__Lz_Pra__inputWrapper input[type="text"]:focus, .productForm-module__Lz_Pra__inputWrapper input[type="number"]:focus {
+  background: rgba(255, 255, 255, .15);
+  border-color: #4a90e2;
+  box-shadow: 0 0 6px rgba(74, 144, 226, .4);
+}
+
+.productForm-module__Lz_Pra__ButtonGroup {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 30px 0 20px;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__nextButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #62c96a;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.productForm-module__Lz_Pra__backButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #dd5651;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.productForm-module__Lz_Pra__nextButton:hover {
+  background: #4ba9c9;
+  transform: translateY(-3px);
+}
+
+.productForm-module__Lz_Pra__nextButton:active {
+  transform: translateY(-1px);
+}
+
+.productForm-module__Lz_Pra__backButton:hover {
+  background: #4ba9c9;
+  transform: translateY(-3px);
+}
+
+.productForm-module__Lz_Pra__backButton:active {
+  transform: translateY(-1px);
 }
 
 /*# sourceMappingURL=app_CSS_adminNavbar_AddProductForm_5651487b._.css.map*/

@@ -1,0 +1,413 @@
+/* [project]/app/CSS/adminNavbar/AddProductForm/categoryForm.module.css [app-client] (css) */
+.categoryForm-module__Th2wEq__categoryForm {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  flex-direction: column;
+  justify-content: center;
+  width: 500px;
+  margin: 100px auto;
+  padding: 30px 20px;
+  display: flex;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .1);
+}
+
+.categoryForm-module__Th2wEq__title h3 {
+  color: gray;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: x-large;
+  font-weight: 600;
+}
+
+.categoryForm-module__Th2wEq__label {
+  color: #4a5568;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: .9rem;
+  font-weight: 500;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__inputGroup {
+  flex-direction: column;
+  margin: 10px;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__inputWrapper {
+  position: relative;
+}
+
+.categoryForm-module__Th2wEq__tagIcon {
+  pointer-events: none;
+  z-index: 2;
+  position: absolute;
+  top: 20px;
+  left: 15px;
+}
+
+.categoryForm-module__Th2wEq__textInput {
+  color: #2d3748;
+  box-sizing: border-box;
+  background: #f9fafb;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  outline: none;
+  width: 100%;
+  padding: 14px 18px 14px 50px;
+  font-size: 1rem;
+  transition: all .3s;
+}
+
+.categoryForm-module__Th2wEq__textInput::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.categoryForm-module__Th2wEq__textInput:focus {
+  background: #fff;
+  border-color: #4a6cf7;
+  transform: scale(1.01);
+  box-shadow: 0 0 8px rgba(74, 108, 247, .25);
+}
+
+.categoryForm-module__Th2wEq__ButtonGroup {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 30px 0 20px;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__nextButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #62c96a;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.categoryForm-module__Th2wEq__backButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #dd5651;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.categoryForm-module__Th2wEq__validationError {
+  color: red;
+  margin: 1px auto;
+  font-size: medium;
+  font-weight: 500;
+}
+
+/* [project]/app/CSS/adminNavbar/AddProductForm/productForm.module.css [app-client] (css) */
+.productForm-module__Lz_Pra__productForm {
+  background-color: #fff;
+  border: none;
+  border-radius: 16px;
+  width: 600px;
+  margin: 40px auto;
+  padding: 40px 50px;
+  font-family: Poppins, sans-serif;
+  transition: all .3s;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .1);
+}
+
+.productForm-module__Lz_Pra__productForm:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .15);
+}
+
+.productForm-module__Lz_Pra__header h3 {
+  text-align: center;
+  color: #4a6cf7;
+  letter-spacing: .5px;
+  margin-bottom: 35px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.productForm-module__Lz_Pra__InputGroup {
+  flex-direction: column;
+  width: 100%;
+  margin: 18px 0;
+  display: flex;
+  position: relative;
+}
+
+.productForm-module__Lz_Pra__InputGroup label {
+  color: #4a5568;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: .95rem;
+  font-weight: 500;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__inputWrapper {
+  width: 100%;
+  position: relative;
+}
+
+.productForm-module__Lz_Pra__inputWrapper input[type="text"], .productForm-module__Lz_Pra__inputWrapper input[type="number"] {
+  color: #2d3748;
+  box-sizing: border-box;
+  background: #f9fafb;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  outline: none;
+  width: 100%;
+  padding: 14px 18px 14px 50px;
+  font-size: 1rem;
+  transition: all .3s;
+}
+
+.productForm-module__Lz_Pra__inputWrapper input[type="text"]::placeholder, .productForm-module__Lz_Pra__inputWrapper input[type="number"]::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.productForm-module__Lz_Pra__inputWrapper input[type="text"]:focus, .productForm-module__Lz_Pra__inputWrapper input[type="number"]:focus {
+  background: #fff;
+  border-color: #4a6cf7;
+  transform: scale(1.01);
+  box-shadow: 0 0 8px rgba(74, 108, 247, .25);
+}
+
+.productForm-module__Lz_Pra__ButtonGroup {
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 35px;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__nextButton, .productForm-module__Lz_Pra__backButton {
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  display: flex;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+}
+
+.productForm-module__Lz_Pra__nextButton {
+  background: linear-gradient(135deg, #4caf50, #81c784);
+}
+
+.productForm-module__Lz_Pra__nextButton:hover {
+  background: linear-gradient(135deg, #43a047, #66bb6a);
+  transform: translateY(-3px);
+}
+
+.productForm-module__Lz_Pra__backButton {
+  background: linear-gradient(135deg, #f44336, #e57373);
+}
+
+.productForm-module__Lz_Pra__backButton:hover {
+  background: linear-gradient(135deg, #d32f2f, #ef5350);
+  transform: translateY(-3px);
+}
+
+.productForm-module__Lz_Pra__nextButton:active, .productForm-module__Lz_Pra__backButton:active {
+  transform: translateY(-1px);
+}
+
+/* [project]/app/CSS/adminNavbar/AddProductForm/productImage.module.css [app-client] (css) */
+.productImage-module__lIneAW__productImage {
+  background-color: #fff;
+  border: 1px solid #fff;
+  border-radius: 12px;
+  width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.productImage-module__lIneAW__header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.productImage-module__lIneAW__header h3 {
+  color: gray;
+  letter-spacing: 1px;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.productImage-module__lIneAW__header p {
+  color: #5c5b5b;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.productImage-module__lIneAW__inputGroup {
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  display: flex;
+}
+
+.productImage-module__lIneAW__customLabel {
+  color: #fff;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  background-color: #007bff;
+  border-radius: 8px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  transition: all .3s;
+  display: inline-flex;
+}
+
+.productImage-module__lIneAW__hiddenFileInput {
+  display: none;
+}
+
+.productImage-module__lIneAW__customFileLabel:hover {
+  background-color: #0056b3;
+}
+
+.productImage-module__lIneAW__customFileLabel:active {
+  transform: scale(.97);
+}
+
+.productImage-module__lIneAW__imagePreviews {
+  margin: 20px 0;
+}
+
+.productImage-module__lIneAW__previewGrid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+  display: grid;
+}
+
+.productImage-module__lIneAW__previewItem {
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.productImage-module__lIneAW__previewImage {
+  object-fit: cover;
+  border-radius: 4px;
+  width: 100%;
+  height: 120px;
+}
+
+.productImage-module__lIneAW__removeButton {
+  color: #fff;
+  cursor: pointer;
+  background: #f44;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  font-size: 16px;
+}
+
+.productImage-module__lIneAW__removeButton:hover {
+  background: #c00;
+}
+
+.productImage-module__lIneAW__imageName {
+  color: #666;
+  word-break: break-all;
+  margin-top: 8px;
+  font-size: 12px;
+  display: block;
+}
+
+.productImage-module__lIneAW__noImages {
+  text-align: center;
+  color: #888;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  margin: 20px 0;
+  padding: 40px;
+}
+
+.productImage-module__lIneAW__ButtonGroup {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 30px 0 20px;
+  display: flex;
+}
+
+.productImage-module__lIneAW__nextButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #62c96a;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.productImage-module__lIneAW__backButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #dd5651;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.productImage-module__lIneAW__nextButton:hover {
+  background: #2fcc51;
+  transform: translateY(-3px);
+}
+
+.productImage-module__lIneAW__nextButton:active {
+  transform: translateY(-1px);
+}
+
+.productImage-module__lIneAW__backButton:hover {
+  background: #d6250e;
+  transform: translateY(-3px);
+}
+
+.productImage-module__lIneAW__backButton:active {
+  transform: translateY(-1px);
+}
+
+/*# sourceMappingURL=app_CSS_adminNavbar_AddProductForm_964a11d7._.css.map*/

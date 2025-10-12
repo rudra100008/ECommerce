@@ -3,6 +3,7 @@ import { useState } from "react";
 import CategoryForm from "../../AdminComponent/AddProductForm/CategoryForm";
 import ProductForm from "../../AdminComponent/AddProductForm/ProductForm";
 import ProductImage from "../../AdminComponent/AddProductForm/ProductImage";
+import { addCategory } from "../../services/adminServices/ProductCategoryServices";
 
 export default function AddProductPage() {
     const [currentState, setCurrentState] = useState('category');

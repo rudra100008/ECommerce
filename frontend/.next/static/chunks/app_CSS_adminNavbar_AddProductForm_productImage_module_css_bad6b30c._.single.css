@@ -1,0 +1,177 @@
+/* [project]/app/CSS/adminNavbar/AddProductForm/productImage.module.css [app-client] (css) */
+.productImage-module__lIneAW__productImage {
+  background-color: #fff;
+  border: 1px solid #fff;
+  border-radius: 12px;
+  width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.productImage-module__lIneAW__header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.productImage-module__lIneAW__header h3 {
+  color: gray;
+  letter-spacing: 1px;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.productImage-module__lIneAW__header p {
+  color: #5c5b5b;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.productImage-module__lIneAW__inputGroup {
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+  display: flex;
+}
+
+.productImage-module__lIneAW__customLabel {
+  color: #fff;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  background-color: #007bff;
+  border-radius: 8px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  transition: all .3s;
+  display: inline-flex;
+}
+
+.productImage-module__lIneAW__hiddenFileInput {
+  display: none;
+}
+
+.productImage-module__lIneAW__customFileLabel:hover {
+  background-color: #0056b3;
+}
+
+.productImage-module__lIneAW__customFileLabel:active {
+  transform: scale(.97);
+}
+
+.productImage-module__lIneAW__imagePreviews {
+  margin: 20px 0;
+}
+
+.productImage-module__lIneAW__previewGrid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+  display: grid;
+}
+
+.productImage-module__lIneAW__previewItem {
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.productImage-module__lIneAW__previewImage {
+  object-fit: cover;
+  border-radius: 4px;
+  width: 100%;
+  height: 120px;
+}
+
+.productImage-module__lIneAW__removeButton {
+  color: #fff;
+  cursor: pointer;
+  background: #f44;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  font-size: 16px;
+}
+
+.productImage-module__lIneAW__removeButton:hover {
+  background: #c00;
+}
+
+.productImage-module__lIneAW__imageName {
+  color: #666;
+  word-break: break-all;
+  margin-top: 8px;
+  font-size: 12px;
+  display: block;
+}
+
+.productImage-module__lIneAW__noImages {
+  text-align: center;
+  color: #888;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  margin: 20px 0;
+  padding: 40px;
+}
+
+.productImage-module__lIneAW__ButtonGroup {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 30px 0 20px;
+  display: flex;
+}
+
+.productImage-module__lIneAW__nextButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #62c96a;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.productImage-module__lIneAW__backButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #dd5651;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.productImage-module__lIneAW__nextButton:hover {
+  background: #2fcc51;
+  transform: translateY(-3px);
+}
+
+.productImage-module__lIneAW__nextButton:active {
+  transform: translateY(-1px);
+}
+
+.productImage-module__lIneAW__backButton:hover {
+  background: #d6250e;
+  transform: translateY(-3px);
+}
+
+.productImage-module__lIneAW__backButton:active {
+  transform: translateY(-1px);
+}
+
+/*# sourceMappingURL=app_CSS_adminNavbar_AddProductForm_productImage_module_css_bad6b30c._.single.css.map*/

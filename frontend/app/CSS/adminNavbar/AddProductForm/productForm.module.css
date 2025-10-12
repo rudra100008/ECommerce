@@ -1,86 +1,124 @@
-
-.inputGroup{
-    display: flex;
-    flex-direction: row;
-
-}
-
-
-/* Product images*/
-
-.productImage{
-    padding: 20px;
-}
-.fileInput{
-    margin: 20px 0px;
-    padding: 10px;
-    border: 1px dashed #ccc;
-}
-
-.fileInput:focus {
-    border-color: #007bff;
-}
-.imagePreviews{
-    margin: 20px 0px;
-}
-
-.previewGrid{
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(150px,lfr));
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.previewItem{
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    text-align: center;
-    padding: 10px;
-}
-.previewImage{
-    width: 100%;
-    object-fit: cover;
-    height: 120px;
-    border-radius: 4px;
-}
-
-/* .removeButton {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ff4444;
-    color: white;
+.productForm {
+    background-color: #ffffff;
     border: none;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    cursor: pointer;
-    font-size: 16px;
-}
-.removeButton:hover {
-    background: #cc0000;
-} */
-
-.imageName {
-    display: block;
-    margin-top: 8px;
-    font-size: 12px;
-    color: #666;
-    word-break: break-all;
+    border-radius: 16px;
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 40px 50px;
+    width: 600px;
+    margin: 40px auto;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
 }
 
-.noImages {
+.productForm:hover {
+    box-shadow: 0px 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.header h3 {
     text-align: center;
-    padding: 40px;
-    color: #888;
-    border: 2px dashed #ddd;
-    border-radius: 8px;
-    margin: 20px 0;
+    font-size: 2rem;
+    color: #4a6cf7;
+    font-weight: 600;
+    margin-bottom: 35px;
+    letter-spacing: 0.5px;
 }
 
-.label {
-    display: block;
+.InputGroup {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 18px 0;
+    position: relative;
+}
+
+.InputGroup label {
+    font-size: 0.95rem;
+    color: #4a5568;
     margin-bottom: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.inputWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.inputWrapper input[type='text'],
+.inputWrapper input[type='number'] {
+    padding: 14px 18px 14px 50px;
+    border: 2px solid #e2e8f0;
+    width: 100%;
+    border-radius: 12px;
+    outline: none;
+    background: #f9fafb;
+    color: #2d3748;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.inputWrapper input[type='text']::placeholder,
+.inputWrapper input[type='number']::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
+}
+
+.inputWrapper input[type='text']:focus,
+.inputWrapper input[type='number']:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 8px rgba(74, 108, 247, 0.25);
+    background: #ffffff;
+    transform: scale(1.01);
+}
+
+
+
+
+.ButtonGroup {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 35px;
+}
+
+.nextButton,
+.backButton {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
     font-weight: 600;
-    color: #333;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.nextButton {
+    background: linear-gradient(135deg, #4caf50, #81c784);
+}
+
+.nextButton:hover {
+    background: linear-gradient(135deg, #43a047, #66bb6a);
+    transform: translateY(-3px);
+}
+
+.backButton {
+    background: linear-gradient(135deg, #f44336, #e57373);
+}
+
+.backButton:hover {
+    background: linear-gradient(135deg, #d32f2f, #ef5350);
+    transform: translateY(-3px);
+}
+
+.nextButton:active,
+.backButton:active {
+    transform: translateY(-1px);
 }

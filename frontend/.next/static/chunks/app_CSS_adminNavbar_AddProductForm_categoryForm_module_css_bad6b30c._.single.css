@@ -1,4 +1,119 @@
 /* [project]/app/CSS/adminNavbar/AddProductForm/categoryForm.module.css [app-client] (css) */
+.categoryForm-module__Th2wEq__categoryForm {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  flex-direction: column;
+  justify-content: center;
+  width: 500px;
+  margin: 100px auto;
+  padding: 30px 20px;
+  display: flex;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .1);
+}
 
+.categoryForm-module__Th2wEq__title h3 {
+  color: gray;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: x-large;
+  font-weight: 600;
+}
+
+.categoryForm-module__Th2wEq__label {
+  color: #4a5568;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: .9rem;
+  font-weight: 500;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__inputGroup {
+  flex-direction: column;
+  margin: 10px;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__inputWrapper {
+  position: relative;
+}
+
+.categoryForm-module__Th2wEq__tagIcon {
+  pointer-events: none;
+  z-index: 2;
+  position: absolute;
+  top: 20px;
+  left: 15px;
+}
+
+.categoryForm-module__Th2wEq__textInput {
+  color: #2d3748;
+  box-sizing: border-box;
+  background: #f9fafb;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  outline: none;
+  width: 100%;
+  padding: 14px 18px 14px 50px;
+  font-size: 1rem;
+  transition: all .3s;
+}
+
+.categoryForm-module__Th2wEq__textInput::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.categoryForm-module__Th2wEq__textInput:focus {
+  background: #fff;
+  border-color: #4a6cf7;
+  transform: scale(1.01);
+  box-shadow: 0 0 8px rgba(74, 108, 247, .25);
+}
+
+.categoryForm-module__Th2wEq__ButtonGroup {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 30px 0 20px;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__nextButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #62c96a;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.categoryForm-module__Th2wEq__backButton {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .5px;
+  background: #dd5651;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all .3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+}
+
+.categoryForm-module__Th2wEq__validationError {
+  color: red;
+  margin: 1px auto;
+  font-size: medium;
+  font-weight: 500;
+}
 
 /*# sourceMappingURL=app_CSS_adminNavbar_AddProductForm_categoryForm_module_css_bad6b30c._.single.css.map*/
