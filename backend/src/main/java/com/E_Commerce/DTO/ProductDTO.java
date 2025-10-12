@@ -25,7 +25,7 @@ public class ProductDTO {
 
     @NotNull(message = "Price is required.")
     @Positive(message = "Price cannot be negative or zero.")
-    @DecimalMax(value = "0.01",message = "Price must be at least 0.01.")
+    @DecimalMin(value = "0.01",message = "Price must be at least 0.01.")
     private Double price;
 
     @PositiveOrZero(message = "Discount cannot be negative.")

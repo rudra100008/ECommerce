@@ -32,7 +32,7 @@ public class AdminController {
 
     @PostMapping("/addProduct")
     public ResponseEntity<?> addProduct(
-            @Valid @RequestPart ProductDTO productDTO,
+            @Valid @RequestBody ProductDTO productDTO,
             BindingResult result
 //            @RequestPart List<MultipartFile> imageFiles
             )
@@ -92,8 +92,15 @@ public class AdminController {
     }
     @PostMapping("/category")
     public ResponseEntity<?> createCategory(
-            @RequestBody CategoryRequest categoryRequest
-            ){
+            @Valid @RequestBody CategoryRequest categoryRequest,
+            BindingResult result
+            )
+    {
+        if(result.hasErrors()){
+            Map<String ,Object> errorRes = new HashMap<>();
+            result.getFieldErrors().forEach(field-> errorRes.put(field.getField(),field.getDefaultMessage()));
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorRes);
+        }
         Category category = this.categoryService.createCategory(categoryRequest.getName());
 
         return  ResponseEntity.status(HttpStatus.CREATED).body(category);

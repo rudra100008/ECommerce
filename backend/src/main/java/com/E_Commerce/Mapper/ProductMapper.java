@@ -43,7 +43,7 @@ public interface ProductMapper {
        product.setCategory(category);
 
 
-       if(productDTO != null || !productDTO.getImageUrls().isEmpty()){
+       if(productDTO.getImageUrls() != null && !productDTO.getImageUrls().isEmpty()){
            List<ProductImage> productImages = productDTO.getImageUrls().stream()
                    .map(imageUrl -> {
                        return ProductImage.builder()
