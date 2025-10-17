@@ -116,4 +116,132 @@
   font-weight: 500;
 }
 
+.categoryForm-module__Th2wEq__category {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-top: 20px;
+  padding: 15px;
+}
+
+.categoryForm-module__Th2wEq__category h3 {
+  color: #2d3748;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.categoryForm-module__Th2wEq__categoryList {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 13px;
+  min-height: 50px;
+  margin-bottom: 20px;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__categoryItem {
+  color: #4a5568;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  white-space: nowrap;
+  background-color: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all .3s ease-in-out;
+}
+
+.categoryForm-module__Th2wEq__categoryItem:hover {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+.categoryForm-module__Th2wEq__categoryItem:active {
+  transform: translateY(0);
+}
+
+.categoryForm-module__Th2wEq__categoryItem.categoryForm-module__Th2wEq__selected {
+  color: #fff;
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.categoryForm-module__Th2wEq__page {
+  justify-content: center;
+  margin-top: 20px;
+  padding: 15px 0;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__pageNumberList {
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__pageNumberItem {
+  color: #4a5568;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  background-color: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all .2s ease-in-out;
+  display: flex;
+}
+
+.categoryForm-module__Th2wEq__pageNumberItem:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+.categoryForm-module__Th2wEq__pageNumberItem:active {
+  transform: translateY(0);
+}
+
+.categoryForm-module__Th2wEq__pageNumberItem.categoryForm-module__Th2wEq__active {
+  color: #fff;
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.categoryForm-module__Th2wEq__pageNumberItem.categoryForm-module__Th2wEq__nav {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  font-weight: bold;
+}
+
+.categoryForm-module__Th2wEq__pageNumberItem.categoryForm-module__Th2wEq__nav:hover {
+  background-color: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.categoryForm-module__Th2wEq__pageNumberItem.categoryForm-module__Th2wEq__nav.categoryForm-module__Th2wEq__disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.categoryForm-module__Th2wEq__pageNumberItem.categoryForm-module__Th2wEq__nav.categoryForm-module__Th2wEq__disabled:hover {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  transform: none;
+}
+
 /*# sourceMappingURL=app_CSS_adminNavbar_AddProductForm_categoryForm_module_css_bad6b30c._.single.css.map*/

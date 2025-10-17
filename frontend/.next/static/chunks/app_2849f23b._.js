@@ -33,7 +33,9 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 
 __turbopack_context__.s([
     "default",
-    ()=>__TURBOPACK__default__export__
+    ()=>__TURBOPACK__default__export__,
+    "setNotifyFunction",
+    ()=>setNotifyFunction
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/axios/lib/axios.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$baseURl$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/baseURl.js [app-client] (ecmascript)");
@@ -43,6 +45,10 @@ const api = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axio
     baseURL: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$baseURl$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"],
     withCredentials: true
 });
+let notify;
+const setNotifyFunction = (fn)=>{
+    notify = fn;
+};
 api.interceptors.request.use((config)=>{
     return config;
 }, (error)=>{
@@ -52,8 +58,8 @@ api.interceptors.response.use((response)=>{
     return response;
 }, (error)=>{
     if (error.response && error.response.status === 401) {
-        console.log("UnAuthorized Access.");
-        window.location.href = "/login";
+        if (notify) notify("UnAuthorized Access. Redirecting to login.");
+        setTimeout(()=>window.location.href = "/login", 3000);
     }
     return Promise.reject(error);
 });

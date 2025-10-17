@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/CSS/notification.module.css"],"sourcesContent":["/* CSS/notification.module.css */\n.container {\n    position: fixed;\n    top: 20px;\n    right: 20px;\n    width: 300px;\n    min-height: 60px;\n    z-index: 1000;\n    background: white;\n    border-radius: 12px;\n    padding: 16px;\n    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);\n    border-left: 4px solid #007bff;\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    gap: 12px;\n    animation: slideIn 0.3s ease-out;\n}\n\n\n.container span {\n    flex: 1;\n    color: #1f2937;\n    font-size: 14px;\n    font-weight: 500;\n    line-height: 1.4;\n}\n\n.container button {\n    background: #ef4444;\n    border: none;\n    color: white;\n    padding: 6px 12px;\n    border-radius: 6px;\n    cursor: pointer;\n    font-size: 12px;\n    font-weight: 600;\n    transition: all 0.2s ease;\n    min-width: 60px;\n}\n\n.container button:hover {\n    background: #dc2626;\n    transform: translateY(-1px);\n}\n\n.container button:active {\n    transform: translateY(0);\n}\n"],"names":[],"mappings":"AACA;;;;;;;;;;;;;;;;;;;AAoBA;;;;;;;;AAQA;;;;;;;;;;;;;AAaA;;;;;AAKA"}}]
+}

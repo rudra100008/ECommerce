@@ -8,7 +8,9 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import api from "../Component/axiosInterceptor";
 import baseURL from "../baseURl";
 import { useRouter } from "next/navigation";
+import {useNotification} from '../Context/NotificationContext';
 export default function LoginPage() {
+    const {error,success} = useNotification();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState({
@@ -33,11 +35,15 @@ export default function LoginPage() {
                 email: '',
                 password: ''
             });
-            router.push(redirectUrl);
-        } catch (error) {
-            console.log("Login Error: ", error)
-            if (error.response.data && error.response.status === 400) {
-                const data = error.response.data;
+            success(response.data.message);
+            setTimeout(()=>{
+                 router.push(redirectUrl);
+            },3000)
+        } catch (err) {
+            console.log("Login Error: ", err)
+            error(err.response.data.message)
+            if (err.response.data && err.response.status === 400) {
+                const data = err.response.data;
                 if (typeof data === 'object') {
                     setValidateUser(user => ({ ...user, ...data }))
                 }
@@ -51,11 +57,6 @@ export default function LoginPage() {
         await login();
         setIsLoading(false);
 
-    }
-    if (isLoading) {
-        return (
-            <div>Loading...</div>
-        )
     }
     return (
         <div className={style.loginForm}>

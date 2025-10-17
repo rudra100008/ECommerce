@@ -9,6 +9,7 @@ export default function AddProductPage() {
     const [currentState, setCurrentState] = useState('category');
    const [formData, setFormData] = useState({
         category: {
+            categoryId:'',
             name: ''
         },
         product: {

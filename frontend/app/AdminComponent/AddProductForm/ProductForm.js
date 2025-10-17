@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import style from '../../CSS/adminNavbar/AddProductForm/productForm.module.css'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { createProduct } from '../../services/adminServices/ProductCategoryServices';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 export default function ProductForm({ setState, formData, updateFormData }) {
     const [validationError, setValidationError] = useState({
         productName: '',
@@ -16,21 +16,33 @@ export default function ProductForm({ setState, formData, updateFormData }) {
     const handleBack = () => {
         setState('category')
     }
-    const handleNext = async(e) => {
+    const handleNext = async (e) => {
         e.preventDefault();
         try {
-             const res = await createProduct({ product: formData.product,category:formData.category })
-             console.log("handleNext() ProductForm(): ",res);
+            const cleanProductData = {
+                productName: formData.product.productName,
+                description: formData.product.description,
+                price: formData.product.price,
+                discount: formData.product.discount,
+                sku: formData.product.sku,
+                stockQuantity: formData.product.stockQuantity
+            }
+            const res = await createProduct({ product: cleanProductData, category: formData.category ,setValidationError})
+            console.log("handleNext() ProductForm(): ", res.data);
 
-
-             setState('productImage');
+            updateFormData({ product: { ...formData.product, ...res.data } })
+            setState('productImage');
         } catch (error) {
             console.log("Product creation  failed: ", error.response?.data);
         }
     }
 
-    console.log("FormData", formData);
-    // console.log("updateFormData: ", updateFormData)
+     useEffect(() => {
+        console.log("ProductForm received formData:", formData);
+        console.log("Category type:", typeof formData.category);
+        console.log("Category value:", formData.category);
+    }, [formData]);
+
     return (
         <div className={style.productForm}>
             <div className={style.header}>
@@ -49,6 +61,7 @@ export default function ProductForm({ setState, formData, updateFormData }) {
                             placeholder='Enter product Name'
                         />
                     </div>
+                    <span className={style.validationError}>{validationError.productName}</span>
                 </div>
                 <div className={style.InputGroup}>
                     <label htmlFor='description'>Description</label>
@@ -62,6 +75,7 @@ export default function ProductForm({ setState, formData, updateFormData }) {
                             placeholder='Enter description'
                         />
                     </div>
+                    <span className={style.validationError}>{validationError.description}</span>
                 </div>
                 <div className={style.InputGroup}>
                     <label htmlFor='price'>Price</label>
@@ -75,6 +89,7 @@ export default function ProductForm({ setState, formData, updateFormData }) {
                             placeholder='Enter a price'
                         />
                     </div>
+                    <span className={style.validationError}>{validationError.price}</span>
                 </div>
                 <div className={style.InputGroup}>
                     <label htmlFor='discount'>Discount</label>
@@ -88,6 +103,7 @@ export default function ProductForm({ setState, formData, updateFormData }) {
                             placeholder='Enter discount'
                         />
                     </div>
+                    <span className={style.validationError}>{validationError.discount}</span>
                 </div>
                 <div className={style.InputGroup}>
                     <label htmlFor='sku'>SKU</label>
@@ -101,6 +117,7 @@ export default function ProductForm({ setState, formData, updateFormData }) {
                             placeholder='Enter sku'
                         />
                     </div>
+                    <span className={style.validationError}>{validationError.sku}</span>
                 </div>
                 <div className={style.InputGroup}>
                     <label htmlFor=''>Stock Quantity</label>
@@ -114,6 +131,7 @@ export default function ProductForm({ setState, formData, updateFormData }) {
                             placeholder='Enter stock quantity'
                         />
                     </div>
+                    <span className={style.validationError}>{validationError.stockQuantity}</span>
                 </div>
 
             </form>

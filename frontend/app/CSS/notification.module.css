@@ -1,0 +1,50 @@
+/* CSS/notification.module.css */
+.container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    min-height: 60px;
+    z-index: 1000;
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    animation: slideIn 0.3s ease-out;
+}
+
+
+.container span {
+    flex: 1;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.container button {
+    background: #ef4444;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    min-width: 60px;
+}
+
+.container button:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.container button:active {
+    transform: translateY(0);
+}

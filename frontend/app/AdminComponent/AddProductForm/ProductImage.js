@@ -3,16 +3,19 @@ import { useState } from 'react';
 import style from '../../CSS/adminNavbar/AddProductForm/productImage.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCross, faUpload, faX } from '@fortawesome/free-solid-svg-icons';
+import { addProductImage } from '../../services/adminServices/ProductCategoryServices';
+import { useRouter } from 'next/navigation';
 
 export default function ProductImage({ setState, formData, updateFormData }) {
     const [previewUrls, setPreviewUrls] = useState([]);
+    const router = useRouter();
     const handleBack = () => {
         setState('product');
     }
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
-        if(files.length === 0) return;
+        if (files.length === 0) return;
         updateFormData({ images: [...formData.images, ...files] });
 
         const newPreviewUrls = files.map(file => URL.createObjectURL(file));
@@ -24,18 +27,40 @@ export default function ProductImage({ setState, formData, updateFormData }) {
 
     const removeImage = (index) => {
         const newImages = formData.images.filter((_, i) => i !== index);
-        console.log("New Images",newImages)
+        console.log("New Images", newImages)
         updateFormData({ images: newImages });
 
         URL.revokeObjectURL(previewUrls[index]);
         const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
         setPreviewUrls(newPreviewUrls);
     }
-    const handleSubmit = () => {
-        if (formData.images.length === 0) {
-            alert("Select at least 1 image");
-        }
+    
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (formData.images.length === 0) {
+        alert("Select at least 1 image");
+        return;
     }
+    try {
+        const formDataToSend = new FormData();
+    
+        formData.images.forEach((image, index) => {
+            formDataToSend.append("images", image);
+        });
+        
+        console.log("FormData being sent:", formDataToSend);
+        
+        const res = await addProductImage({ 
+            product: formData.product, 
+            images: formDataToSend  
+        });
+        console.log("Response of handleSubmit() in productImage: ", res.data);
+
+        setTimeout(()=> router.push("/admin"),2000)
+    } catch (error) {
+        console.log("Error in handleSubmit() in productImage", error.response?.data);
+    }
+}
     return (
         <div className={style.productImage}>
             <div className={style.header}>
@@ -74,7 +99,7 @@ export default function ProductImage({ setState, formData, updateFormData }) {
                                     onClick={() => removeImage(index)}
                                     className={style.removeButton}
                                 >
-                                    <FontAwesomeIcon icon={faX}/>
+                                    <FontAwesomeIcon icon={faX} />
                                 </button>
                                 <span className={style.imageName}>
                                     {formData.images[index]?.name}
@@ -96,12 +121,12 @@ export default function ProductImage({ setState, formData, updateFormData }) {
                     className={style.backButton}
                     onClick={handleBack}
                 >
-                    <FontAwesomeIcon icon={faArrowLeft}/>
+                    <FontAwesomeIcon icon={faArrowLeft} />
                     Back
                 </button>
                 <button
-                    type='submit'
-                    onSubmit={handleSubmit}
+                    type='button'
+                    onClick={handleSubmit}
                     className={style.nextButton}
                 >
                     Submit

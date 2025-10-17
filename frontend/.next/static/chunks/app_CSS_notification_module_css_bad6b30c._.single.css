@@ -1,0 +1,51 @@
+/* [project]/app/CSS/notification.module.css [app-client] (css) */
+.notification-module__cvCgAq__container {
+  z-index: 1000;
+  background: #fff;
+  border-left: 4px solid #007bff;
+  border-radius: 12px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 300px;
+  min-height: 60px;
+  padding: 16px;
+  animation: .3s ease-out notification-module__cvCgAq__slideIn;
+  display: flex;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .15);
+}
+
+.notification-module__cvCgAq__container span {
+  color: #1f2937;
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.notification-module__cvCgAq__container button {
+  color: #fff;
+  cursor: pointer;
+  background: #ef4444;
+  border: none;
+  border-radius: 6px;
+  min-width: 60px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all .2s;
+}
+
+.notification-module__cvCgAq__container button:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.notification-module__cvCgAq__container button:active {
+  transform: translateY(0);
+}
+
+/*# sourceMappingURL=app_CSS_notification_module_css_bad6b30c._.single.css.map*/
