@@ -32,6 +32,8 @@ public class SecurityConfig {
     private final JsonLogoutHandler jsonLogoutHandler;
     private final OAuth2AuthenticationHandler oAuth2AuthenticationHandler;
     private final PasswordEncoder passwordEncoder;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessHandler customAccessHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration)throws Exception{
@@ -60,7 +62,12 @@ public class SecurityConfig {
                 .sessionManagement(session->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                      .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                      .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex-> ex
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessHandler)
+
+                );
 
         http.oauth2Login(oauth-> oauth
                 .successHandler(oAuth2AuthenticationHandler)

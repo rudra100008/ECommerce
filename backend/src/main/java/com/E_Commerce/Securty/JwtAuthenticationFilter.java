@@ -1,5 +1,6 @@
 package com.E_Commerce.Securty;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -24,43 +25,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String path = request.getRequestURI();
-//        if(path.startsWith("/api/auth")){
-//            filterChain.doFilter(request,response);
-//            return;
-//        }
-//        if(path.startsWith("/oauth2")){
-//            filterChain.doFilter(request,response);
-//            return;
-//        }
 
-        String jwt = null;
-        if(request.getCookies() != null){
-            System.out.println("=== JWT Filter Debug ===");
-            System.out.println("Cookies found: " + request.getCookies().length);
-            for(Cookie cookie:request.getCookies()){
-                System.out.println("Cookie: " + cookie.getName() + " = " + cookie.getValue());
-                if("token".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isEmpty()){
-                     jwt = cookie.getValue();
-                     break;
+        try {
+            String jwt = null;
+            if (request.getCookies() != null) {
+                System.out.println("=== JWT Filter Debug ===");
+                System.out.println("Cookies found: " + request.getCookies().length);
+                for (Cookie cookie : request.getCookies()) {
+                    System.out.println("Cookie: " + cookie.getName() + " = " + cookie.getValue());
+                    if ("token".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isEmpty()) {
+                        jwt = cookie.getValue();
+                        break;
+                    }
                 }
             }
-        }
-        if(jwt != null) {
-           String username = jwtUtil.extractUsername(jwt);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-                if (jwtUtil.isTokenValid(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (jwt != null) {
+                String username = jwtUtil.extractUsername(jwt);
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                    if (jwtUtil.isTokenValid(jwt, userDetails)) {
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                    }
                 }
             }
+            filterChain.doFilter(request,response);
+        }catch (ExpiredJwtException e){
+            sendErrorResponse(response,"token_expired","Token has expired. Please login again",HttpServletResponse.SC_UNAUTHORIZED);
         }
-        filterChain.doFilter(request,response);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response,String error ,String message,int status)
+    throws IOException{
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.getWriter().write(
+                String.format("{\"error\":  \"%s\", \"message\" : \"%s\"}",error,message)
+        );
     }
 }

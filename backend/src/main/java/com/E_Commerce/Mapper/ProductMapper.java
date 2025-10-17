@@ -44,13 +44,14 @@ public interface ProductMapper {
 
 
        if(productDTO.getImageUrls() != null && !productDTO.getImageUrls().isEmpty()){
-           List<ProductImage> productImages = productDTO.getImageUrls().stream()
-                   .map(imageUrl -> {
-                       return ProductImage.builder()
-                               .product(product)
-                               .imageUrl(imageUrl)
-                               .build();
-                   }).toList();
+           List<ProductImage> productImages = new ArrayList<>();
+           for(String imageUrl : productDTO.getImageUrls()){
+               ProductImage productImage = ProductImage.builder()
+                       .imageUrl(imageUrl)
+                       .product(product)
+                       .build();
+               productImages.add(productImage);
+           }
 
            product.setProductImages(productImages);
        }

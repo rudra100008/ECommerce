@@ -32,7 +32,6 @@ public class ProductDTO {
     @DecimalMax(value = "1000", message = "Discount to high.")
     private Double discount;
 
-    @NotBlank(message = "SKU is required")
     private String sku;
 
     @NotNull(message = "Category is required.")

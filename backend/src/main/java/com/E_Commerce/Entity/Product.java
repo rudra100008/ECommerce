@@ -19,9 +19,11 @@ public class Product {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer productId;
+
     @Column(nullable = false)
     private String productName;
     private String description;
+
     @Column(nullable = false)
     private Double price;
     private Double discount;
@@ -32,15 +34,18 @@ public class Product {
     @JoinColumn(name = "category_id",nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default // Add this annotation
     private List<ProductImage> productImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default // Add this annotation
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Inventory inventory;
 
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default // Add this annotation
     private List<CartItem> cartItems = new ArrayList<>();
 }

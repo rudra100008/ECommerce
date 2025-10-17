@@ -1,10 +1,13 @@
 package com.E_Commerce.Exception;
 
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -86,15 +89,44 @@ public class GlobalException {
     }
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e,WebRequest request){
-        return  errorResponse(
-                HttpStatus.FORBIDDEN,
-                "Access Denied: You don't have permission to access this resource.",
-                request
-        );
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String role = determineRole(authentication);
+        Map<String, Object> body = new HashMap<>();
+        body.put("error",HttpStatus.FORBIDDEN);
+        body.put("message","You don't have permission to access this resource.");
+        body.put("role",role);
+        body.put("redirectUrl", getRedirectUrl(role));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
     }
     @ExceptionHandler(IOException.class)
     public ResponseEntity<?> handleIOException(IOException e,WebRequest request){
         return errorResponse(HttpStatus.BAD_REQUEST,e.getMessage(),request);
+    }
+
+    @ExceptionHandler(BusinessValidationException.class)
+    public ResponseEntity<?> handleBusinessValidationException(BusinessValidationException e,WebRequest request){
+        return  errorResponse(
+                HttpStatus.CONFLICT,
+                e.getMessage(),
+                request
+        );
+    }
+
+    private String determineRole(Authentication authentication){
+        return authentication.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .filter(role-> role.startsWith("ROLE_"))
+                .findFirst()
+                .orElse("ROLE_CUSTOMER");
+    }
+
+    private String getRedirectUrl(String role){
+        if(role.equals("ROLE_ADMIN")){
+            return "http://localhost:3000/admin";
+        } else if (role.equals("ROLE_CUSTOMER")) {
+            return "http://localhost:3000/";
+        }
+        return null;
     }
 
 }
