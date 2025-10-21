@@ -110,13 +110,16 @@ api.interceptors.response.use((response)=>{
         const message = (_error_response_data = error.response.data) === null || _error_response_data === void 0 ? void 0 : _error_response_data.message;
         if (notify) notify(message);
         setTimeout(()=>window.location.href = "/login", 3000);
-    }
-    if (error.response && error.response.status === 403) {
+    } else if (error.response && error.response.status === 403) {
         var _error_response_data1, _error_response_data2;
         const message = (_error_response_data1 = error.response.data) === null || _error_response_data1 === void 0 ? void 0 : _error_response_data1.message;
         const redirectUrl = (_error_response_data2 = error.response.data) === null || _error_response_data2 === void 0 ? void 0 : _error_response_data2.redirectUrl;
         if (notify) notify(message);
         setTimeout(()=>window.location.href = redirectUrl, 3000);
+    } else if (error.code === 'ERR_NETWORK') {
+        const message = "Server is down or unreachable";
+        if (notify) notify(message);
+        setTimeout(()=>window.location.href.repeat, 3000);
     }
     return Promise.reject(error);
 });

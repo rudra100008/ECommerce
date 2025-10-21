@@ -164,12 +164,15 @@ api.interceptors.response.use((response)=>{
         const message = error.response.data?.message;
         if (notify) notify(message);
         setTimeout(()=>window.location.href = "/login", 3000);
-    }
-    if (error.response && error.response.status === 403) {
+    } else if (error.response && error.response.status === 403) {
         const message = error.response.data?.message;
         const redirectUrl = error.response.data?.redirectUrl;
         if (notify) notify(message);
         setTimeout(()=>window.location.href = redirectUrl, 3000);
+    } else if (error.code === 'ERR_NETWORK') {
+        const message = "Server is down or unreachable";
+        if (notify) notify(message);
+        setTimeout(()=>window.location.href.repeat, 3000);
     }
     return Promise.reject(error);
 });

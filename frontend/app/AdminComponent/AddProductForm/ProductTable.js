@@ -3,9 +3,14 @@ import style from '../../CSS/adminNavbar/AddProductForm/productForm.module.css';
 import { fetchProductsWithCategoryId } from '../../services/ProductServices';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { fetchAllCategories } from '../../services/CategoryService';
+import ProductData from '../ProductData';
 export default function ProductTable() {
     const [pageNumbers, setPageNumbers] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
+    const [categorys, setCategorys] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedProduct, setSelectedProduct] = useState({})
     const [pageInfo, setPageInfo] = useState({
         lastPage: false,
         pageNumber: 0,
@@ -13,15 +18,15 @@ export default function ProductTable() {
         totalElement: 0,
         totalPage: 0
     })
+    const [showProductDetails, setShowProductDetails] = useState(false);
     const [productsDetail, setProductsDetail] = useState([]);
 
 
     const fetchProducts = async (pageNumber, pageSize) => {
         try {
-            const response = await fetchProductsWithCategoryId(pageNumber, pageSize);
-            console.log("response in ProductTable", response.data);
+            const categoryId = localStorage.getItem("categoryId");
+            const response = await fetchProductsWithCategoryId(pageNumber, pageSize, categoryId);
             const { product } = response.data;
-            console.log("Product", product)
             setProductsDetail(product.data);
             setPageInfo({
                 lastPage: product.lastPage,
@@ -38,13 +43,27 @@ export default function ProductTable() {
                 }
                 setPageNumbers(numbers);
             }
+            setSelectedCategory(categoryId)
         } catch (error) {
             console.log("Error in productTable: ", error.response?.data)
         }
 
     }
+
+    const fetchCategory = async () => {
+        try {
+            const response = await fetchAllCategories(0, 10000);
+            console.log("Resposne fetchCategory()", response.data.data)
+            const { data } = response.data;
+            setCategorys(data)
+
+        } catch (error) {
+            console.log("Error fetching categories: ", error.response?.data);
+        }
+    }
     useEffect(() => {
         fetchProducts(0, 5);
+        fetchCategory();
     }, [])
 
     const handlePreviousPage = () => {
@@ -68,39 +87,90 @@ export default function ProductTable() {
         }
     }
 
+    const handleCategoryChange = (e) => {
+        const categoryId = e.target.value;
+        localStorage.setItem("categoryId", categoryId);
+        setSelectedCategory(categoryId);
+        fetchProducts(0, 5);
+    }
+    const getSerialNumber = (index) => {
+        return currentPage * pageInfo.pageSize + index + 1;
+    }
+
+    const handleDoubleClicks = (product) => {
+        setSelectedProduct(product);
+        setShowProductDetails(true);
+    }
+    useEffect(() => {
+        if (selectedProduct && selectedProduct.productId && productsDetail && productsDetail.length > 0) {
+            setProductsDetail((prev) => {
+                const index = prev.findIndex(item => item.productId === selectedProduct.productId)
+                if (index !== -1) {
+                    const updated = [...prev];
+                    updated[index] = selectedProduct;
+                    return updated
+                }
+            })
+        }
+    }, [selectedProduct])
     const displayCurrentPage = currentPage + 1;
     return (
-        <div className={style.productTable}>
-            <table>
-                <thead>
-                    <tr>
-                        <th>SN</th>
-                        <th>Product Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Discount</th>
-                        <th>Category</th>
-                        <th>Stock Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    {
-                        productsDetail.map((product, index) => (
-                            <tr key={index}>
-                                <td>{index + 1}</td>
-                                <th>{product.productName}</th>
-                                <th>{product.description}</th>
-                                <th>{product.price}</th>
-                                <th>{product.discount || 0}</th>
-                                <th>{product.categoryId}</th>
-                                <th>{product.stockQuantity}</th>
-                            </tr>
+        <div>
+            {
+                showProductDetails &&
+                <ProductData
+                    setShowProductDetails={setShowProductDetails}
+                    selectedProduct={selectedProduct}
+                    setSelectedProduct={setSelectedProduct}
+                />
+            }
+            <div className={style.categoryFilter}>
+                <select
+                    id='categorySelect'
+                    value={selectedCategory}
+                    onChange={handleCategoryChange}
+                    className={style.categorySelect}
+                >
+                    <option value="">Choose a  category</option>
+                    {categorys &&
+                        categorys.map((category, index) => (
+                            <option key={category.categoryId || index} value={category.categoryId}>
+                                {category.name}
+                            </option>
                         ))
                     }
-                </tbody>
-            </table>
-
+                </select>
+            </div>
+            <div className={style.productTable}>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>Category</th>
+                            <th>Stock </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            productsDetail.map((product, index) => (
+                                <tr key={index} onDoubleClick={() => handleDoubleClicks(product)}>
+                                    <td>{getSerialNumber(index)}</td>
+                                    <td>{product.productName}</td>
+                                    <td>{product.description}</td>
+                                    <td>₹{product.price}</td>
+                                    <td>₹{product.discount || 0}</td>
+                                    <td>{product.categoryId}</td>
+                                    <td>{product.stockQuantity}</td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
             <div className={style.page}>
                 <div className={style.pageNumberList}>
                     <div

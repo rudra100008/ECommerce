@@ -125,10 +125,108 @@
 
 
 /* Product table design */
-.productTable{
-    padding: 10px;
+.productTable {
+    width: 100%;
+    margin: 20px 0px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.productTable table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.productTable thead {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.productTable thead tr{
+    position:relative;
+    z-index: 1;
+}
+.productTable tbody{
+    position: relative;
+    z-index: 1;
+}
+
+.productTable th {
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.productTable tbody tr {
+    transition: all 0.2s ease-in-out;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.productTable tbody tr:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.productTable td{
+    padding: 14px 12px;
+    color: #4a5568;
+    font-size: 14px;
+    border-bottom: 1px solid #e2e8f0;
+}
+.productTable td:first-child {
+  font-weight: 600;
+  color: #667eea;
+}
+.productTable th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.productTable th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.productTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.productTable tbody:empty::after {
+    content: "No products found";
+    display: block;
+    text-align: center;
+    padding: 40px;
+    color: #a0aec0;
+    font-style: italic;
+    font-size: 16px;
+}
+
+.productTable td:nth-child(4), 
+.productTable td:nth-child(5), 
+.productTable td:nth-child(7) {
+    text-align: right;
+}
+.productTable td:nth-child(1) { 
+    text-align: center;
+}
+.productTable td:nth-child(3) { /* Description */
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* Page navigation styles */
 .page {
     display: flex;
     justify-content: center;
@@ -201,4 +299,35 @@
     background-color: #f1f5f9;
     border-color: #e2e8f0;
     transform: none;
+}
+/* category selector */
+.categoryFilter {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+}
+
+
+.categorySelect {
+    padding: 10px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    color: #4a5568;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    min-width: 200px;
+}
+
+.categorySelect:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.categorySelect:hover {
+    border-color: #cbd5e0;
 }

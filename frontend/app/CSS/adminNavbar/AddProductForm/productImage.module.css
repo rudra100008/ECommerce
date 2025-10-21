@@ -8,23 +8,24 @@
 }
 
 
-.header{
+.header {
     margin-bottom: 12px;
     text-align: center;
 }
 
-.header h3{
-     font-size: 1.8rem;
-     font-weight: 500;
-     color: gray;
-     letter-spacing: 1px;
+.header h3 {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: gray;
+    letter-spacing: 1px;
 }
 
-.header p{
+.header p {
     font-size: 1rem;
     font-weight: 400;
     color: rgb(92, 91, 91);
 }
+
 .inputGroup {
     display: flex;
     flex-direction: column;
@@ -85,7 +86,7 @@
     border-radius: 4px;
 }
 
- .removeButton {
+.removeButton {
     background: #ff4444;
     color: white;
     border: none;
@@ -95,9 +96,10 @@
     cursor: pointer;
     font-size: 16px;
 }
+
 .removeButton:hover {
     background: #cc0000;
-} 
+}
 
 .imageName {
     display: block;

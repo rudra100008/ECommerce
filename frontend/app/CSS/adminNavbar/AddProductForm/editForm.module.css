@@ -1,0 +1,114 @@
+.editForm {
+    border: none;
+    border-radius: 16px;
+    padding: 40px 50px;
+    transition: all 0.3s ease;
+    overflow-y: auto;
+}
+
+.header h3 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #4a6cf7;
+    font-weight: 600;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+}
+
+.InputGroup {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 18px 0;
+    position: relative;
+}
+
+.InputGroup label {
+    font-size: 0.8rem;
+    color: #576070;
+    margin-bottom: 5px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.inputWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.inputWrapper input[type='text'],
+.inputWrapper input[type='number'] {
+    padding: 14px 18px 14px 50px;
+    border: 2px solid #e2e8f0;
+    width: 100%;
+    border-radius: 12px;
+    outline: none;
+    background: #f9fafb;
+    color: #2d3748;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.inputWrapper input[type='text']::placeholder,
+.inputWrapper input[type='number']::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
+}
+
+.inputWrapper input[type='text']:focus,
+.inputWrapper input[type='number']:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 8px rgba(74, 108, 247, 0.25);
+    background: #ffffff;
+    transform: scale(1.01);
+
+}
+
+.inputIcon {
+    position: absolute;
+    left: 10px;
+    top: 36%;
+    font-size: 15px;
+    color: #4a5568;
+    z-index: 2;
+}
+
+.ButtonGroup {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 35px;
+}
+
+.editButton {
+    background-color: #4a6cf7;
+    color: white;
+    font-weight: 400;
+    padding: 10px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+.editButton:hover{
+    background-color: #224cf3;
+    font-weight: 600;
+    transform: translateY(-5px);
+}
+
+.backButton{
+    background-color: rgb(217, 119, 236);
+    padding: 10px 8px;
+    color: white;
+    font-weight: 400;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+.backButton:hover{
+    background-color: rgb(180, 50, 206);
+    font-weight: 600;
+    transform: translateY(-5px);
+}

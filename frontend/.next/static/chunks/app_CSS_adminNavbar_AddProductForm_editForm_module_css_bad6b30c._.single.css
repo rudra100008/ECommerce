@@ -1,0 +1,115 @@
+/* [project]/app/CSS/adminNavbar/AddProductForm/editForm.module.css [app-client] (css) */
+.editForm-module__Xn4MIG__editForm {
+  border: none;
+  border-radius: 16px;
+  padding: 40px 50px;
+  transition: all .3s;
+  overflow-y: auto;
+}
+
+.editForm-module__Xn4MIG__header h3 {
+  text-align: center;
+  color: #4a6cf7;
+  letter-spacing: .5px;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.editForm-module__Xn4MIG__InputGroup {
+  flex-direction: column;
+  width: 100%;
+  margin: 18px 0;
+  display: flex;
+  position: relative;
+}
+
+.editForm-module__Xn4MIG__InputGroup label {
+  color: #576070;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: .8rem;
+  font-weight: 500;
+  display: flex;
+}
+
+.editForm-module__Xn4MIG__inputWrapper {
+  width: 100%;
+  position: relative;
+}
+
+.editForm-module__Xn4MIG__inputWrapper input[type="text"], .editForm-module__Xn4MIG__inputWrapper input[type="number"] {
+  color: #2d3748;
+  box-sizing: border-box;
+  background: #f9fafb;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  outline: none;
+  width: 100%;
+  padding: 14px 18px 14px 50px;
+  font-size: 1rem;
+  transition: all .3s;
+}
+
+.editForm-module__Xn4MIG__inputWrapper input[type="text"]::placeholder, .editForm-module__Xn4MIG__inputWrapper input[type="number"]::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.editForm-module__Xn4MIG__inputWrapper input[type="text"]:focus, .editForm-module__Xn4MIG__inputWrapper input[type="number"]:focus {
+  background: #fff;
+  border-color: #4a6cf7;
+  transform: scale(1.01);
+  box-shadow: 0 0 8px rgba(74, 108, 247, .25);
+}
+
+.editForm-module__Xn4MIG__inputIcon {
+  color: #4a5568;
+  z-index: 2;
+  font-size: 15px;
+  position: absolute;
+  top: 36%;
+  left: 10px;
+}
+
+.editForm-module__Xn4MIG__ButtonGroup {
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 35px;
+  display: flex;
+}
+
+.editForm-module__Xn4MIG__editButton {
+  color: #fff;
+  cursor: pointer;
+  background-color: #4a6cf7;
+  border-radius: 8px;
+  padding: 10px 8px;
+  font-weight: 400;
+  transition: all .3s ease-in-out;
+}
+
+.editForm-module__Xn4MIG__editButton:hover {
+  background-color: #224cf3;
+  font-weight: 600;
+  transform: translateY(-5px);
+}
+
+.editForm-module__Xn4MIG__backButton {
+  color: #fff;
+  cursor: pointer;
+  background-color: #d977ec;
+  border-radius: 8px;
+  padding: 10px 8px;
+  font-weight: 400;
+  transition: all .3s ease-in-out;
+}
+
+.editForm-module__Xn4MIG__backButton:hover {
+  background-color: #b432ce;
+  font-weight: 600;
+  transform: translateY(-5px);
+}
+
+/*# sourceMappingURL=app_CSS_adminNavbar_AddProductForm_editForm_module_css_bad6b30c._.single.css.map*/

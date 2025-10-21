@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import style from '../../CSS/adminNavbar/AddProductForm/productImage.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCross, faUpload, faX } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faUpload, faX } from '@fortawesome/free-solid-svg-icons';
 import { addProductImage } from '../../services/adminServices/ProductCategoryServices';
 import { useRouter } from 'next/navigation';
 

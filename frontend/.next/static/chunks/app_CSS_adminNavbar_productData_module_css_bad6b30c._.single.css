@@ -1,0 +1,204 @@
+/* [project]/app/CSS/adminNavbar/productData.module.css [app-client] (css) */
+.productData-module__cBquvG__container {
+  z-index: 100;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, #d9f4f3 0%, #b8d8d8 100%);
+  border-radius: 15px;
+  flex-direction: column;
+  width: 600px;
+  height: 600px;
+  padding-top: 14px;
+  transition: all .3s ease-in;
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+}
+
+.productData-module__cBquvG__container:hover {
+  box-shadow: 0 8px 14px rgba(0, 0, 0, .2);
+}
+
+.productData-module__cBquvG__closeButton {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, .9);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+}
+
+.productData-module__cBquvG__closeButton:hover {
+  background-color: #fff;
+  transform: scale(1.1);
+}
+
+.productData-module__cBquvG__header h3 {
+  text-align: center;
+  color: #4e4e50;
+  letter-spacing: .5px;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.productData-module__cBquvG__product {
+  flex: 1;
+  margin-top: 20px;
+  padding: 30px 25px;
+  overflow-y: auto;
+}
+
+.productData-module__cBquvG__productGroup {
+  color: #555454;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 12px;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 15px;
+  font-size: large;
+  font-weight: 400;
+  transition: all .3s ease-in-out;
+  display: flex;
+}
+
+.productData-module__cBquvG__productGroup:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.productData-module__cBquvG__productGroup:hover {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.productData-module__cBquvG__label {
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.productData-module__cBquvG__productGroup p {
+  color: #525151;
+  word-wrap: break-word;
+  margin-left: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.productData-module__cBquvG__imageButton {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.productData-module__cBquvG__imageButton button {
+  color: #fff;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all .3s;
+}
+
+.productData-module__cBquvG__imageButton button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, .3);
+}
+
+.productData-module__cBquvG__imageGrid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 15px;
+  display: grid;
+  overflow-y: auto;
+}
+
+.productData-module__cBquvG__imageGridItem {
+  background: rgba(255, 255, 255, .1);
+  border-radius: 12px;
+  min-height: 10px;
+  padding: 15px;
+  transition: all .3s;
+  display: flex;
+}
+
+.productData-module__cBquvG__imageGridItem:hover {
+  background: rgba(255, 255, 255, .2);
+  transform: scale(1.02);
+}
+
+.productData-module__cBquvG__imageContainer {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.productData-module__cBquvG__backButton {
+  text-align: center;
+  margin-top: 0;
+  padding: 0 20px 20px;
+}
+
+.productData-module__cBquvG__backButton button {
+  color: #fff;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  background-color: #cac850;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all .3s;
+}
+
+.productData-module__cBquvG__backButton button:hover {
+  background-color: #d3d031;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, .3);
+}
+
+.productData-module__cBquvG__editButton {
+  text-align: center;
+  color: #555454;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 12px;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 15px;
+  font-size: large;
+  font-weight: 400;
+  transition: all .3s ease-in-out;
+}
+
+.productData-module__cBquvG__editButton:hover {
+  background-color: #fff;
+  font-weight: 600;
+}
+
+.productData-module__cBquvG__editButton button {
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=app_CSS_adminNavbar_productData_module_css_bad6b30c._.single.css.map*/
