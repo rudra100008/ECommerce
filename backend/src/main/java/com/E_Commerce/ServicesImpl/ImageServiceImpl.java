@@ -4,6 +4,7 @@ import com.E_Commerce.Exception.ImageValidException;
 import com.E_Commerce.Services.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,7 +43,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public byte[] getImage(String imageDir, String imageName)throws IOException {
+    public byte[] getImage(String imageDir)throws IOException {
         Path path = Path.of(imageDir);
         try {
             if (Files.exists(path)) {
@@ -64,6 +65,16 @@ public class ImageServiceImpl implements ImageService {
             return "error";
         }
 
+    }
+
+    @Override
+    public MediaType determineMediaType(String filename) {
+
+        String lowerfileName = filename.toLowerCase();
+        if(lowerfileName.endsWith(".png")) return MediaType.IMAGE_PNG;
+        if(lowerfileName.endsWith(".gif")) return MediaType.IMAGE_GIF;
+        if(lowerfileName.endsWith(".webp")) return MediaType.parseMediaType("image/webp");
+        return MediaType.IMAGE_JPEG;
     }
 
     private void validateImage(MultipartFile imageFile){

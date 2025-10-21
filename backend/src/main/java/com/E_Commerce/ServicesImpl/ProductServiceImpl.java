@@ -105,6 +105,32 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
+    @Override
+    public ProductDTO updateProduct(ProductDTO productDTO) {
+        Category category = this.categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(()-> new ResourceNotFoundException("Category not found in server."));
+        Product product =this.productRepository.findById(productDTO.getProductId())
+                .orElseThrow(()-> new ResourceNotFoundException("Product no found."));
+        if(category.getCategoryId() != product.getCategory().getCategoryId()){
+            throw new IllegalArgumentException("Product and category is not matching.");
+        }
+        if(productDTO.getPrice() != null )
+            product.setPrice(productDTO.getPrice());
+        if(productDTO.getDiscount() != null)
+            product.setPrice(productDTO.getPrice());
+        product.setDiscount(productDTO.getDiscount());
+        if(productDTO.getDescription() != null || !productDTO.getDescription().isEmpty())
+            product.setDescription(productDTO.getDescription());
+        if(productDTO.getProductName() != null || !productDTO.getProductName().isEmpty())
+            product.setProductName(productDTO.getProductName());
+        if(productDTO.getStockQuantity() != null)
+            product.getInventory().setStockQuantity(productDTO.getStockQuantity());
+        Product  updatedProduct = this.productRepository.save(product);
+        return this.productMapper.toProductDTO(updatedProduct);
+    }
+
+
+    //helper method
     private String generateSku(ProductDTO productDTO, Category category){
         if(productDTO.getSku() != null && !productDTO.getSku().isEmpty()) {
             if (productRepository.existsBySku(productDTO.getSku())) {

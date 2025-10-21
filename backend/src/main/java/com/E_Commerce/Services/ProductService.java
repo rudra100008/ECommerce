@@ -12,4 +12,5 @@ public interface ProductService {
     ProductDTO findByProductId(Integer productId);
     ProductDTO updateProductImages(List<String> imageUrls,Integer productId);
     PageInfo<ProductDTO> findProducts(Integer pageNumber, Integer pageSize, Integer categoryId);
+    ProductDTO updateProduct(ProductDTO productDTO);
 }
