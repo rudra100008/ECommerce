@@ -28,4 +28,10 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "product_id",nullable = false)
     private Product product;
+
+
+    //helper method
+    public Double getSubTotal(){
+        return (priceAtPurchase - discountAtPurchase)* quantity;
+    }
 }

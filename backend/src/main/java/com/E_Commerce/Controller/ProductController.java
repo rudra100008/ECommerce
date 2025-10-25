@@ -6,7 +6,6 @@ import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.ProductImageService;
 import com.E_Commerce.Services.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

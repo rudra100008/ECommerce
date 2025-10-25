@@ -5,8 +5,6 @@ import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.RoleRepository;
 import com.E_Commerce.Repository.UserRepository;
-import com.E_Commerce.Services.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,18 +20,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.util.*;
 
 @Component
 @RequiredArgsConstructor
 public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler {
-    private final UserService userService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final CacheManager cacheManager;
     @Lazy
     private final PasswordEncoder passwordEncoder;
 
@@ -55,21 +53,15 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(user.getEmail());
         final String token = jwtUtil.generateToken(userDetails);
 
-
-//        Map<String,Object> responseBody = new HashMap<>();
-//        responseBody.put("userId",user.getUserId());
-//        responseBody.put("email",user.getEmail());
-//        responseBody.put("username",user.getUsername());
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        response.getWriter().write(new ObjectMapper().writeValueAsString(responseBody));
         setJwtCookies(response,token);
         response.sendRedirect("http://localhost:3000");
 
     }
 
+//    private User saveUser(String name,String email,String picture){
+//
+//    }
     private User saveUser(String name,String email,String picture){
-
         try{
            return this.userRepository.findByEmail(email).map(
                     existingUser-> updateExistingUser(existingUser,name,picture)

@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(()-> new ResourceNotFoundException("Category not found in server."));
         Product product =this.productRepository.findById(productDTO.getProductId())
                 .orElseThrow(()-> new ResourceNotFoundException("Product no found."));
-        if(category.getCategoryId() != product.getCategory().getCategoryId()){
+        if(!category.getCategoryId().equals(product.getCategory().getCategoryId())){
             throw new IllegalArgumentException("Product and category is not matching.");
         }
         if(productDTO.getPrice() != null )
@@ -127,6 +127,43 @@ public class ProductServiceImpl implements ProductService {
             product.getInventory().setStockQuantity(productDTO.getStockQuantity());
         Product  updatedProduct = this.productRepository.save(product);
         return this.productMapper.toProductDTO(updatedProduct);
+    }
+
+    @Override
+    public PageInfo<ProductDTO> findRandomProduct(Integer pageNumber,Integer pageSize) {
+        Pageable productPageable = PageRequest.of(pageNumber,pageSize);
+        Page<Product> productPage = this.productRepository.findProductInRandom(productPageable);
+        List<ProductDTO> productDTO = productPage.getContent().stream()
+                .map(productMapper::toProductDTO)
+                .toList();
+        return new PageInfo<>(
+                productDTO,
+                pageNumber,
+                pageSize,
+                productPage.getTotalPages(),
+                productPage.getTotalElements(),
+                productPage.isLast()
+        );
+    }
+
+    @Override
+    public PageInfo<ProductDTO> findRandomProductByCategoryId(Integer pageNumber, Integer pageSize, Integer categoryId) {
+        this.categoryRepository.findById(categoryId)
+                .orElseThrow(()-> new ResourceNotFoundException("CategoryId not found in server."));
+        Pageable productPageable = PageRequest.of(pageNumber,pageSize);
+        Page<Product> productPage = this.productRepository.findProductByCategoryId(categoryId,productPageable);
+        List<ProductDTO> productDTOS = productPage.getContent().stream()
+                .map(productMapper::toProductDTO)
+                .toList();
+
+        return new PageInfo<>(
+                productDTOS,
+                pageNumber,
+                pageSize,
+                productPage.getTotalPages(),
+                productPage.getTotalElements(),
+                productPage.isLast()
+        );
     }
 
 

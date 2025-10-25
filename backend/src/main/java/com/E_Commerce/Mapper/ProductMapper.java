@@ -62,6 +62,12 @@ public interface ProductMapper {
                    .reservedQuantity(0)
                    .product(product) // Set bidirectional relationship
                    .build();
+           if(inventory.isInStock()){
+               productDTO.setInStock(true);
+           }else{
+               productDTO.setInStock(false);
+               product.setIsActive(false);
+           }
            product.setInventory(inventory);
        }
 

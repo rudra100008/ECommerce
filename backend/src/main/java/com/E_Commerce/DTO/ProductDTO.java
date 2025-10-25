@@ -41,5 +41,7 @@ public class ProductDTO {
 
     @NotNull(message = "stock quantity is required")
     private Integer stockQuantity;
+    private Boolean isActive;
+    private boolean isInStock;
 
 }

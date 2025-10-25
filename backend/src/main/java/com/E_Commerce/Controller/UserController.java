@@ -25,7 +25,7 @@ public class UserController {
     private final UserService userService;
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+//    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -20,7 +20,7 @@ public class Inventory {
 
     private Integer stockQuantity; // number of products in stock
 
-    private Integer reservedQuantity; //In carts but nor purchased
+    private Integer reservedQuantity; //In carts but not purchased
 
     @OneToOne
     @JoinColumn(name = "product_id",nullable = false)

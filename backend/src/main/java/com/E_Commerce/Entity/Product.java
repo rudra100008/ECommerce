@@ -35,17 +35,22 @@ public class Product {
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default // Add this annotation
+    @Builder.Default
     private List<ProductImage> productImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default // Add this annotation
+    @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Inventory inventory;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default // Add this annotation
+    @Builder.Default
     private List<CartItem> cartItems = new ArrayList<>();
+
+
+    public Double getTotalPrice(){
+        return this.price - (this.discount != null ? this.discount : 0.0);
+    }
 }
