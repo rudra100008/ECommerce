@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import style from '../CSS/adminNavbar/navbar.module.css'
-import { faBarsStaggered } from '@fortawesome/free-solid-svg-icons'
+import { faBarsStaggered, faBell, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
 export default function AdminNavbar({showSideBar}) {
     return (
@@ -10,27 +10,32 @@ export default function AdminNavbar({showSideBar}) {
                     <FontAwesomeIcon icon={faBarsStaggered} />
                 </div>
                 <div className={style.navlist}>
-                    <div className={style.title}>
-                        <h3>
-                            ECommerce
-                        </h3>
-                    </div>
                     <div className={style.navlistItem}>
                         <div className={style.search}>
-                            <input type='text' placeholder='Search here' />
+                            <FontAwesomeIcon className={style.searchIcon} icon={faMagnifyingGlass}/>
+                            <input 
+                            className={style.searchInput}
+                            type='text' 
+                            placeholder='Search here' />
                         </div>
                     </div>
-                    <div className={style.navlistItem}>
-                        <a href='#'>
-                            <span>notification</span>
-                        </a>
-                    </div>
-                    <div className={style.navlistItem}>
-                        <a href='#'>
-                            <span>Profile</span>
-                        </a>
-                    </div>
                 </div>
+                <div className={style.groupItems}>
+                        <div className={style.navlistItem}>
+                            <a href='#'>
+                                <span className={style.icons}>
+                                    <FontAwesomeIcon icon={faBell} />
+                                </span>
+                            </a>
+                        </div>
+                        <div className={style.navlistItem}>
+                            <a href='#'>
+                                <span className={style.userProfile} >
+                                    User
+                                </span>
+                            </a>
+                        </div>
+                    </div>
             </nav>
         </div>
     )

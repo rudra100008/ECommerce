@@ -1,20 +1,28 @@
 /* [project]/app/CSS/adminNavbar/adminPage.module.css [app-client] (css) */
 .adminPage-module__CiVa3W__adminLayout {
-  flex-direction: column;
+  width: 100%;
   height: 100vh;
   display: flex;
+  overflow: hidden;
 }
 
 .adminPage-module__CiVa3W__adminContent {
+  flex-direction: column;
   flex: 1;
+  height: 100vh;
   display: flex;
+  overflow: hidden;
 }
 
 .adminPage-module__CiVa3W__mainContent {
   background-color: #f8fafc;
-  flex: 1;
+  height: calc(100% - 60px);
   padding: 20px;
   overflow-y: auto;
+}
+
+.adminPage-module__CiVa3W__pageContent {
+  height: 100%;
 }
 
 /*# sourceMappingURL=app_CSS_adminNavbar_adminPage_module_css_bad6b30c._.single.css.map*/

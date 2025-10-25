@@ -1,6 +1,7 @@
 'use client'
 import api from "../Component/axiosInterceptor";
-export const fetchCurrentUser = async ({router})=>{
+
+export const fetchCurrentUser = async ()=>{
     try{
       const response = await api.get('/api/user/me')
       console.log("CurrentUser: ",response.data);
@@ -9,5 +10,6 @@ export const fetchCurrentUser = async ({router})=>{
       return {...data};
     }catch(error){
       console.log("CurrenUser: ",error);
+      throw error;
     }
   }

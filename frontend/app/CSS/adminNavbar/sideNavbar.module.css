@@ -2,15 +2,42 @@
     width: 200px;
     background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     transition: all 0.3s ease-in-out;
-    overflow-x: hidden;
     border-right: 1px solid #e2e8f0;
-    box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    z-index: 100;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.container::-webkit-scrollbar {
+    display: none;
 }
 
 .container.closed {
     width: 100px;
 }
 
+/* Title Styles */
+.title {
+    text-align: center;
+    margin: 10px;
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+    font-size: 20px;
+    border-radius: 20px;
+}
+
+.title:hover {
+    color: blue;
+    font-weight: 550;
+    border: 3px solid blue;
+    background-color: lightblue;
+}
+
+/* Navigation Structure */
 .navbar {
     display: flex;
     flex-direction: column;
@@ -23,9 +50,9 @@
     flex-direction: column;
     width: 100%;
     gap: 4px;
-    transition: all 0.3s ease;
 }
 
+/* Base Nav Item Styles */
 .navlistitem {
     display: flex;
     align-items: center;
@@ -33,19 +60,17 @@
     cursor: pointer;
     border-radius: 12px;
     width: 100%;
-   
-    transition: all 0.3scubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-sizing: border-box;
-    position: relative;
     background-color: transparent;
 }
 
 .navlistitem:hover {
-    background-color: #f0f0f0;
+    background-color: #f0efef;
     transform: translateX(4px);
 }
 
-.navlistitem .navItemContainer {
+.navItemContainer {
     display: flex;
     align-items: center;
     text-decoration: none;
@@ -54,38 +79,103 @@
     transition: all 0.3s ease;
 }
 
+/* Icon and Text Styles */
+.faIcon {
+    transition: all 0.3s ease;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.cartIcon {
+    transition: all 0.3s ease;
+    color: #64748b;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
 .navlistitem span {
-    color: rgb(63, 63, 63);
+    color: #3f3f3f;
     font-weight: 600;
     font-size: 14px;
     transition: all 0.3s ease;
     white-space: nowrap;
     flex-shrink: 0;
 }
+
+/* Active States */
 .navlistitem.active {
-    background-color: #fffbeb; /* Add background to make active state more visible */
+    background-color: #fffbeb;
 }
 
 .navlistitem.active .faIcon,
-.navlistitem.active .navItemContainer span {
-    color: #d97706  !important; /* Use !important temporarily to test */
-}
-.navlistitem .faIcon{
-    transition: all 0.3s ease;
-    color: #64748b;
-}
-.navlistitem.active .navItemContainer .faIcon
-.navlistitem.active .navItemContainer span{
-    color: blue;
+.navlistitem.active .cartIcon,
+.navlistitem.active span {
+    color: #d97706;
 }
 
-/* Closed state styles */
+.navlistitem.activeSubItem {
+    background-color: #fffbeb;
+}
+
+.navlistitem.activeSubItem .faIcon,
+.navlistitem.activeSubItem .cartIcon,
+.navlistitem.activeSubItem span {
+    color: #d97706;
+}
+
+/* Sub Items Styles */
+.subItems {
+    margin-left: 20px;
+    margin-bottom: 8px;
+    animation: slideDown 0.3s ease-out;
+}
+
+.subItems p,
+.subItems a {
+    display: block;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    cursor: pointer;
+    color: #3f3f3f;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.subItems p:hover,
+.subItems a:hover {
+    background-color: #e5e6e7;
+    color: #161616;
+}
+
+.subItems p.active,
+.subItems a.active {
+    background-color: #fffbeb;
+    color: #d97706;
+    font-weight: 600;
+}
+
+/* Closed State Styles */
+.container.closed .title {
+    padding: 4px;
+    font-weight: 450;
+    font-size: 15px;
+    word-wrap: break-word;
+}
+
+.container.closed .title:hover {
+    color: blue;
+    font-weight: 500;
+    border: 3px solid blue;
+    background-color: lightblue;
+}
+
 .container.closed .navlistitem {
-    width: 100%;
     padding: 14px;
     justify-content: center;
     border-radius: 14px;
-    position:relative;
 }
 
 .container.closed .navlistitem .navItemContainer {
@@ -97,18 +187,32 @@
     opacity: 0;
     visibility: hidden;
     width: 0;
-    margin: 0;
     transform: translateX(-10px);
 }
 
-.container.closed .navlistitem .faIcon {
+.container.closed .navlistitem .faIcon,
+.container.closed .navlistitem .cartIcon {
     margin: 0;
     transform: scale(1.15);
 }
 
-/* Smooth hover effects in closed state */
 .container.closed .navlistitem:hover {
     background-color: #f0f0f0;
     transform: scale(1.08);
 }
 
+.container.closed .subItems {
+    display: none; /* Hide subitems in closed state */
+}
+
+/* Animation */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

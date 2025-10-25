@@ -6,11 +6,11 @@ export default function Product() {
     const router = useRouter();
     return (
         <div className={style.container}>
-            <div className={style.ButtonGroup}>
+            {/* <div className={style.ButtonGroup}>
                 <button onClick={() => router.push("/admin/addProduct")} className={style.productButton}>
                     Add Product to Inventory
                 </button>
-            </div>
+            </div> */}
             <div className={style.productTable}>
                 <ProductTable />
             </div>

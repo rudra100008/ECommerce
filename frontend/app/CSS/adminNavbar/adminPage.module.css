@@ -1,21 +1,25 @@
 .adminLayout {
     display: flex;
-    flex-direction: column;
     height: 100vh;
+    width: 100%;
+    overflow: hidden;
 }
 
-.adminContent{
+.adminContent {
     display: flex;
-    flex:1;
+    flex-direction: column;
+    flex: 1;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.mainContent{
-    flex: 1;
+.mainContent {
     padding: 20px;
     overflow-y: auto;
     background-color: #f8fafc;
+    height: calc(100% - 60px);
 }
 
-.pageContent{
-    
+.pageContent {
+    height: 100%;
 }

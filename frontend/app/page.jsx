@@ -14,7 +14,7 @@ export default function Home() {
 
   const loadCurrentUser = async()=>{
     try{
-      const data = await fetchCurrentUser({router});
+      const data = await fetchCurrentUser();
       
       setUserData(prev => ({...prev,...data}));
     }catch(error){

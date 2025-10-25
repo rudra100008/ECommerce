@@ -149,7 +149,7 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-ssr] (ecmascript)");
 'use client';
 ;
-const fetchCurrentUser = async ({ router })=>{
+const fetchCurrentUser = async ()=>{
     try {
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get('/api/user/me');
         console.log("CurrentUser: ", response.data);
@@ -159,6 +159,7 @@ const fetchCurrentUser = async ({ router })=>{
         };
     } catch (error) {
         console.log("CurrenUser: ", error);
+        throw error;
     }
 };
 }),
@@ -190,9 +191,7 @@ function Home() {
     });
     const loadCurrentUser = async ()=>{
         try {
-            const data = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$UserServices$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fetchCurrentUser"])({
-                router
-            });
+            const data = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$UserServices$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fetchCurrentUser"])();
             setUserData((prev)=>({
                     ...prev,
                     ...data

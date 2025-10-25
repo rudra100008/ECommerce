@@ -1,4 +1,9 @@
 /* [project]/app/CSS/adminNavbar/navbar.module.css [app-client] (css) */
+.navbar-module__eAp2dq__container {
+  background: linear-gradient(#fff 0%, #f8fafc 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
 .navbar-module__eAp2dq__staggeredBar {
   cursor: pointer;
   border-radius: 50%;
@@ -28,12 +33,60 @@
 }
 
 .navbar-module__eAp2dq__search {
-  border: 1px solid #ccc;
+  flex: 1;
+  min-width: 400px;
+  position: relative;
+}
+
+.navbar-module__eAp2dq__searchInput {
+  box-sizing: border-box;
+  color: #334155;
+  border: 2px solid #fff;
   border-radius: 12px;
-  margin-left: 10px;
-  margin-right: 10px;
-  padding: 6px;
-  box-shadow: 0 12px 20px rgba(0, 0, 0, .2);
+  outline: none;
+  width: 100%;
+  margin: 0 10px;
+  padding: 10px 16px 10px 44px;
+  font-family: inherit;
+  font-size: .95rem;
+  transition: all .3s ease-in-out;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, .2);
+}
+
+.navbar-module__eAp2dq__searchInput::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.navbar-module__eAp2dq__searchInput:focus {
+  background: #fff;
+  border-color: #4a6cf7;
+  transform: translate(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
+
+.navbar-module__eAp2dq__searchIcon {
+  z-index: 10;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+.navbar-module__eAp2dq__groupItems {
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 50px;
+  display: flex;
+}
+
+.navbar-module__eAp2dq__icons {
+  color: #000;
+  font-size: 20px;
+}
+
+.navbar-module__eAp2dq__userProfile {
+  font-size: 20px;
 }
 
 /*# sourceMappingURL=app_CSS_adminNavbar_navbar_module_css_bad6b30c._.single.css.map*/

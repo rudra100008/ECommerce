@@ -7,39 +7,42 @@ import Dashboard from "../AdminComponent/Dashboard"
 import Product from "../AdminComponent/Product"
 import Profile from "../AdminComponent/Profile"
 export default function AdminPage() {
-    const [isSideBarOpen,setIsSideBarOpen] = useState(false);
-    const [itemClicked,setItemClicked] = useState('');
+    const [isSideBarOpen, setIsSideBarOpen] = useState(true);
+    const [itemClicked, setItemClicked] = useState('');
 
-    const toggleSideBar = () =>{
-        setIsSideBarOpen(prev=> !prev);
+    const toggleSideBar = () => {
+        setIsSideBarOpen(prev => !prev);
     }
-    useEffect(()=>{
-        if(itemClicked){
-            localStorage.setItem('adminSelectedTab',itemClicked);
-            console.log("ItemClicked",itemClicked);
+    useEffect(() => {
+        if (itemClicked) {
+            localStorage.setItem('adminSelectedTab', itemClicked);
+            console.log("ItemClicked", itemClicked);
         }
-    },[itemClicked])
+    }, [itemClicked])
 
-    useEffect(()=>{
+    useEffect(() => {
         const selectedTab = localStorage.getItem("adminSelectedTab");
-        if(selectedTab){
+        if (selectedTab) {
             setItemClicked(selectedTab);
-        }else{
+        } else {
             setItemClicked('dashboard'); //default
         }
-    },[])
+    }, [])
     return (
         <div className={style.adminLayout}>
-            <AdminNavbar showSideBar={toggleSideBar} />
+            <AdminSideNavbar 
+            isSideBarOpen={isSideBarOpen} 
+            setIsSideBarOpen ={setIsSideBarOpen}
+            setItemClicked={setItemClicked} 
+            itemClicked={itemClicked} />
             <div className={style.adminContent}>
-                <AdminSideNavbar isSideBarOpen={isSideBarOpen} setItemClicked={setItemClicked} itemClicked={itemClicked} />
+                <AdminNavbar showSideBar={toggleSideBar} />
                 <main className={style.mainContent}>
-
                     {/*page content */}
                     <div className={style.pageContent}>
-                        { itemClicked === 'dashboard' &&<Dashboard /> }
-                        {  itemClicked === 'product' &&   <Product /> }
-                        { itemClicked === 'profile' &&  <Profile />}
+                        {itemClicked === 'dashboard' && <Dashboard />}
+                        {itemClicked === 'product' && <Product />}
+                        {itemClicked === 'profile' && <Profile />}
                     </div>
                 </main>
             </div>

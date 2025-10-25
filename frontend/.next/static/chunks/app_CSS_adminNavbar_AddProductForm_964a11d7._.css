@@ -363,7 +363,101 @@
 }
 
 .productForm-module__Lz_Pra__productTable {
-  padding: 10px;
+  width: 100%;
+  margin: 20px 0;
+  font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.productForm-module__Lz_Pra__productTable table {
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1);
+}
+
+.productForm-module__Lz_Pra__productTable thead {
+  z-index: 2;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+}
+
+.productForm-module__Lz_Pra__productTable thead tr, .productForm-module__Lz_Pra__productTable tbody {
+  z-index: 1;
+  position: relative;
+}
+
+.productForm-module__Lz_Pra__productTable th {
+  text-align: left;
+  color: #fff;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 16px 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.productForm-module__Lz_Pra__productTable tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: all .2s ease-in-out;
+}
+
+.productForm-module__Lz_Pra__productTable tbody tr:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+}
+
+.productForm-module__Lz_Pra__productTable td {
+  color: #4a5568;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 12px;
+  font-size: 14px;
+}
+
+.productForm-module__Lz_Pra__productTable td:first-child {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.productForm-module__Lz_Pra__productTable th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.productForm-module__Lz_Pra__productTable th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.productForm-module__Lz_Pra__productTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.productForm-module__Lz_Pra__productTable tbody:empty:after {
+  content: "No products found";
+  text-align: center;
+  color: #a0aec0;
+  padding: 40px;
+  font-size: 16px;
+  font-style: italic;
+  display: block;
+}
+
+.productForm-module__Lz_Pra__productTable td:nth-child(4), .productForm-module__Lz_Pra__productTable td:nth-child(5), .productForm-module__Lz_Pra__productTable td:nth-child(7) {
+  text-align: right;
+}
+
+.productForm-module__Lz_Pra__productTable td:first-child {
+  text-align: center;
+}
+
+.productForm-module__Lz_Pra__productTable td:nth-child(3) {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
 }
 
 .productForm-module__Lz_Pra__page {
@@ -437,6 +531,36 @@
   background-color: #f1f5f9;
   border-color: #e2e8f0;
   transform: none;
+}
+
+.productForm-module__Lz_Pra__categoryFilter {
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__categorySelect {
+  color: #4a5568;
+  cursor: pointer;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  outline: none;
+  min-width: 200px;
+  padding: 10px 16px;
+  font-size: 14px;
+  transition: all .2s;
+}
+
+.productForm-module__Lz_Pra__categorySelect:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, .1);
+}
+
+.productForm-module__Lz_Pra__categorySelect:hover {
+  border-color: #cbd5e0;
 }
 
 /* [project]/app/CSS/adminNavbar/AddProductForm/productImage.module.css [app-client] (css) */

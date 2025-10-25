@@ -522,6 +522,8 @@ __turbopack_context__.v({
   "InputGroup": "productForm-module__Lz_Pra__InputGroup",
   "active": "productForm-module__Lz_Pra__active",
   "backButton": "productForm-module__Lz_Pra__backButton",
+  "categoryFilter": "productForm-module__Lz_Pra__categoryFilter",
+  "categorySelect": "productForm-module__Lz_Pra__categorySelect",
   "disabled": "productForm-module__Lz_Pra__disabled",
   "header": "productForm-module__Lz_Pra__header",
   "inputWrapper": "productForm-module__Lz_Pra__inputWrapper",
