@@ -1,8 +1,10 @@
 package com.E_Commerce.Securty;
 
+import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
+import com.E_Commerce.Repository.CartRepository;
 import com.E_Commerce.Repository.RoleRepository;
 import com.E_Commerce.Repository.UserRepository;
 import jakarta.servlet.ServletException;
@@ -33,6 +35,7 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
     private final CacheManager cacheManager;
     @Lazy
     private final PasswordEncoder passwordEncoder;
+    private final CartRepository cartRepository;
 
     Logger logger = LoggerFactory.getLogger(OAuth2AuthenticationHandler.class);
     @Override
@@ -49,7 +52,9 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
         String picture = oAuth2User.getAttribute("picture");
 
         User user = saveUser(name,email,picture);
-
+        if(user.getCart() == null) {
+            createCartForUser(user);
+        }
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(user.getEmail());
         final String token = jwtUtil.generateToken(userDetails);
 
@@ -108,5 +113,12 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
     }
     private String generateRandomPassword(){
         return UUID.randomUUID().toString()+ "_"+System.currentTimeMillis();
+    }
+    private void createCartForUser(User user){
+        Cart cart = Cart.builder()
+                .user(user)
+                .cartItem(new ArrayList<>())
+                .build();
+        this.cartRepository.save(cart);
     }
 }

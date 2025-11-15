@@ -33,5 +33,6 @@ public class UserDTO {
     private String phoneNumber;
     private Set<Role> roles = new HashSet<>();
     private String profileImageUrl;
-    private List<AddressDTO> addresses;
+    private List<Integer> addressIds;
+    private Integer cartId;
 }

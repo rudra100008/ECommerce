@@ -36,7 +36,8 @@ public class User {
     private String profileImageUrl;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
-
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
+    private Cart cart;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
 }

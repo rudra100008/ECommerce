@@ -1,29 +1,23 @@
-package com.E_Commerce.Entity;
+package com.E_Commerce.DTO;
 
 import com.E_Commerce.Exception.InsufficientStockException;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "inventory")
-public class Inventory {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class InventoryDTO {
     private Integer id;
 
     private Integer stockQuantity; // number of products in stock
+
     private Integer reservedQuantity; //In carts but not purchased
 
-    @OneToOne
-    @JoinColumn(name = "product_id",nullable = false)
-    private Product product;
+    private Integer productId;
 
     //helper  method
 
@@ -43,16 +37,11 @@ public class Inventory {
     }
 
     public void releaseReservedQuantity(Integer quantity){
-
         this.reservedQuantity -= quantity;
-        if(reservedQuantity < 0){
-            reservedQuantity = 0;
-        }
     }
 
     public void updateStockAfterPurchase(Integer purchaseQuantity){
         this.stockQuantity -= purchaseQuantity;
         this.reservedQuantity -= purchaseQuantity;
     }
-
 }

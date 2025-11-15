@@ -3,8 +3,11 @@ package com.E_Commerce.Controller;
 import com.E_Commerce.DTO.UserDTO;
 import com.E_Commerce.DTO.AuthRequest;
 import com.E_Commerce.DTO.AuthResponse;
+import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.Role;
+import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
+import com.E_Commerce.Repository.CartRepository;
 import com.E_Commerce.Repository.RoleRepository;
 import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Securty.CustomUserDetailsService;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +49,7 @@ public class AuthenticationController {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final JwtAuthenticationHandler authenticationHandler;
+    private final CartRepository cartRepository;
 
 
     @PostMapping("/login")
@@ -108,13 +113,13 @@ public class AuthenticationController {
                 .profileImageUrl("default.jpg")
                 .roles(Set.of(role))
                 .build();
+
         userService.saveUser(userDTO);
         Map<String, String> successResponse = new HashMap<>();
         successResponse.put("message", "User registered successfully");
         successResponse.put("email", userDTO.getEmail());
         successResponse.put("username", userDTO.getUsername());
         return ResponseEntity.ok(successResponse);
-
     }
 
     @PostMapping("/logout")
@@ -126,5 +131,14 @@ public class AuthenticationController {
         cookie.setMaxAge(0); // Immediately expire
         response.addCookie(cookie);
         return ResponseEntity.ok().body(Map.of("message", "Logged out successfully"));
+    }
+
+
+    private void createCartForUser(User user){
+        Cart cart = Cart.builder()
+                .user(user)
+                .cartItem(new ArrayList<>())
+                .build();
+        this.cartRepository.save(cart);
     }
 }

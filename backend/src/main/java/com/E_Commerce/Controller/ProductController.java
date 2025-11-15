@@ -1,5 +1,7 @@
 package com.E_Commerce.Controller;
 
+import com.E_Commerce.Config.PageConfig;
+import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.DTO.ProductDTO;
 import com.E_Commerce.Entity.ProductImage;
 import com.E_Commerce.Services.ImageService;
@@ -74,7 +76,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/updateProduct")
-    public ResponseEntity<?> handleproductupdate(
+    public ResponseEntity<?> handleProductUpdate(
             @RequestBody ProductDTO productDTO
     ){
         ProductDTO updatedProduct = this.productService.updateProduct(productDTO);
@@ -82,6 +84,53 @@ public class ProductController {
         response.put("message","Product successfully updated.");
         response.put("product",updatedProduct);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/fetchProducts")
+    public ResponseEntity<?> fetchRandomProducts(
+            @RequestParam(required = false,defaultValue = PageConfig.PAGE_NUMBER,name = "pageNumber")Integer pageNumber,
+            @RequestParam(required = false,defaultValue = PageConfig.PAGE_SIZE,name = "pageSize")Integer pageSize
+    ){
+        PageInfo<ProductDTO> productDTOPageInfo = this.productService.findRandomProduct(pageNumber,pageSize);
+        this.productService.deleteProductsWithoutImages(productDTOPageInfo.getData());
+        productDTOPageInfo.getData()
+                .forEach(productDTO ->setFirstImageUrl(productDTO) );
+        return ResponseEntity.status(HttpStatus.OK).body(productDTOPageInfo);
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<?> findProductById(
+            @PathVariable(name = "productId")Integer productId
+    )
+    {
+        ProductDTO productDTO = this.productService.findByProductId(productId);
+        productDTO.setImageUrls(getImageUrls(productDTO));
+        return  ResponseEntity.status(HttpStatus.OK).body(productDTO);
+    }
+
+
+
+    // createImageUrl for first product imageUrl
+    private ProductDTO setFirstImageUrl(ProductDTO productDTO){
+        List<ProductImage> productImageList = this.productImageService.getProductImageByProductId(productDTO.getProductId());
+
+        if(!productImageList.isEmpty()) {
+            ProductImage productImage = productImageList.get(0);
+            String imageUrl = "/api/product/" + productDTO.getProductId() + "/image/" + productImage.getId();
+            productDTO.setImageUrls(List.of(imageUrl));
+        }
+        return  productDTO;
+    }
+    private List<String> getImageUrls(ProductDTO productDTO){
+        List<ProductImage> productImages = this.productImageService.getProductImageByProductId(productDTO.getProductId());
+        List<String> imageUrls = new ArrayList<>();
+        if(!productImages.isEmpty()){
+            for(ProductImage productImage : productImages){
+               String imageUrl = "/api/product/" + productDTO.getProductId() + "/image/" + productImage.getId();
+               imageUrls.add(imageUrl);
+            }
+        }
+        return imageUrls;
     }
 
 

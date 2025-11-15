@@ -1,5 +1,6 @@
 package com.E_Commerce.ServicesImpl;
 
+import com.E_Commerce.DTO.CategoryRequest;
 import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.DTO.ProductDTO;
 import com.E_Commerce.Entity.Category;
@@ -7,20 +8,26 @@ import com.E_Commerce.Entity.Product;
 import com.E_Commerce.Entity.ProductImage;
 import com.E_Commerce.Exception.AlreadyExitsException;
 import com.E_Commerce.Exception.BusinessValidationException;
+import com.E_Commerce.Exception.ImageValidException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.ProductMapper;
 import com.E_Commerce.Repository.CategoryRepository;
 import com.E_Commerce.Repository.ProductImageRepository;
 import com.E_Commerce.Repository.ProductRepository;
+import com.E_Commerce.Services.CategoryService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,8 +40,33 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
     private final ProductMapper productMapper;
 
+    Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
+    @Override
+    public ProductDTO createProductWithImages(ProductDTO productDTO, CategoryRequest categoryRequest, List<MultipartFile> imageFiles) {
+       List<String> imageNames = new ArrayList<>();
+       try{
+           for(MultipartFile imageFile: imageFiles){
+               if(imageFile != null || !imageFile.isEmpty()){
+                   String imageName = this.imageService.uploadImage(productDTO.getProductName(),imageFile);
+                   imageNames.add(imageName);
+               }
+           }
+       }catch (IOException e){
+           throw new ImageValidException("Image not uploaded: "+ e.getMessage());
+       }
+       Category category = this.categoryService.createCategory(categoryRequest.getName());
+       String sku = generateSku(productDTO,category);
+       productDTO.setSku(sku);
+       productDTO.setCategoryId(category.getCategoryId());
+       productDTO.setImageUrls(imageNames);
+       Product product = this.productMapper.toProduct(productDTO);
+       Product savedProduct = this.productRepository.save(product);
+        return productMapper.toProductDTO(savedProduct);
+    }
 
     @Override
     @Transactional
@@ -90,8 +122,13 @@ public class ProductServiceImpl implements ProductService {
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Product> productPage = this.productRepository.findProductByCategoryId(categoryId, pageable);
-
-        List<ProductDTO> productDTOS = productPage.getContent().stream()
+        List<Product> fetchProduct = productPage.getContent();
+        fetchProduct.forEach(product -> {
+            if(product.getProductImages() == null || product.getProductImages().isEmpty()){
+                productRepository.delete(product);
+            }
+        });
+        List<ProductDTO> productDTOS = fetchProduct.stream()
                 .map(product -> this.productMapper.toProductDTO(product))
                 .collect(Collectors.toList());
 
@@ -164,6 +201,20 @@ public class ProductServiceImpl implements ProductService {
                 productPage.getTotalElements(),
                 productPage.isLast()
         );
+    }
+
+
+    @Override
+    @Transactional
+    public void deleteProductsWithoutImages(List<ProductDTO> productDTOS) {
+        List<Product> products = productDTOS.stream().map(productDTO ->
+                productMapper.toProduct(productDTO)
+        ).filter(product -> product.getProductImages() == null || product.getProductImages().isEmpty())
+                .toList();
+        if(!products.isEmpty()){
+            this.productRepository.deleteAll(products);
+            logger.info("Deleted {} products without images",products.size());
+        }
     }
 
 

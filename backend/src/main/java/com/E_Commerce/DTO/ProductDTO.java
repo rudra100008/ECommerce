@@ -1,6 +1,7 @@
 package com.E_Commerce.DTO;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class ProductDTO {
     @Size(min = 2,max = 100,message = "Product name must be between 2 and 100 character.")
     private String productName;
 
-    @Size(max = 1000,message = "Description should be less than 1000 characters")
+    @Size(max = 10000,message = "Description should be less than 1000 characters")
     private String description;
 
     @NotNull(message = "Price is required.")
@@ -41,7 +42,10 @@ public class ProductDTO {
 
     @NotNull(message = "stock quantity is required")
     private Integer stockQuantity;
+    private Integer reservedQuantity;
+    private Integer availableQuantity;
     private Boolean isActive;
+    @JsonProperty("isInStock")
     private boolean isInStock;
 
 }

@@ -1,7 +1,10 @@
 package com.E_Commerce.DTO;
 
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +22,9 @@ public class AddressDTO {
     private String province;
     @NotBlank(message = "Municipality is required.")
     private String  municipality;
-    @NotBlank(message = "WardNumber is required.")
+    @NotNull(message = "Ward number is required.")
+    @Min(value = 1,message = "Ward number must be at least 1")
+    @Max(value = 35,message = "Ward number should not exceed 35")
     private Integer wardNumber;
     @NotBlank(message = "Landmark is required.")
     private String landmark;// famous place eg "Near BhatBhateni Supermarket", "Opposite of Everest Bank", "Behind Boudha Stupa"

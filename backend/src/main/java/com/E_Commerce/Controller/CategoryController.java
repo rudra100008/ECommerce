@@ -2,8 +2,10 @@ package com.E_Commerce.Controller;
 
 import com.E_Commerce.DTO.CategoryDTO;
 import com.E_Commerce.DTO.PageInfo;
+import com.E_Commerce.Entity.Category;
 import com.E_Commerce.Services.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,5 +25,14 @@ public class CategoryController {
         PageInfo<CategoryDTO> categoryPageInfo = this.categoryService.fetchAllCategory(pageNumber,pageSize);
 
         return ResponseEntity.ok(categoryPageInfo);
+    }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<?> fetchCategoryById(
+            @PathVariable("categoryId") Integer categoryId
+    ){
+        Category category = categoryService.findById(categoryId);
+        CategoryDTO categoryDTO = new CategoryDTO(category.getCategoryId(),category.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
     }
 }

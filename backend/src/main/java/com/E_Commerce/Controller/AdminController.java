@@ -6,8 +6,10 @@ import com.E_Commerce.DTO.CategoryRequest;
 import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.DTO.ProductDTO;
 import com.E_Commerce.Entity.Category;
+import com.E_Commerce.Entity.ProductImage;
 import com.E_Commerce.Services.CategoryService;
 import com.E_Commerce.Services.ImageService;
+import com.E_Commerce.Services.ProductImageService;
 import com.E_Commerce.Services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +31,16 @@ public class AdminController {
     private final ProductService productService;
     private final ImageService imageService;
     private final CategoryService categoryService;
-
+    private final ProductImageService productImageService;
 
 
     @PostMapping("/addProduct")
-    public ResponseEntity<?> addProduct(
-            @Valid @RequestBody ProductDTO productDTO,
-            BindingResult result
-            )
+    public ResponseEntity<?> addProductForm(
+            @Valid @RequestPart("category")CategoryRequest categoryRequest,
+            @Valid @RequestPart("product") ProductDTO productDTO,
+            BindingResult result,
+            @RequestPart("image")List<MultipartFile> imageFiles
+    )
     {
         if(result.hasErrors()){
             Map<String,Object> errorResponse = new HashMap<>();
@@ -45,8 +49,15 @@ public class AdminController {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
-       ProductDTO savedProductDTO = this.productService.createProduct(productDTO);
-
+        ProductDTO savedProductDTO = new ProductDTO();
+        if(categoryRequest != null  && productDTO != null && imageFiles != null || !imageFiles.isEmpty()) {
+             savedProductDTO = this.productService.createProductWithImages(productDTO, categoryRequest, imageFiles);
+        }
+        Map<String,Object> response = new HashMap<>();
+        response.put("message","Product added successfully");
+        response.put("category",savedProductDTO.getCategoryId());
+        response.put("product",savedProductDTO.getProductId());
+        response.put("imageUrls",getImageUrls(savedProductDTO));
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProductDTO);
     }
 
@@ -84,6 +95,12 @@ public class AdminController {
     ){
         Category category = this.categoryService.findById(categoryId);
         PageInfo<ProductDTO> productDTOPageInfo = this.productService.findProducts(pageNumber,pageSize,categoryId);
+
+        this.productService.deleteProductsWithoutImages(productDTOPageInfo.getData());
+
+        for (ProductDTO productDTO : productDTOPageInfo.getData()) {
+            productDTO.setImageUrls(getImageUrls(productDTO));
+        }
         Map<String,Object> response = new HashMap<>();
         response.put("message","Products of category: "+ category.getName());
         response.put("product",productDTOPageInfo);
@@ -105,4 +122,14 @@ public class AdminController {
         CategoryDTO categoryDTO = new CategoryDTO(category.getCategoryId(),category.getName());
         return  ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO);
     }
+    private List<String> getImageUrls(ProductDTO productDTO){
+        List<String> imageUrls = new ArrayList<>();
+        List<ProductImage> productImageList =  this.productImageService.getProductImageByProductId(productDTO.getProductId());
+        productImageList.forEach(productImage -> {
+            String imageUrl  = "/api/product/"+productImage.getProduct().getProductId() +"/image/"+productImage.getId();
+            imageUrls.add(imageUrl);
+        });
+        return imageUrls;
+    }
+
 }

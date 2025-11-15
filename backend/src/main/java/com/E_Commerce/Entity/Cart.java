@@ -25,6 +25,10 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CartItem> cartItem = new ArrayList<>();
+
+    @OneToOne()
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
     @PrePersist
     protected  void onCreate(){
         createdAt = LocalDateTime.now();

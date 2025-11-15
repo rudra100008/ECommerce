@@ -98,6 +98,17 @@ public class GlobalException {
         body.put("redirectUrl", getRedirectUrl(role));
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
     }
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<?> handleSecurityException(SecurityException e,WebRequest request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String role = determineRole(authentication);
+        Map<String, Object> body = new HashMap<>();
+        body.put("error",HttpStatus.FORBIDDEN);
+        body.put("message",e.getLocalizedMessage());
+        body.put("role",role);
+        body.put("redirectUrl", getRedirectUrl(role));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
     @ExceptionHandler(IOException.class)
     public ResponseEntity<?> handleIOException(IOException e,WebRequest request){
         return errorResponse(HttpStatus.BAD_REQUEST,e.getMessage(),request);
@@ -107,6 +118,22 @@ public class GlobalException {
     public ResponseEntity<?> handleBusinessValidationException(BusinessValidationException e,WebRequest request){
         return  errorResponse(
                 HttpStatus.CONFLICT,
+                e.getMessage(),
+                request
+        );
+    }
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<?> handleInsufficientStockException(InsufficientStockException e,WebRequest request){
+        return  errorResponse(
+                HttpStatus.BAD_REQUEST,
+                e.getMessage(),
+                request
+        );
+    }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleRunTimeException(RuntimeException e,WebRequest request){
+        return  errorResponse(
+                HttpStatus.BAD_REQUEST,
                 e.getMessage(),
                 request
         );

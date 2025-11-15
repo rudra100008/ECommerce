@@ -18,8 +18,22 @@ public interface ProductMapper {
     @Mapping(source = "category.categoryId", target = "categoryId")
     @Mapping(source = "productImages", target = "imageUrls", qualifiedByName = "mapImagesToUrl")
     @Mapping(source = "inventory.stockQuantity", target = "stockQuantity")
+    @Mapping(source = "inventory.reservedQuantity", target = "reservedQuantity")
+    @Mapping(target = "availableQuantity",expression = "java(getAvailableQuantity(product))")
+    @Mapping(target = "isInStock",expression = "java(isProductInStock(product))")
     ProductDTO toProductDTO(Product product);
 
+
+    default boolean isProductInStock(Product product){
+        if(product.getInventory() == null){
+            return  false;
+        }
+
+        return product.getInventory().isInStock();
+    }
+    default Integer getAvailableQuantity(Product product){
+        return product.getInventory().getAvailableQuantity();
+    }
 
    default Product toProduct(ProductDTO productDTO){
         if(productDTO == null){
@@ -59,15 +73,9 @@ public interface ProductMapper {
        if (productDTO.getStockQuantity() != null) {
            Inventory inventory = Inventory.builder()
                    .stockQuantity(productDTO.getStockQuantity())
-                   .reservedQuantity(0)
-                   .product(product) // Set bidirectional relationship
+                   .reservedQuantity(productDTO.getReservedQuantity())
+                   .product(product)
                    .build();
-           if(inventory.isInStock()){
-               productDTO.setInStock(true);
-           }else{
-               productDTO.setInStock(false);
-               product.setIsActive(false);
-           }
            product.setInventory(inventory);
        }
 
