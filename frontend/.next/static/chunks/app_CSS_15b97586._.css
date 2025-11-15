@@ -1,0 +1,72 @@
+/* [project]/app/CSS/userSide/products.module.css [app-client] (css) */
+.products-module__msaFTa__productContainer {
+  margin-top: 40px;
+  margin-left: 40px;
+  margin-right: 30px;
+}
+
+.products-module__msaFTa__productGrid {
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  display: grid;
+}
+
+.products-module__msaFTa__product {
+  text-align: center;
+  transition: all .3 ease-in;
+  background-color: #fff;
+  border: 1px solid gray;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.products-module__msaFTa__product:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, .15);
+}
+
+.products-module__msaFTa__productImageDiv {
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 12px;
+  display: flex;
+  overflow: hidden;
+}
+
+.products-module__msaFTa__productImage {
+  object-fit: cover;
+}
+
+.products-module__msaFTa__productName {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.products-module__msaFTa__description {
+  color: #666;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.products-module__msaFTa__price {
+  color: #2c5aa0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* [project]/app/CSS/mainContent.module.css [app-client] (css) */
+.mainContent-module__iKJb5W__pageWrapper {
+  flex-direction: column;
+  min-height: 100vh;
+  display: flex;
+}
+
+.mainContent-module__iKJb5W__pageContainer {
+  flex: 1;
+}
+
+/*# sourceMappingURL=app_CSS_15b97586._.css.map*/

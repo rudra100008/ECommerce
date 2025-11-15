@@ -1,108 +1,28 @@
 /* [project]/app/CSS/signup.module.css [app-client] (css) */
-.signup-module__J6uJfW__signupBody {
-  background-color: #fff;
-  border: none;
-  border-radius: 12px;
-  flex-direction: column;
-  width: 440px;
-  margin: 50px auto;
-  padding: 20px 40px;
+.signup-module__J6uJfW__adminLayout {
+  width: 100%;
+  height: 100vh;
   display: flex;
-  position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, .1);
 }
 
-.signup-module__J6uJfW__header {
-  text-align: center;
-  color: #4abe63;
-  letter-spacing: 1px;
-  margin-bottom: 30px;
-  font-family: cursive;
-  font-size: 2.2rem;
-  font-weight: 700;
-}
-
-.signup-module__J6uJfW__inputGroup {
+.signup-module__J6uJfW__adminContent {
   flex-direction: column;
-  width: 100%;
-  margin: 15px 0;
+  flex: 1;
+  height: 100vh;
   display: flex;
-  position: relative;
+  overflow: hidden;
 }
 
-.signup-module__J6uJfW__inputGroup label {
-  color: #4a5568;
-  align-items: center;
-  margin-bottom: 6px;
-  font-size: .9rem;
-  font-weight: 500;
-  display: flex;
+.signup-module__J6uJfW__mainContent {
+  background-color: #f8fafc;
+  height: calc(100% - 60px);
+  padding: 20px;
+  overflow-y: auto;
 }
 
-.signup-module__J6uJfW__inputWrapper {
-  width: 100%;
-  position: relative;
-}
-
-.signup-module__J6uJfW__inputIcon {
-  position: absolute;
-  top: 20px;
-  left: 15px;
-}
-
-.signup-module__J6uJfW__inputGroup .signup-module__J6uJfW__inputWrapper input {
-  color: #2d3748;
-  box-sizing: border-box;
-  background: #fff;
-  border: 2px solid #e2e8f0;
-  border-radius: 14px;
-  outline: none;
-  width: 100%;
-  padding: 15px 15px 15px 45px;
-  font-size: 1rem;
-  transition: all .3s;
-}
-
-.signup-module__J6uJfW__inputGroup input::placeholder {
-  color: #cbd5e0;
-  font-weight: 400;
-}
-
-.signup-module__J6uJfW__inputGroup input:focus {
-  background: rgba(255, 255, 255, .15);
-  border-color: #4a90e2;
-  box-shadow: 0 0 6px rgba(74, 144, 226, .4);
-}
-
-.signup-module__J6uJfW__submitButton {
-  color: #fff;
-  cursor: pointer;
-  letter-spacing: .5px;
-  background: #0a98c7;
-  border: none;
-  border-radius: 10px;
-  padding: 15px 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all .3s;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
-}
-
-.signup-module__J6uJfW__submitButton:hover {
-  background: #4ba9c9;
-  transform: translateY(-3px);
-}
-
-.signup-module__J6uJfW__submitButton:active {
-  transform: translateY(-1px);
-}
-
-.signup-module__J6uJfW__redirectPrompt {
-  text-align: center;
-  color: #000;
-  font-size: 2rem;
-  font-weight: 700;
+.signup-module__J6uJfW__pageContent {
+  height: 100%;
 }
 
 /*# sourceMappingURL=app_CSS_signup_module_bdf11c16.css.map*/

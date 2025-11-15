@@ -1,0 +1,536 @@
+.profileContainer {
+    width: 700px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.backButton {
+    margin-right: auto;
+    background-color: rgba(23, 23, 224, 0.2);
+    border: 2px solid blue;
+    padding: 8px 10px;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    color: black;
+    font-size: 16px;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.backButton:hover {
+    color: white;
+    background-color: rgba(23, 23, 224, 0.7);
+    transform: translateY(-3px);
+}
+
+.userImageContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: 20px;
+    border: 1px solid #dad5d5;
+    padding: 20px;
+    width: 100%;
+    gap: 14px;
+    border-radius: 15px;
+}
+
+.userImageDiv {
+    background-color: white;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.userImage {
+    border-radius: 50%;
+    position: relative;
+    object-fit: cover;
+}
+
+.uploadIcon {
+    font-size: 14px;
+    cursor: pointer;
+    color: white;
+    background-color: #007bff;
+    padding: 8px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+.uploadIcon.show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.uploadIcon:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+.fullName {
+    font-size: 15px;
+    color: gray;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.fullName p {
+    margin: 0;
+    transition: opacity 0.3s ease;
+}
+
+.fullName p.fadeOut {
+    opacity: 0;
+}
+
+.fullNameInput {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: #f9fafb;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+.fullNameInput.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.fullNameInput:focus {
+    background-color: white;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.editButton {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-family: inherit;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.editButton:hover {
+    transform: translateY(-1px);
+    background-color: rgba(0, 0, 0, 0.08);
+    border-color: #9ca3af;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.editButton:active {
+    transform: translateY(0);
+    transition-duration: 0.1s;
+}
+
+.editButton p {
+    font-weight: 500;
+    color: #4b5563;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1;
+}
+
+.editIcon {
+    font-size: 0.75rem;
+    color: #6b7280;
+    transition: transform 0.2s ease-in-out;
+}
+
+.editButton:hover .editIcon {
+    transform: scale(1.1);
+    color: #374151;
+}
+
+/* Save/Cancel buttons container */
+.actionButtons {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transform: translateX(10px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.actionButtons.show {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.saveButton,
+.cancelButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-family: inherit;
+    border: 1px solid;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.saveButton {
+    background-color: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+.saveButton:hover {
+    background-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.cancelButton {
+    background-color: #ef4444;
+    color: white;
+    border-color: #ef4444;
+}
+
+.cancelButton:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+/* Rest of your existing CSS... */
+.userProfileContainer {
+    margin-bottom: 20px;
+    border: 1px solid #dad5d5;
+    padding: 20px;
+    width: 100%;
+    gap: 14px;
+    border-radius: 15px;
+}
+
+.profileTitle {
+    display: flex;
+    font-weight: 550;
+    font-size: 17px;
+}
+
+.personalInfoGroup {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.userName {
+    display: block;
+}
+
+.userName div {
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+.userName div p {
+    color: gray;
+}
+
+.userName div span {
+    color: #333;
+    font-weight: 500;
+}
+
+.email div {
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+.email div p {
+    color: gray;
+}
+
+.email div span {
+    color: #333;
+    font-weight: 500;
+}
+
+.phoneNumber div {
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+.phoneNumber div p {
+    color: gray;
+}
+
+.phoneNumber div span {
+    color: #333;
+    font-weight: 500;
+}
+
+.addressInfoContainer {
+    margin-bottom: 20px;
+    border: 1px solid #dad5d5;
+    padding: 20px;
+    width: 100%;
+    gap: 14px;
+    border-radius: 15px;
+}
+
+.addressInfoTitle {
+    display: flex;
+    align-items: center;
+}
+
+.addressInfoTitle p {
+    font-size: 17px;
+    font-weight: 550;
+}
+
+.addAddressButton {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-family: inherit;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.addAddressButton:hover {
+    transform: translateY(-1px);
+    background-color: rgba(0, 0, 0, 0.08);
+    border-color: #9ca3af;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.addAddressButton:active {
+    transform: translateY(0);
+    transition-duration: 0.1s;
+}
+
+.addAddressButton p {
+    font-weight: 500;
+    color: #4b5563;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1;
+}
+
+.addAddressButton .plusIcon {
+    font-size: 0.75rem;
+    color: #6b7280;
+    transition: transform 0.2s ease-in-out;
+}
+
+.addAddressButton:hover .plusIcon {
+    transform: scale(1.1);
+    color: #374151;
+}
+
+.addressInfoGroup .addressTitle {
+    margin-top: 10px;
+    display: flex;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 480;
+}
+
+.addressInfoGroup .addressInfo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.district div {
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+.district div p {
+    color: gray;
+}
+
+.district div span {
+    color: #333;
+    font-weight: 500;
+}
+
+.province div,
+.municipality div,
+.wardNumber div,
+.landMark div {
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+.province div p,
+.municipality div p,
+.wardNumber div p,
+.landMark div p {
+    color: gray;
+}
+
+.province div span,
+.municipality div span,
+.wardNumber div span,
+.landMark div span {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Address form */
+.addressFormContainer {
+    background: white;
+    width: 100%;
+    max-width: 700px;
+    border: 1px solid #e9e6e6;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    margin: 50px auto;
+    padding: 32px;
+}
+
+.addressFormContainer .title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 32px;
+    color: #1a1a1a;
+}
+
+.addressFormContainer .addressFormGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.addressFormContainer .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formGroup label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 0;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="number"] {
+    padding: 12px 16px;
+    background-color: #f9fafb;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.formGroup input[type="text"]:focus,
+.formGroup input[type="number"]:focus {
+    background-color: white;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.formGroup input::placeholder {
+    color: #9ca3af;
+}
+
+.formGroup input[type="number"]::-webkit-inner-spin-button,
+.formGroup input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.formGroup input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.submitButton {
+    margin-top: 12px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
+}
+
+.submitButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.35);
+}
+
+.submitButton:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .addressFormContainer {
+        width: 95%;
+        padding: 24px;
+        margin: 20px auto;
+    }
+
+    .addressFormContainer .title {
+        font-size: 20px;
+        margin-bottom: 24px;
+    }
+
+    .profileContainer {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .personalInfoGroup,
+    .addressInfoGroup .addressInfo {
+        grid-template-columns: 1fr;
+    }
+}

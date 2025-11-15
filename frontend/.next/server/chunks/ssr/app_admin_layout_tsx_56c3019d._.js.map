@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///E:/ECommerce/frontend/app/admin/layout.tsx"],"sourcesContent":["import '../globals.css'\nimport { ReactNode } from \"react\";\nimport { NotificationProvider } from \"../Context/NotificationContext\";\nimport AppInitializer from '../Component/AppInitializer';\nimport NotificationBar from '../NotificationBar';\n\n\nexport default function AdminLayout({ children }: { children: ReactNode }) {\n    return (\n        <html lang='en'>\n            <head>\n                <title>Admin</title>\n            </head>\n            <body>\n                <div>\n                    <NotificationProvider>\n                        <AppInitializer />\n                        <NotificationBar />\n                        {children}\n                    </NotificationProvider>\n                </div >\n            </body>\n        </html>\n    )\n}"],"names":[],"mappings":";;;;;AAEA;AACA;AACA;;;;;;AAGe,SAAS,YAAY,EAAE,QAAQ,EAA2B;IACrE,qBACI,8OAAC;QAAK,MAAK;;0BACP,8OAAC;0BACG,cAAA,8OAAC;8BAAM;;;;;;;;;;;0BAEX,8OAAC;0BACG,cAAA,8OAAC;8BACG,cAAA,8OAAC,6JAAoB;;0CACjB,8OAAC,6IAAc;;;;;0CACf,8OAAC,iIAAe;;;;;4BACf;;;;;;;;;;;;;;;;;;;;;;;AAMzB","debugId":null}}]
+}

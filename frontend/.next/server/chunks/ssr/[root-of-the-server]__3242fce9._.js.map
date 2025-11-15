@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 15, "column": 0}, "map": {"version":3,"sources":["file:///E:/ECommerce/frontend/app/shop/page.js"],"sourcesContent":["\n\nexport default function Shop(){\n    return(\n        <div>\n            \n        </div>\n    )\n}"],"names":[],"mappings":";;;;;;AAEe,SAAS;IACpB,qBACI,8OAAC;;;;;AAIT","debugId":null}}]
+}

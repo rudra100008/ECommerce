@@ -41,12 +41,15 @@ export default function LoginPage() {
             },3000)
         } catch (err) {
             console.log("Login Error: ", err)
-            error(err.response.data.message)
             if (err.response.data && err.response.status === 400) {
                 const data = err.response.data;
                 if (typeof data === 'object') {
                     setValidateUser(user => ({ ...user, ...data }))
                 }
+            }
+            if(err.response.data && err.response.status === 401){
+                const{ message }= err.response.data;
+                error(message);
             }
         }
     }

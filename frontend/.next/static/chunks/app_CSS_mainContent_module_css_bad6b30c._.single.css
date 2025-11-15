@@ -1,0 +1,33 @@
+/* [project]/app/CSS/mainContent.module.css [app-client] (css) */
+.mainContent-module__iKJb5W__pageWrapper {
+  flex-direction: column;
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.mainContent-module__iKJb5W__pageContainer {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
+  overflow-y: scroll;
+}
+
+.mainContent-module__iKJb5W__pageContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.mainContent-module__iKJb5W__Loading {
+  justify-content: center;
+  align-items: center;
+  margin: 100px auto;
+  display: flex;
+}
+
+.mainContent-module__iKJb5W__Loading p {
+  color: #000;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/*# sourceMappingURL=app_CSS_mainContent_module_css_bad6b30c._.single.css.map*/

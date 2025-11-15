@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///E:/ECommerce/frontend/app/CSS/mainContent.module.css"],"sourcesContent":[".mainContent{\n    \n}\n\n.pageWrapper{\n    min-height: 100vh;\n    display: flex;\n    flex-direction: column;\n}\n.pageContainer{\n    flex: 1;\n\n}"],"names":[],"mappings":"AAIA;;;;;;AAKA","debugId":null}}]
+}

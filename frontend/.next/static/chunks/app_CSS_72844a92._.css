@@ -1,0 +1,204 @@
+/* [project]/app/CSS/mainContent.module.css [app-client] (css) */
+
+
+/* [project]/app/CSS/navbar.module.css [app-client] (css) */
+.navbar-module__0TPdZG__NavbarContainer {
+  background-color: #fff;
+  align-items: center;
+  gap: 40px;
+  padding: 20px 10px;
+  display: flex;
+}
+
+.navbar-module__0TPdZG__title {
+  color: #1a1a1a;
+  letter-spacing: -.2px;
+  text-transform: uppercase;
+  font-family: Poppins, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.navbar-module__0TPdZG__title p {
+  background: linear-gradient(45deg, #2c3e50, #3498db);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-module__0TPdZG__searchGroup {
+  min-width: 400px;
+  max-width: 600px;
+  margin: auto;
+  display: inline-block;
+  position: relative;
+}
+
+.navbar-module__0TPdZG__searchIcon {
+  color: gray;
+  font-size: 20px;
+  transition: all .3s ease-in;
+  position: absolute;
+  top: 30%;
+  left: 10px;
+}
+
+.navbar-module__0TPdZG__searchInput {
+  color: gray;
+  border: 2px solid gray;
+  border-radius: 16px;
+  outline: none;
+  width: 100%;
+  padding: 10px 10px 10px 45px;
+  font-size: 20px;
+  font-weight: 450;
+  transition: all .3s ease-in;
+  position: relative;
+}
+
+.navbar-module__0TPdZG__searchInput::placeholder {
+  color: #9b9a9a;
+  letter-spacing: .05rem;
+  font-size: 18px;
+  font-weight: 480;
+}
+
+.navbar-module__0TPdZG__searchGroup:focus-within .navbar-module__0TPdZG__searchIcon {
+  color: #3b82f6;
+  transform: translateY(-3px);
+}
+
+.navbar-module__0TPdZG__searchGroup:focus-within .navbar-module__0TPdZG__searchInput {
+  border-color: #3b82f6;
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .1);
+}
+
+.navbar-module__0TPdZG__navbarItems {
+  align-items: center;
+  display: flex;
+}
+
+.navbar-module__0TPdZG__navbarItem {
+  align-items: center;
+  padding: 10px;
+  display: flex;
+}
+
+.navbar-module__0TPdZG__favoriteIcon {
+  color: gray;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 20px;
+  transition: all .2s ease-in;
+}
+
+.navbar-module__0TPdZG__favoriteIcon:hover {
+  background-color: #d3d2d2;
+}
+
+.navbar-module__0TPdZG__orderIcon {
+  color: gray;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 20px;
+  transition: all .2s ease-in;
+}
+
+.navbar-module__0TPdZG__orderIcon:hover {
+  background-color: #d3d2d2;
+}
+
+.navbar-module__0TPdZG__cartIcon {
+  color: gray;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 20px;
+  transition: all .2s ease-in;
+}
+
+.navbar-module__0TPdZG__cartIcon:hover {
+  background-color: #d3d2d2;
+}
+
+.navbar-module__0TPdZG__userImageSection {
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.navbar-module__0TPdZG__userImage {
+  border-radius: 50%;
+}
+
+.navbar-module__0TPdZG__logoutGroup {
+  margin-left: auto;
+  padding-right: 5px;
+}
+
+.navbar-module__0TPdZG__logoutButton {
+  color: #f0f8ff;
+  cursor: pointer;
+  background-color: #f86060;
+  border-radius: 12px;
+  padding: 5px 10px;
+  font-weight: 450;
+  transition: all .3s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .1);
+}
+
+.navbar-module__0TPdZG__logoutButton:active {
+  transform: translateY(-1px);
+}
+
+.navbar-module__0TPdZG__logoutButton:hover {
+  background: red;
+  transform: translateY(-3px);
+}
+
+.navbar-module__0TPdZG__subNavbar {
+  align-items: center;
+  padding: 0;
+  display: flex;
+  background-color: #000 !important;
+}
+
+.navbar-module__0TPdZG__subnavItems {
+  justify-content: center;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  margin: auto;
+  display: flex;
+}
+
+.navbar-module__0TPdZG__subnavItem {
+  cursor: pointer;
+  color: #f5f5f5;
+  text-align: center;
+  border-left: 1px solid #555;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 40px;
+  font-size: 18px;
+  font-weight: 500;
+  transition: all .3s ease-in;
+  display: flex;
+  position: relative;
+}
+
+.navbar-module__0TPdZG__subnavItem:last-child {
+  border-right: 1px solid gray;
+}
+
+.navbar-module__0TPdZG__active {
+  position: relative;
+  color: #fff !important;
+  background-color: #f28b00 !important;
+}
+
+/*# sourceMappingURL=app_CSS_72844a92._.css.map*/

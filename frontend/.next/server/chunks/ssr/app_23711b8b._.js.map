@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/app/CSS/mainContent.module.css [app-ssr] (css module)"],"sourcesContent":["__turbopack_context__.v({\n});\n"],"names":[],"mappings":"AAAA;AACA"}},
+    {"offset": {"line": 9, "column": 0}, "map": {"version":3,"sources":["file:///E:/ECommerce/frontend/app/page.jsx"],"sourcesContent":["'use client'\nimport style from './CSS/mainContent.module.css'\nimport { useRouter } from \"next/navigation\";\nexport default function Home() {\n  const router = useRouter();\n  return (\n    <div>\n      <div className={style.mainContent}>\n        main page\n      </div>\n      {/* <div>\n        Email: {userData.email}\n      </div>\n      <div>\n        Username : {userData.username}\n      </div>\n      <p>Image Url: <span>{userData.profileImageUrl}</span></p> */}\n      {/* {userData.roles &&\n        userData.roles.map((role, key) =>\n        (\n          <p key={key}> Role: {role.roleName}</p>\n        )\n        )} */}\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AACA;AACA;AAFA;;;;AAGe,SAAS;IACtB,MAAM,SAAS,IAAA,+IAAS;IACxB,qBACE,8OAAC;kBACC,cAAA,8OAAC;YAAI,WAAW,gJAAK,CAAC,WAAW;sBAAE;;;;;;;;;;;AAkBzC","debugId":null}}]
+}

@@ -1,15 +1,19 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import style from '../../CSS/adminNavbar/AddProductForm/productImage.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faUpload, faX } from '@fortawesome/free-solid-svg-icons';
-import { addProductImage } from '../../services/adminServices/ProductCategoryServices';
 import { useRouter } from 'next/navigation';
+import { addProduct } from '../../services/adminServices/ProductServices';
 
 export default function ProductImage({ setState, formData, updateFormData }) {
     const [previewUrls, setPreviewUrls] = useState([]);
     const router = useRouter();
     const handleBack = () => {
+        //  if(formData.images){
+        //     const newPreviewUrls = formData.images.map(file => URL.createObjectURL(file));
+        //     setPreviewUrls(prev => [...prev,...newPreviewUrls]);
+        // }
         setState('product');
     }
 
@@ -22,8 +26,6 @@ export default function ProductImage({ setState, formData, updateFormData }) {
         setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
         e.target.value = "";
     }
-    console.log("FormData.Images ", formData);
-    console.log("previewUrls ", previewUrls)
 
     const removeImage = (index) => {
         const newImages = formData.images.filter((_, i) => i !== index);
@@ -34,33 +36,49 @@ export default function ProductImage({ setState, formData, updateFormData }) {
         const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
         setPreviewUrls(newPreviewUrls);
     }
-    
-   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (formData.images.length === 0) {
-        alert("Select at least 1 image");
-        return;
-    }
-    try {
-        const formDataToSend = new FormData();
-    
-        formData.images.forEach((image, index) => {
-            formDataToSend.append("images", image);
-        });
-        
-        console.log("FormData being sent:", formDataToSend);
-        
-        const res = await addProductImage({ 
-            product: formData.product, 
-            images: formDataToSend  
-        });
-        console.log("Response of handleSubmit() in productImage: ", res.data);
 
-        setTimeout(()=> router.push("/admin"),2000)
-    } catch (error) {
-        console.log("Error in handleSubmit() in productImage", error.response?.data);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (formData.images.length === 0) {
+            alert("Select at least 1 image");
+            return;
+        }
+        try {
+            console.log("FormData", formData)
+            const formDataToSend = new FormData();
+            const categoryBlob = new Blob(
+                [JSON.stringify(formData.category)],
+                { type: 'application/json' }
+            )
+            const productBlob = new Blob(
+                [JSON.stringify(formData.product)],
+                { type: 'application/json' }
+            )
+            formDataToSend.append("product", productBlob);
+            formDataToSend.append("category", categoryBlob);
+            formData.images.forEach(img =>
+                formDataToSend.append("image", img)
+            );
+            const res = await addProduct(formDataToSend);
+            setTimeout(() => router.push("/admin"), 2000)
+        } catch (error) {
+            console.log("Error in handleSubmit() in productImage", error.response?.data);
+        }
     }
-}
+    useEffect(() => {
+        if (formData.images.length > 0 && previewUrls.length === 0) {
+              const newPreviewUrls = formData.images.map(image => URL.createObjectURL(image));
+              setPreviewUrls(newPreviewUrls);
+        }
+
+        return ()=>{
+        previewUrls.forEach(url => URL.revokeObjectURL(url));
+        }
+    }, [])
+
+    useEffect(() => {
+        console.log("Images", formData.images)
+    }, [formData.images])
     return (
         <div className={style.productImage}>
             <div className={style.header}>

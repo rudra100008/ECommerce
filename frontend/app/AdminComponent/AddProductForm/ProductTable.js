@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import style from '../../CSS/adminNavbar/AddProductForm/productForm.module.css';
-import { fetchProductsWithCategoryId } from '../../services/ProductServices';
+import { fetchProductsWithCategoryId } from '../../services/adminServices/ProductServices';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faAngleRight, faArrowLeft, faArrowRight, faX } from '@fortawesome/free-solid-svg-icons';
 import { fetchAllCategories } from '../../services/CategoryService';
 import ProductData from '../ProductData';
 export default function ProductTable() {
@@ -11,6 +11,9 @@ export default function ProductTable() {
     const [categorys, setCategorys] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedProduct, setSelectedProduct] = useState({})
+    const [showImageModel, setShowImageModel] = useState(false);
+    const [selectedProductImage, setSelectedProductImage] = useState([]);
+    const [imageIndex, setImageIndex] = useState(0);
     const [pageInfo, setPageInfo] = useState({
         lastPage: false,
         pageNumber: 0,
@@ -53,10 +56,8 @@ export default function ProductTable() {
     const fetchCategory = async () => {
         try {
             const response = await fetchAllCategories(0, 10000);
-            console.log("Resposne fetchCategory()", response.data.data)
             const { data } = response.data;
             setCategorys(data)
-
         } catch (error) {
             console.log("Error fetching categories: ", error.response?.data);
         }
@@ -113,6 +114,21 @@ export default function ProductTable() {
             })
         }
     }, [selectedProduct])
+
+    const handleShowImage = (product) => {
+        setSelectedProductImage(product.imageUrls || []);
+        setShowImageModel(true);
+    }
+    const handleLeftButton = () =>{
+        if(imageIndex >= 0){
+            setImageIndex(prev => prev - 1);
+        }
+    }
+    const handleRightButton = () => {
+        if(selectedProductImage.length -1 > imageIndex){
+            setImageIndex(prev => prev + 1);
+        }
+    }
     const displayCurrentPage = currentPage + 1;
     return (
         <div>
@@ -123,6 +139,32 @@ export default function ProductTable() {
                     selectedProduct={selectedProduct}
                     setSelectedProduct={setSelectedProduct}
                 />
+            }
+            {
+                showImageModel &&
+                <div className={style.imageModel}>
+                    <div onClick={() => setShowImageModel(false)} className={style.closeButton}>
+                        <FontAwesomeIcon icon={faX} />
+                    </div>
+                    <div className={style.modelImages}>
+                        <div onClick={handleLeftButton} className={`${style.leftButton} ${imageIndex === 0? style.activeLeftButton :''}`}>
+                            <FontAwesomeIcon icon={faAngleLeft} />
+                        </div>
+                        {
+                            selectedProductImage.length > 0 &&
+                           ( <div className={style.modelImageContainer}>
+                                <img
+                                    src={`http://localhost:8080${selectedProductImage[imageIndex]}`}
+                                    alt={`Product Image ${imageIndex + 1}`}
+                                    className={style.productImage}
+                                />
+                            </div>)
+                        }
+                        <div onClick={handleRightButton} className={`${style.rightButton} ${imageIndex === selectedProductImage.length -1  ? style.activeRightButton : ''}`}>
+                            <FontAwesomeIcon icon={faAngleRight} />
+                        </div>
+                    </div>
+                </div>
             }
             <div className={style.categoryFilter}>
                 <select
@@ -150,8 +192,8 @@ export default function ProductTable() {
                             <th>Description</th>
                             <th>Price</th>
                             <th>Discount</th>
-                            <th>Category</th>
                             <th>Stock </th>
+                            <th>Images</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -163,8 +205,12 @@ export default function ProductTable() {
                                     <td>{product.description}</td>
                                     <td>₹{product.price}</td>
                                     <td>₹{product.discount || 0}</td>
-                                    <td>{product.categoryId}</td>
                                     <td>{product.stockQuantity}</td>
+                                    <td>
+                                        <button onClick={() => handleShowImage(product)} className={style.imageButton} type='button'>
+                                            See Images
+                                        </button>
+                                    </td>
                                 </tr>
                             ))
                         }

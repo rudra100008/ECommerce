@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { addCategory } from '../../services/adminServices/ProductCategoryServices';
 import { useEffect, useState } from 'react';
 import { fetchAllCategories } from '../../services/CategoryService';
+import { addProduct } from '../../services/adminServices/ProductServices';
 export default function CategoryForm({ setState, formData, updateFormData }) {
     const [validationError, setValidationError] = useState({
         name: ''
@@ -21,19 +22,21 @@ export default function CategoryForm({ setState, formData, updateFormData }) {
         totalPage: 0,
     })
     const router = useRouter();
-    const handleNext = async (e) => {
-        e.preventDefault();
-        try {
-            const cleanCategoryData = {
-                name: formData.category.name
-            };
-            const result = await addCategory({ category: cleanCategoryData, setValidationError });
-            updateFormData({ category: { ...formData.category, ...result.data } })
-            setState('product');
-        } catch (error) {
-            console.error("Failed to create category:", error.response?.data);
-        }
+
+
+   const handleNext = async (e) => {
+    e.preventDefault();
+    try {
+        const cleanCategoryData = {
+            name: formData.category.name
+        };
+        console.log("FormData",formData)
+        
+        setState('product');
+    } catch (error) {
+        console.error("Failed to create category:", error);
     }
+}
 
     const handleCancel = () => {
         router.push("/admin")

@@ -15,10 +15,10 @@ export default function AddProductPage() {
         product: {
             productName: '',
             description: '',
-            price: '',
-            discount: '',
+            price: 0,
+            discount: 0,
             sku: '',
-            stockQuantity: ''
+            stockQuantity: 0
         },
         images: []
     })

@@ -16,7 +16,6 @@ export default function AdminPage() {
     useEffect(() => {
         if (itemClicked) {
             localStorage.setItem('adminSelectedTab', itemClicked);
-            console.log("ItemClicked", itemClicked);
         }
     }, [itemClicked])
 
@@ -25,7 +24,7 @@ export default function AdminPage() {
         if (selectedTab) {
             setItemClicked(selectedTab);
         } else {
-            setItemClicked('dashboard'); //default
+            setItemClicked('dashboard');
         }
     }, [])
     return (

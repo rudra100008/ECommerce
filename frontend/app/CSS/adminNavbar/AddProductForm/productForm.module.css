@@ -147,11 +147,12 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.productTable thead tr{
-    position:relative;
+.productTable thead tr {
+    position: relative;
     z-index: 1;
 }
-.productTable tbody{
+
+.productTable tbody {
     position: relative;
     z-index: 1;
 }
@@ -178,26 +179,28 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.productTable td{
+.productTable td {
     padding: 14px 12px;
     color: #4a5568;
     font-size: 14px;
     border-bottom: 1px solid #e2e8f0;
 }
+
 .productTable td:first-child {
-  font-weight: 600;
-  color: #667eea;
+    font-weight: 600;
+    color: #667eea;
 }
+
 .productTable th:first-child {
-  border-top-left-radius: 12px;
+    border-top-left-radius: 12px;
 }
 
 .productTable th:last-child {
-  border-top-right-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
 .productTable tbody tr:last-child td {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .productTable tbody:empty::after {
@@ -208,21 +211,175 @@
     color: #a0aec0;
     font-style: italic;
     font-size: 16px;
-}
-
-.productTable td:nth-child(4), 
-.productTable td:nth-child(5), 
-.productTable td:nth-child(7) {
-    text-align: right;
-}
-.productTable td:nth-child(1) { 
     text-align: center;
 }
-.productTable td:nth-child(3) { /* Description */
+
+.productTable td:nth-child(4),
+.productTable td:nth-child(5),
+.productTable td:nth-child(6) {
+    text-align: center;
+}
+
+.productTable td:nth-child(1) {
+    text-align: center;
+}
+
+.productTable td:nth-child(3) {
+    /* Description */
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.productTable td:nth-child(7) {
+    position: relative;
+    text-align: center;
+}
+
+.imageButton {
+    background-color: #43a047;
+    color: white;
+    font-size: 14px;
+    font-weight: 450;
+    padding: 5px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.imageButton:hover {
+    background-color: #1ea525;
+    transform: scale(1.03);
+}
+
+.imageModel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    z-index: 1001;
+    cursor: pointer;
+    transition:all 0.3s ease-in;
+}
+
+.closeButton:hover {
+    background: rgba(239, 68, 68, 0.9);
+    transform: rotate(90deg) scale(1.1);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+.modelImages {
+    display: flex;
+     align-items: center;
+    justify-content: center;
+    gap: 30px;
+    max-width: 90vw;
+    animation: slideUp 0.4s ease-out;
+}
+@keyframes slideUp{
+    from{
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.leftButton,
+.rightButton {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    cursor: pointer;
+    color: white;
+    border: 2px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    font-size: 25px;
+}
+
+.leftButton:hover,
+.rightButton:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.15);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.leftButton:active,
+.rightButton:active {
+    transform: scale(0.95);
+}
+
+.leftButton.activeLeftButton,
+.rightButton.activeRightButton {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.modelImageContainer {
+    position: relative;
+    background: white;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 800px;
+    max-height: 85vh;
+    overflow: hidden;
+}
+
+.productImage {
+    width: 380px;
+    height: 400px;
+    object-fit: contain;
+    border-radius: 12px;
+    display: block;
 }
 
 
@@ -300,6 +457,7 @@
     border-color: #e2e8f0;
     transform: none;
 }
+
 /* category selector */
 .categoryFilter {
     margin-bottom: 20px;

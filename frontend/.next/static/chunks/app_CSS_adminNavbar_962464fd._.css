@@ -534,17 +534,14 @@
   content: "No products found";
   text-align: center;
   color: #a0aec0;
+  text-align: center;
   padding: 40px;
   font-size: 16px;
   font-style: italic;
   display: block;
 }
 
-.productForm-module__Lz_Pra__productTable td:nth-child(4), .productForm-module__Lz_Pra__productTable td:nth-child(5), .productForm-module__Lz_Pra__productTable td:nth-child(7) {
-  text-align: right;
-}
-
-.productForm-module__Lz_Pra__productTable td:first-child {
+.productForm-module__Lz_Pra__productTable td:nth-child(4), .productForm-module__Lz_Pra__productTable td:nth-child(5), .productForm-module__Lz_Pra__productTable td:nth-child(6), .productForm-module__Lz_Pra__productTable td:first-child {
   text-align: center;
 }
 
@@ -553,6 +550,158 @@
   white-space: nowrap;
   max-width: 200px;
   overflow: hidden;
+}
+
+.productForm-module__Lz_Pra__productTable td:nth-child(7) {
+  text-align: center;
+  position: relative;
+}
+
+.productForm-module__Lz_Pra__imageButton {
+  color: #fff;
+  cursor: pointer;
+  background-color: #43a047;
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 14px;
+  font-weight: 450;
+  transition: all .3s ease-in-out;
+}
+
+.productForm-module__Lz_Pra__imageButton:hover {
+  background-color: #1ea525;
+  transform: scale(1.03);
+}
+
+.productForm-module__Lz_Pra__imageModel {
+  z-index: 1000;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, .85);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  animation: .3s ease-in-out productForm-module__Lz_Pra__fadeIn;
+  display: flex;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+@keyframes productForm-module__Lz_Pra__fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.productForm-module__Lz_Pra__closeButton {
+  color: #fff;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  z-index: 1001;
+  cursor: pointer;
+  background: rgba(255, 255, 255, .15);
+  border: 2px solid rgba(255, 255, 255, .2);
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  font-size: 18px;
+  transition: all .3s ease-in;
+  display: flex;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.productForm-module__Lz_Pra__closeButton:hover {
+  background: rgba(239, 68, 68, .9);
+  border-color: rgba(239, 68, 68, .5);
+  transform: rotate(90deg)scale(1.1);
+}
+
+.productForm-module__Lz_Pra__modelImages {
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  max-width: 90vw;
+  animation: .4s ease-out productForm-module__Lz_Pra__slideUp;
+  display: flex;
+}
+
+@keyframes productForm-module__Lz_Pra__slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.productForm-module__Lz_Pra__leftButton, .productForm-module__Lz_Pra__rightButton {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  color: #fff;
+  background: rgba(255, 255, 255, .15);
+  border: 2px solid rgba(255, 255, 255, .2);
+  border-radius: 50%;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  font-size: 25px;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__leftButton:hover, .productForm-module__Lz_Pra__rightButton:hover {
+  background: rgba(255, 255, 255, .25);
+  border-color: rgba(255, 255, 255, .4);
+  transform: scale(1.15);
+}
+
+.productForm-module__Lz_Pra__leftButton:active, .productForm-module__Lz_Pra__rightButton:active {
+  transform: scale(.95);
+}
+
+.productForm-module__Lz_Pra__leftButton.productForm-module__Lz_Pra__activeLeftButton, .productForm-module__Lz_Pra__rightButton.productForm-module__Lz_Pra__activeRightButton {
+  opacity: .3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.productForm-module__Lz_Pra__modelImageContainer {
+  background: #fff;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  max-width: 800px;
+  max-height: 85vh;
+  padding: 15px;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .5);
+}
+
+.productForm-module__Lz_Pra__productImage {
+  object-fit: contain;
+  border-radius: 12px;
+  width: 380px;
+  height: 400px;
+  display: block;
 }
 
 .productForm-module__Lz_Pra__page {

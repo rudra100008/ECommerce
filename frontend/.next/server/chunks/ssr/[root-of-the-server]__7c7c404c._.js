@@ -964,22 +964,10 @@ function ProductForm({ setState, formData, updateFormData }) {
 "[project]/app/CSS/adminNavbar/AddProductForm/productImage.module.css [app-ssr] (css module)", ((__turbopack_context__) => {
 
 __turbopack_context__.v({
-  "ButtonGroup": "productImage-module__lIneAW__ButtonGroup",
-  "backButton": "productImage-module__lIneAW__backButton",
-  "customFileLabel": "productImage-module__lIneAW__customFileLabel",
-  "customLabel": "productImage-module__lIneAW__customLabel",
-  "header": "productImage-module__lIneAW__header",
-  "hiddenFileInput": "productImage-module__lIneAW__hiddenFileInput",
-  "imageName": "productImage-module__lIneAW__imageName",
-  "imagePreviews": "productImage-module__lIneAW__imagePreviews",
-  "inputGroup": "productImage-module__lIneAW__inputGroup",
-  "nextButton": "productImage-module__lIneAW__nextButton",
-  "noImages": "productImage-module__lIneAW__noImages",
-  "previewGrid": "productImage-module__lIneAW__previewGrid",
-  "previewImage": "productImage-module__lIneAW__previewImage",
-  "previewItem": "productImage-module__lIneAW__previewItem",
-  "productImage": "productImage-module__lIneAW__productImage",
-  "removeButton": "productImage-module__lIneAW__removeButton",
+  "adminContent": "productImage-module__lIneAW__adminContent",
+  "adminLayout": "productImage-module__lIneAW__adminLayout",
+  "mainContent": "productImage-module__lIneAW__mainContent",
+  "pageContent": "productImage-module__lIneAW__pageContent",
 });
 }),
 "[project]/app/AdminComponent/AddProductForm/ProductImage.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {

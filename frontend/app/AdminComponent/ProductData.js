@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import style from '../CSS/adminNavbar/productData.module.css';
 import { faArrowLeft, faX } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
-import { fetchProductImageUrls } from '../services/ProductServices';
+import { fetchProductImageUrls } from '../services/adminServices/ProductServices';
 import GetProductImage from '../Component/GetProductImage';
 import EditProduct from './AddProductForm/EditProduct';
 
@@ -71,8 +71,10 @@ export default function ProductData({ selectedProduct, setShowProductDetails, se
                         </div>
                         <p>{
                             selectedProduct.description.length > 200 ? (
-                                <p>selectedProduct.description.slice(0,200).....</p>
-                            ) : selectedProduct.description
+                                <span>{selectedProduct.description.slice(0,200)}....</span>
+                            ) : (
+                               <span>{selectedProduct.description}</span>
+                            )
 
                         }</p>
                     </div>

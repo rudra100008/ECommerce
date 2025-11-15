@@ -2,7 +2,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import style from '../../CSS/adminNavbar/AddProductForm/productForm.module.css'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { createProduct } from '../../services/adminServices/ProductCategoryServices';
 import { useEffect, useState } from 'react';
 export default function ProductForm({ setState, formData, updateFormData }) {
     const [validationError, setValidationError] = useState({
@@ -19,18 +18,8 @@ export default function ProductForm({ setState, formData, updateFormData }) {
     const handleNext = async (e) => {
         e.preventDefault();
         try {
-            const cleanProductData = {
-                productName: formData.product.productName,
-                description: formData.product.description,
-                price: formData.product.price,
-                discount: formData.product.discount,
-                sku: formData.product.sku,
-                stockQuantity: formData.product.stockQuantity
-            }
-            const res = await createProduct({ product: cleanProductData, category: formData.category ,setValidationError})
-            console.log("handleNext() ProductForm(): ", res.data);
-
-            updateFormData({ product: { ...formData.product, ...res.data } })
+            formData.product.categoryId = formData.category.categoryId;
+            console.log("formData",formData)
             setState('productImage');
         } catch (error) {
             console.log("Product creation  failed: ", error.response?.data);

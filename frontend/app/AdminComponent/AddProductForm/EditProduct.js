@@ -2,7 +2,7 @@ import { useState } from 'react'
 import style from '../../CSS/adminNavbar/AddProductForm/editForm.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRupee, faRupeeSign } from '@fortawesome/free-solid-svg-icons'
-import { updateProduct } from '../../services/ProductServices'
+import { updateProduct } from '../../services/adminServices/ProductServices'
 export default function EditProduct({ selectedProduct, setSelectedProduct, setShowEditForm }) {
     const [validationError, setValidationError] = useState({
         productName: '',

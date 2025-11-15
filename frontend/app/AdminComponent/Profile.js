@@ -7,7 +7,6 @@ export default function Profile(){
     const fetchAdmin = async () =>{
         try{
         const response = await fetchCurrentUser();
-        success("User data fetched")
         }catch(err){
             console.log("Error",err.response?.data)
         }

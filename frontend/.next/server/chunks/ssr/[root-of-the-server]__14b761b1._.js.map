@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 15, "column": 0}, "map": {"version":3,"sources":["file:///E:/ECommerce/frontend/app/home/page.js"],"sourcesContent":["import Navbar from './Component/Navbar';\nexport default function Home(){\n    return(\n        <div>\n            <Navbar/>\n            home\n        </div>\n    )\n}"],"names":[],"mappings":";;;;;;;;;;;;AACe,SAAS;IACpB,qBACI,8OAAC;;0BACG,8OAAC;;;;;YAAQ;;;;;;;AAIrB","debugId":null}}]
+}

@@ -1,0 +1,32 @@
+.mainContent {}
+
+.pageWrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.pageContainer {
+    flex: 1;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.pageContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.Loading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin:100px auto;
+}
+
+.Loading p{
+    font-size: 20px;
+    color: black;
+    font-weight: 600;
+}
