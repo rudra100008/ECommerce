@@ -67,13 +67,7 @@ export default function Shop() {
             hasLoadedRef.current = true;
         }
     }, [])
-    // if (isLoading) {
-    //     return (
-    //         <div className={style.LoadingPage}>
-    //             <p>Loading....</p>
-    //         </div>
-    //     )
-    // }
+  
     return (
         <div className={style.pageWrapper}>
             <Navbar />

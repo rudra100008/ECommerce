@@ -3,7 +3,7 @@ import style from '../CSS/userSide/navbar.module.css';
 import { usePathname, useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons/faMagnifyingGlass";
-import { faCartShopping, } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faClipboard, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { useNavigation } from "../Context/NavigationContext";
 import Link from "next/link";
@@ -13,42 +13,66 @@ import { useNotification } from '../Context/NotificationContext';
 import Image from 'next/image';
 
 export default function Navbar() {
-    const { success,error } = useNotification();
+    const { success, error } = useNotification();
     const userBoxRef = useRef();
     const userImageRef = useRef();
     const [showUserBox, setShowUserBox] = useState(false);
-    const { userData, loadCurrentUser, userLoading } = useNavigation();
+    const { userData, setUserData, loadCurrentUser, userLoading } = useNavigation();
     const pathName = usePathname();
     const router = useRouter();
+
     const getActiveItem = () => {
         if (pathName === "/") return "home";
         if (pathName === "/shop") return "shop";
         if (pathName === "/cart") return "cart";
         if (pathName === "/contact") return "contact";
     }
+
     const handleUserBox = () => {
         setShowUserBox(prev => !prev);
     }
 
+   
+    const isBackendImage = (url) => {
+        return url && (url.includes("/api/user") || url.startsWith("/"));
+    }
+
+
+    const getImageUrl = (url) => {
+        if (!url) return null;
+        
+      
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+            return url;
+        }
+        
+        
+        if (url.startsWith("/api/")) {
+            return `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080'}${url}`;
+        }
+        
+        return url;
+    }
+
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if(userImageRef.current && userImageRef.current.contains(event.target)){
+            if (userImageRef.current && userImageRef.current.contains(event.target)) {
                 return;
             }
-            if (userBoxRef.current && !userBoxRef.current.contains(event.target) ) {
+            if (userBoxRef.current && !userBoxRef.current.contains(event.target)) {
                 setShowUserBox(false);
             }
         }
+
         if (showUserBox) {
             window.addEventListener('mousedown', handleClickOutside);
         } else {
-            window.removeEventListener('mousedown', handleClickOutside)
+            window.removeEventListener('mousedown', handleClickOutside);
         }
 
         return () => {
             window.removeEventListener('mousedown', handleClickOutside);
         }
-
     }, [showUserBox])
 
     useEffect(() => {
@@ -56,6 +80,7 @@ export default function Navbar() {
     }, [])
 
     const activeNavItem = getActiveItem();
+
     return (
         <div className={style.container}>
             <div className={style.NavbarContainer}>
@@ -86,30 +111,41 @@ export default function Navbar() {
                     </div>
                     <div className={style.navbarItem}>
                         <FontAwesomeIcon
-                        onClick={()=> router.push("/cart")}
+                            onClick={() => router.push("/cart")}
                             className={style.cartIcon}
-                            icon={faCartShopping} />
-                        {
-                            <span className={style.cartMoney}>Rs 0.00 </span>
-                        }
+                            icon={faCartShopping}
+                        />
+                        <span className={style.cartMoney}>Rs 0.00</span>
                     </div>
 
                     <div className={style.userImageSection}>
-                        <div ref = {userImageRef} onClick={handleUserBox}>
-                            {
-                                userData.profileImageUrl ?
-                                    (<Image
+                        <div ref={userImageRef} onClick={handleUserBox} className={style.userImageContainer}>
+                            {userData.profileImageUrl ? (
+                                isBackendImage(userData.profileImageUrl) ? (
+                                   
+                                    <img
+                                        src={getImageUrl(userData.profileImageUrl)}
+                                        alt={userData.username || "user"}
+                                        width={45}
+                                        height={45}
+                                        className={style.userImage}
+                                    />
+                                ) : (
+                                    
+                                    <Image
                                         src={userData.profileImageUrl}
                                         alt={userData.username || "user"}
                                         width={45}
                                         height={45}
                                         className={style.userImage}
-                                    />) : (
-                                        <div>
-                                            <p>No image</p>
-                                        </div>
-                                    )
-                            }
+                                        unoptimized 
+                                    />
+                                )
+                            ) : (
+                                <div className={style.noImage}>
+                                    <span>{userData.username?.charAt(0).toUpperCase() || "U"}</span>
+                                </div>
+                            )}
                         </div>
                         {showUserBox && (
                             <div ref={userBoxRef} className={style.userBox}>
@@ -118,7 +154,6 @@ export default function Navbar() {
                             </div>
                         )}
                     </div>
-
                 </div>
             </div>
             <div className={style.subNavbar}>

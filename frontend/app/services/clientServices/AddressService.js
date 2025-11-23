@@ -13,11 +13,32 @@ export const fetchAllAddressesOfUser = async (userId) =>{
 
 export const addAddress = async(addressDTO = {}) =>{
     try{
-        const respsone = await api.post("/api/address/addAddress",addressDTO);
-        console.log("Response of addAddress: ",respsone);
-        return respsone.data;
+        const response = await api.post("/api/address/addAddress",addressDTO);
+        console.log("Response of addAddress: ",response);
+        return response.data;
     }catch(err){
         console.log("error in AddressService: ",err.response.data);
         throw err;
+    }
+}
+
+export const removeAddressById = async(userId = 0 ,addressId = 0)=>{
+    try{
+        const response = await api.delete(`/api/address/${addressId}/user/${userId}`)
+        console.log("Response: ",response.data.message)
+        return response.data
+    }catch(err){
+        console.log("error in AddressService: ",err.response.data);
+        throw err;
+    }
+}
+
+export const updateAddress = async (address = {}) =>{
+    try{
+        const response = await api.put('/api/address/updateAddress',address);
+        console.log("Response in AddressService:",response.data)
+        return response.data
+    }catch(err){
+        console.log("Error in AddressService:",err.response.data)
     }
 }

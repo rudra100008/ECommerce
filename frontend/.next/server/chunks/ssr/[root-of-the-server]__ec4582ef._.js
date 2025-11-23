@@ -269,7 +269,9 @@ function NotificationBar() {
 
 __turbopack_context__.s([
     "fetchCurrentUser",
-    ()=>fetchCurrentUser
+    ()=>fetchCurrentUser,
+    "updateUserImageAndFullName",
+    ()=>updateUserImageAndFullName
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Context/NotificationContext.js [app-ssr] (ecmascript)");
@@ -296,6 +298,20 @@ const fetchCurrentUser = async (success, error)=>{
                 window.location.href = "/login";
             }, 3000);
         }
+        throw err;
+    }
+};
+const updateUserImageAndFullName = async (userId, formDataToSend)=>{
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/api/user/${userId}/userImageAndFullName`, formDataToSend, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        console.log("Response in UserService: ", response);
+        return response;
+    } catch (err) {
+        console.log("error in UserService: ", err.response.data);
         throw err;
     }
 };

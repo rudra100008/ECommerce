@@ -2,6 +2,7 @@ module.exports = [
 "[project]/app/CSS/userSide/profile.module.css [app-ssr] (css module)", ((__turbopack_context__) => {
 
 __turbopack_context__.v({
+  "actionButtons": "profile-module__1fuQea__actionButtons",
   "addAddressButton": "profile-module__1fuQea__addAddressButton",
   "addressFormContainer": "profile-module__1fuQea__addressFormContainer",
   "addressFormGroup": "profile-module__1fuQea__addressFormGroup",
@@ -9,15 +10,25 @@ __turbopack_context__.v({
   "addressInfoContainer": "profile-module__1fuQea__addressInfoContainer",
   "addressInfoGroup": "profile-module__1fuQea__addressInfoGroup",
   "addressInfoTitle": "profile-module__1fuQea__addressInfoTitle",
+  "addressInput": "profile-module__1fuQea__addressInput",
   "addressTitle": "profile-module__1fuQea__addressTitle",
   "backButton": "profile-module__1fuQea__backButton",
+  "cancelAddressButton": "profile-module__1fuQea__cancelAddressButton",
+  "cancelButton": "profile-module__1fuQea__cancelButton",
+  "deletIcon": "profile-module__1fuQea__deletIcon",
+  "deleteButton": "profile-module__1fuQea__deleteButton",
+  "deleteIcon": "profile-module__1fuQea__deleteIcon",
   "district": "profile-module__1fuQea__district",
   "editButton": "profile-module__1fuQea__editButton",
   "editIcon": "profile-module__1fuQea__editIcon",
   "email": "profile-module__1fuQea__email",
+  "fadeOut": "profile-module__1fuQea__fadeOut",
   "formGroup": "profile-module__1fuQea__formGroup",
   "fullName": "profile-module__1fuQea__fullName",
+  "fullNameInput": "profile-module__1fuQea__fullNameInput",
   "landMark": "profile-module__1fuQea__landMark",
+  "logoutButton": "profile-module__1fuQea__logoutButton",
+  "logoutButtonSection": "profile-module__1fuQea__logoutButtonSection",
   "municipality": "profile-module__1fuQea__municipality",
   "personalInfoGroup": "profile-module__1fuQea__personalInfoGroup",
   "phoneNumber": "profile-module__1fuQea__phoneNumber",
@@ -25,8 +36,18 @@ __turbopack_context__.v({
   "profileContainer": "profile-module__1fuQea__profileContainer",
   "profileTitle": "profile-module__1fuQea__profileTitle",
   "province": "profile-module__1fuQea__province",
+  "removeImageButton": "profile-module__1fuQea__removeImageButton",
+  "removeImageButtonSection": "profile-module__1fuQea__removeImageButtonSection",
+  "revertPicButton": "profile-module__1fuQea__revertPicButton",
+  "revertPicButtonSection": "profile-module__1fuQea__revertPicButtonSection",
+  "saveAddressButton": "profile-module__1fuQea__saveAddressButton",
+  "saveButton": "profile-module__1fuQea__saveButton",
+  "settingContainer": "profile-module__1fuQea__settingContainer",
+  "settingSection": "profile-module__1fuQea__settingSection",
+  "show": "profile-module__1fuQea__show",
   "submitButton": "profile-module__1fuQea__submitButton",
   "title": "profile-module__1fuQea__title",
+  "uploadIcon": "profile-module__1fuQea__uploadIcon",
   "userImage": "profile-module__1fuQea__userImage",
   "userImageContainer": "profile-module__1fuQea__userImageContainer",
   "userImageDiv": "profile-module__1fuQea__userImageDiv",
@@ -42,7 +63,11 @@ __turbopack_context__.s([
     "addAddress",
     ()=>addAddress,
     "fetchAllAddressesOfUser",
-    ()=>fetchAllAddressesOfUser
+    ()=>fetchAllAddressesOfUser,
+    "removeAddressById",
+    ()=>removeAddressById,
+    "updateAddress",
+    ()=>updateAddress
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-ssr] (ecmascript)");
 ;
@@ -58,12 +83,31 @@ const fetchAllAddressesOfUser = async (userId)=>{
 };
 const addAddress = async (addressDTO = {})=>{
     try {
-        const respsone = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post("/api/address/addAddress", addressDTO);
-        console.log("Response of addAddress: ", respsone);
-        return respsone.data;
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post("/api/address/addAddress", addressDTO);
+        console.log("Response of addAddress: ", response);
+        return response.data;
     } catch (err) {
         console.log("error in AddressService: ", err.response.data);
         throw err;
+    }
+};
+const removeAddressById = async (userId = 0, addressId = 0)=>{
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].delete(`/api/address/${addressId}/user/${userId}`);
+        console.log("Response: ", response.data.message);
+        return response.data;
+    } catch (err) {
+        console.log("error in AddressService: ", err.response.data);
+        throw err;
+    }
+};
+const updateAddress = async (address = {})=>{
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].put('/api/address/updateAddress', address);
+        console.log("Response in AddressService:", response.data);
+        return response.data;
+    } catch (err) {
+        console.log("Error in AddressService:", err.response.data);
     }
 };
 }),
@@ -110,7 +154,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navi
 function AddressForm() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const { loadCurrentUser, userData, setUserData, userLoading } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useNavigation"])();
-    const { success } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useNotification"])();
+    const { success, clear } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useNotification"])();
     const [address, setAddress] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
         district: '',
         province: '',
@@ -149,6 +193,7 @@ function AddressForm() {
             });
             setTimeout(()=>{
                 router.push("/profile");
+                clear();
             }, 2000);
         } catch (err) {
             console.log("error in handleAddAddress", err.response.data);
@@ -166,12 +211,12 @@ function AddressForm() {
                     children: "Address Form"
                 }, void 0, false, {
                     fileName: "[project]/app/profile/address/page.js",
-                    lineNumber: 65,
+                    lineNumber: 66,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/profile/address/page.js",
-                lineNumber: 64,
+                lineNumber: 65,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -185,7 +230,7 @@ function AddressForm() {
                                 children: "District"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 69,
+                                lineNumber: 70,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -197,13 +242,13 @@ function AddressForm() {
                                 placeholder: "Enter district"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 70,
+                                lineNumber: 71,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/profile/address/page.js",
-                        lineNumber: 68,
+                        lineNumber: 69,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -214,7 +259,7 @@ function AddressForm() {
                                 children: "Province"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 80,
+                                lineNumber: 81,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -226,13 +271,13 @@ function AddressForm() {
                                 placeholder: "Enter a province"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 81,
+                                lineNumber: 82,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/profile/address/page.js",
-                        lineNumber: 79,
+                        lineNumber: 80,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -243,7 +288,7 @@ function AddressForm() {
                                 children: "Municipality"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 91,
+                                lineNumber: 92,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -255,13 +300,13 @@ function AddressForm() {
                                 placeholder: "Enter municipality name"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 92,
+                                lineNumber: 93,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/profile/address/page.js",
-                        lineNumber: 90,
+                        lineNumber: 91,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -272,7 +317,7 @@ function AddressForm() {
                                 children: "Ward Number"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 102,
+                                lineNumber: 103,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -286,13 +331,13 @@ function AddressForm() {
                                 max: "35"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 103,
+                                lineNumber: 104,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/profile/address/page.js",
-                        lineNumber: 101,
+                        lineNumber: 102,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -303,7 +348,7 @@ function AddressForm() {
                                 children: "LandMark"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 115,
+                                lineNumber: 116,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -315,13 +360,13 @@ function AddressForm() {
                                 placeholder: "Enter a landMark"
                             }, void 0, false, {
                                 fileName: "[project]/app/profile/address/page.js",
-                                lineNumber: 116,
+                                lineNumber: 117,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/profile/address/page.js",
-                        lineNumber: 114,
+                        lineNumber: 115,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -330,19 +375,19 @@ function AddressForm() {
                         children: "Add Address"
                     }, void 0, false, {
                         fileName: "[project]/app/profile/address/page.js",
-                        lineNumber: 125,
+                        lineNumber: 126,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/profile/address/page.js",
-                lineNumber: 67,
+                lineNumber: 68,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/profile/address/page.js",
-        lineNumber: 63,
+        lineNumber: 64,
         columnNumber: 9
     }, this);
 }

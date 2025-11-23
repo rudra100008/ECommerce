@@ -9,13 +9,20 @@ import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons'
 import { addToCart } from '../services/clientServices/CartService'
 import { useNavigation } from "../Context/NavigationContext";
 import { useNotification } from '../Context/NotificationContext'
+import { useCart } from '../Context/CartContext'
 import { productDetailsInInventory } from '../services/clientServices/InventoryService'
 export default function Products({ products, setProducts }) {
     const { success, error, clear } = useNotification();
     const { userData } = useNavigation();
+    const { addItemToCart,cartItems } = useCart();
     const [categories, setCategories] = useState([]);
     const [favoriteProduct, setFavoriteProduct] = useState([]);
     const [cartItem, setCartItem] = useState([]);
+
+
+    console.log("CartProvider - userData:", userData);
+    console.log("CartProvider - cartItems:", cartItems);
+
     const getCategories = async () => {
         try {
             const response = await fetchAllCategories({ pageNumber: 0, pageSize: 100000 });
@@ -49,28 +56,21 @@ export default function Products({ products, setProducts }) {
     }, [])
 
     const handleAddToCart = async (product) => {
-        const cartItem = {
-            quantity: 1,
-            productId: product.productId,
-            cartId: userData.cartId
-        }
         try {
-            const cart = await addToCart(userData.cartId, cartItem);
-            console.log("Cart: ", cart.Cart);
-            const { Cart, message } = cart;
-            setCartItem(Cart.cartItemDTOList);
-            success(message);
+            await addItemToCart(product);
+             console.log("Cart items after add:", cartItems);
+            success("Product added to cart successfully!");
             setTimeout(() => {
                 clear();
-            }, 6000)
+            }, 6000);
         } catch (err) {
-            console.log("Error in Product: ", err.response?.data)
-            error("Failed to added to cart.Please try later.")
+            console.log("Error in Product: ", err.response?.data);
+            error("Failed to add to cart. Please try later.");
             setTimeout(() => {
                 clear();
-            }, 6000)
+            }, 6000);
         }
-    }
+    };
     return (
         <div className={style.productContainer}>
             <div className={style.productGrid}>

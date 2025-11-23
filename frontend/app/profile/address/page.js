@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 export default function AddressForm() {
     const router = useRouter();
    const { loadCurrentUser, userData, setUserData, userLoading } = useNavigation();
-    const { success } = useNotification();
+    const { success,clear } = useNotification();
     const [address, setAddress] = useState({
         district: '',
         province: '',
@@ -39,6 +39,7 @@ export default function AddressForm() {
             const response = await addAddress(addressDTO);
             console.log("Response of sendAddress", response);
             success("Address added success.")
+
             setAddress({
                 district: '',
                 province: '',
@@ -50,7 +51,7 @@ export default function AddressForm() {
 
             setTimeout(() => {
                 router.push("/profile")
-
+                clear();
             }, 2000)
         } catch (err) {
             console.log("error in handleAddAddress", err.response.data);

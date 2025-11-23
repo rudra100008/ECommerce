@@ -2,10 +2,13 @@
 "[project]/app/CSS/signup.module.css [app-client] (css module)", ((__turbopack_context__) => {
 
 __turbopack_context__.v({
-  "adminContent": "signup-module__J6uJfW__adminContent",
-  "adminLayout": "signup-module__J6uJfW__adminLayout",
-  "mainContent": "signup-module__J6uJfW__mainContent",
-  "pageContent": "signup-module__J6uJfW__pageContent",
+  "header": "signup-module__J6uJfW__header",
+  "inputGroup": "signup-module__J6uJfW__inputGroup",
+  "inputIcon": "signup-module__J6uJfW__inputIcon",
+  "inputWrapper": "signup-module__J6uJfW__inputWrapper",
+  "redirectPrompt": "signup-module__J6uJfW__redirectPrompt",
+  "signupBody": "signup-module__J6uJfW__signupBody",
+  "submitButton": "signup-module__J6uJfW__submitButton",
 });
 }),
 "[project]/app/signup/page.jsx [app-client] (ecmascript)", ((__turbopack_context__) => {

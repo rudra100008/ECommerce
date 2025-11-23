@@ -63,10 +63,10 @@
   border-radius: 50%;
   justify-content: center;
   align-items: center;
-  width: 28px;
-  height: 28px;
+  width: 18px;
+  height: 18px;
   padding: 8px;
-  font-size: 14px;
+  font-size: 12px;
   transition: all .3s;
   display: flex;
   position: absolute;
@@ -174,6 +174,48 @@
 
 .profile-module__1fuQea__editButton:hover .profile-module__1fuQea__editIcon {
   color: #374151;
+  transform: scale(1.1);
+}
+
+.profile-module__1fuQea__deleteButton {
+  color: #fff;
+  cursor: pointer;
+  background-color: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: .5rem;
+  align-items: center;
+  gap: .5rem;
+  margin-left: 10px;
+  padding: .5rem .75rem;
+  font-family: inherit;
+  font-size: .875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all .2s ease-in-out;
+  display: inline-flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-module__1fuQea__deleteButton:hover {
+  background-color: #dc2626;
+  border-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, .3);
+}
+
+.profile-module__1fuQea__deleteButton:active {
+  transition-duration: .1s;
+  transform: translateY(0);
+}
+
+.profile-module__1fuQea__deleteIcon {
+  color: #fff;
+  font-size: .75rem;
+  transition: transform .2s ease-in-out;
+}
+
+.profile-module__1fuQea__deleteButton:hover .profile-module__1fuQea__deletIcon {
   transform: scale(1.1);
 }
 
@@ -402,6 +444,158 @@
 .profile-module__1fuQea__province div span, .profile-module__1fuQea__municipality div span, .profile-module__1fuQea__wardNumber div span, .profile-module__1fuQea__landMark div span {
   color: #333;
   font-weight: 500;
+}
+
+.profile-module__1fuQea__district div span.profile-module__1fuQea__fadeOut, .profile-module__1fuQea__province div span.profile-module__1fuQea__fadeOut, .profile-module__1fuQea__municipality div span.profile-module__1fuQea__fadeOut, .profile-module__1fuQea__wardNumber div span.profile-module__1fuQea__fadeOut, .profile-module__1fuQea__landMark div span.profile-module__1fuQea__fadeOut {
+  opacity: 0;
+}
+
+.profile-module__1fuQea__addressInput {
+  opacity: 0;
+  pointer-events: none;
+  background-color: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  width: 80%;
+  padding: 10px 12px;
+  font-size: 15px;
+  transition: all .3s;
+  transform: translateY(-10px);
+}
+
+.profile-module__1fuQea__addressInput.profile-module__1fuQea__show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.profile-module__1fuQea__addressInput:focus {
+  background-color: #fff;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, .1);
+}
+
+.profile-module__1fuQea__saveAddressButton, .profile-module__1fuQea__cancelAddressButton {
+  cursor: pointer;
+  border: 1px solid;
+  border-radius: .5rem;
+  padding: .5rem .75rem;
+  font-size: .875rem;
+  font-weight: 500;
+  transition: all .2s ease-in-out;
+}
+
+.profile-module__1fuQea__saveAddressButton {
+  color: #fff;
+  background-color: #10b981;
+  border-color: #10b981;
+  margin-left: auto;
+}
+
+.profile-module__1fuQea__saveAddressButton:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, .3);
+}
+
+.profile-module__1fuQea__cancelAddressButton {
+  color: #fff;
+  background-color: #ef4444;
+  border-color: #ef4444;
+  margin-left: 10px;
+}
+
+.profile-module__1fuQea__cancelAddressButton:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, .3);
+}
+
+.profile-module__1fuQea__settingSection {
+  border: 1px solid #dad5d5;
+  border-radius: 15px;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.profile-module__1fuQea__settingSection .profile-module__1fuQea__title {
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-size: 17px;
+  font-weight: 550;
+  display: flex;
+}
+
+.profile-module__1fuQea__settingSection .profile-module__1fuQea__settingContainer {
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  display: grid;
+}
+
+.profile-module__1fuQea__revertPicButtonSection, .profile-module__1fuQea__removeImageButtonSection, .profile-module__1fuQea__logoutButtonSection {
+  display: flex;
+}
+
+.profile-module__1fuQea__revertPicButton, .profile-module__1fuQea__removeImageButton, .profile-module__1fuQea__logoutButton {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all .2s;
+}
+
+.profile-module__1fuQea__revertPicButton {
+  color: #fff;
+  background-color: #4285f4;
+}
+
+.profile-module__1fuQea__revertPicButton:hover {
+  background-color: #357ae8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(66, 133, 244, .3);
+}
+
+.profile-module__1fuQea__revertPicButton:active {
+  transform: translateY(0);
+}
+
+.profile-module__1fuQea__removeImageButton {
+  color: #dc3545;
+  background-color: #fff;
+  border: 1.5px solid #dc3545;
+}
+
+.profile-module__1fuQea__removeImageButton:hover {
+  color: #fff;
+  background-color: #dc3545;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, .3);
+}
+
+.profile-module__1fuQea__removeImageButton:active {
+  transform: translateY(0);
+}
+
+.profile-module__1fuQea__logoutButton {
+  color: #fff;
+  background-color: #333;
+}
+
+.profile-module__1fuQea__logoutButton:hover {
+  background-color: #1a1a1a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, .3);
+}
+
+.profile-module__1fuQea__logoutButton:active {
+  transform: translateY(0);
 }
 
 .profile-module__1fuQea__addressFormContainer {

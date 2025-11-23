@@ -7,8 +7,9 @@ import { ReactNode } from "react";
 import { NotificationProvider } from "./Context/NotificationContext"; 
 import AppInitializer from './Component/AppInitializer';
 import NotificationBar from './NotificationBar';
-import Navbar from "./Component/Navbar";
-import {NavigationProvider} from "./Context/NavigationContext";
+import { NavigationProvider } from "./Context/NavigationContext";
+import { CartProvider } from './Context/CartContext'
+
 interface RootLayoutProps {
   children: ReactNode;
 }
@@ -22,10 +23,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body>
         <div id="portal-root">
           <NotificationProvider>
-            <AppInitializer />
-            <NotificationBar />
-             <NavigationProvider>
-              {children}
+            <NavigationProvider> 
+              <CartProvider>     
+                <AppInitializer />
+                <NotificationBar />
+                {children}
+              </CartProvider>
             </NavigationProvider>
           </NotificationProvider>
         </div>
