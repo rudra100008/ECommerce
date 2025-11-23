@@ -1,6 +1,6 @@
 package com.E_Commerce.ServicesImpl;
 
-import com.E_Commerce.Exception.ImageValidException;
+import com.E_Commerce.Exception.ImageInvalidException;
 import com.E_Commerce.Services.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +38,7 @@ public class ImageServiceImpl implements ImageService {
             Files.copy(imageFile.getInputStream(),completePath, StandardCopyOption.REPLACE_EXISTING);
             return completePath.toString();
         }catch(IOException e){
-            throw  new ImageValidException("Image failed to upload.");
+            throw  new ImageInvalidException("Image failed to upload.");
         }
     }
 
@@ -50,7 +50,7 @@ public class ImageServiceImpl implements ImageService {
                 return Files.readAllBytes(path);
             }
         }catch (IOException e){
-            throw new ImageValidException("Image not found.");
+            throw new ImageInvalidException("Image not found.");
         }
         return new byte[0];
     }
@@ -79,15 +79,15 @@ public class ImageServiceImpl implements ImageService {
 
     private void validateImage(MultipartFile imageFile){
         if(imageFile == null || imageFile.isEmpty()){
-            throw  new ImageValidException("Image is required.");
+            throw  new ImageInvalidException("Image is required.");
         }
         if(imageFile.getSize() > MAX_SIZE){
-            throw new ImageValidException(imageFile.getOriginalFilename() + " exceeds " + MAX_SIZE + ".");
+            throw new ImageInvalidException(imageFile.getOriginalFilename() + " exceeds " + MAX_SIZE + ".");
         }
         String imageName = imageFile.getOriginalFilename();
         String extension = imageName.substring(imageName.lastIndexOf(".")+1).toLowerCase();
         if(!extensions.contains(extension)){
-            throw new ImageValidException("Only JPG, JPEG, PNG, JFIF and GIF files are allowed.");
+            throw new ImageInvalidException("Only JPG, JPEG, PNG, JFIF and GIF files are allowed.");
         }
     }
 }

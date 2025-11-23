@@ -1,7 +1,6 @@
 package com.E_Commerce.Exception;
 
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -54,6 +53,10 @@ public class GlobalException {
     public ResponseEntity<?> handleIllegalAccessException(IllegalAccessException e, WebRequest request){
         return errorResponse(HttpStatus.UNAUTHORIZED,e.getMessage(),request);
     }
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<?> handleIllegalAccessException(IllegalStateException e, WebRequest request){
+        return errorResponse(HttpStatus.UNAUTHORIZED,e.getMessage(),request);
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
@@ -83,8 +86,8 @@ public class GlobalException {
     public ResponseEntity<?> handleUserNameNotFoundException(UsernameNotFoundException e,WebRequest request){
         return errorResponse(HttpStatus.NOT_FOUND,e.getMessage(),request);
     }
-    @ExceptionHandler(ImageValidException.class)
-    public ResponseEntity<?> handleImageValidException(ImageValidException e,WebRequest request){
+    @ExceptionHandler(ImageInvalidException.class)
+    public ResponseEntity<?> handleImageValidException(ImageInvalidException e, WebRequest request){
         return  errorResponse(HttpStatus.BAD_REQUEST,e.getMessage(),request);
     }
     @ExceptionHandler(AccessDeniedException.class)

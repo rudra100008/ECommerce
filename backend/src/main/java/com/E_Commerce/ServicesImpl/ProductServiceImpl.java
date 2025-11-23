@@ -8,7 +8,7 @@ import com.E_Commerce.Entity.Product;
 import com.E_Commerce.Entity.ProductImage;
 import com.E_Commerce.Exception.AlreadyExitsException;
 import com.E_Commerce.Exception.BusinessValidationException;
-import com.E_Commerce.Exception.ImageValidException;
+import com.E_Commerce.Exception.ImageInvalidException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.ProductMapper;
 import com.E_Commerce.Repository.CategoryRepository;
@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
                }
            }
        }catch (IOException e){
-           throw new ImageValidException("Image not uploaded: "+ e.getMessage());
+           throw new ImageInvalidException("Image not uploaded: "+ e.getMessage());
        }
        Category category = this.categoryService.createCategory(categoryRequest.getName());
        String sku = generateSku(productDTO,category);

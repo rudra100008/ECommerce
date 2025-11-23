@@ -43,24 +43,38 @@ public class UserController {
         Object principal = authentication.getPrincipal();
         if(principal instanceof UserDetails ){
             UserDetails userDetails = (UserDetails) principal;
-            UserDTO user = this.userService.findByEmail(userDetails.getUsername());
+            User user = this.userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(()-> new ResourceNotFoundException("user not found"));
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("userId", user.getUserId());
             responseBody.put("email", user.getEmail());
             responseBody.put("username", user.getUsername());
-            responseBody.put("profileImageUrl",user.getProfileImageUrl());
-            responseBody.put("cartId",user.getCartId());
+            if(Boolean.TRUE .equals(user.getHasCustomImage())){
+                responseBody.put("profileImageUrl",getUserImageUrl(user.getUserId()));
+            }else {
+                responseBody.put("profileImageUrl", user.getProfileImageUrl());
+            }
+            responseBody.put("fullName",user.getFullName()); 
+            responseBody.put("cartId",user.getCart().getId());
+            responseBody.put("hasCustomImage",user.getHasCustomImage());
             responseBody.put("roles",user.getRoles());
             return  ResponseEntity.ok(responseBody);
         } else if (principal instanceof DefaultOAuth2User) {
             DefaultOAuth2User oAuth2User = (DefaultOAuth2User) principal;
-            UserDTO user = this.userService.findByEmail(oAuth2User.getAttribute("email"));
+            User user = this.userRepository.findByEmail(oAuth2User.getAttribute("email"))
+                    .orElseThrow(()-> new ResourceNotFoundException("user not found"));
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("userId", user.getUserId());
             responseBody.put("email", user.getEmail());
             responseBody.put("username", user.getUsername());
-            responseBody.put("profileImageUrl",user.getProfileImageUrl());
-            responseBody.put("cartId",user.getCartId());
+            if(Boolean.TRUE .equals(user.getHasCustomImage())){
+                responseBody.put("profileImageUrl",getUserImageUrl(user.getUserId()));
+            }else {
+                responseBody.put("profileImageUrl", user.getProfileImageUrl());
+            }
+            responseBody.put("fullName",user.getFullName());
+            responseBody.put("cartId",user.getCart().getId());
+            responseBody.put("hasCustomImage",user.getHasCustomImage());
             responseBody.put("roles",user.getRoles());
             return  ResponseEntity.ok(responseBody);
         }
@@ -77,15 +91,18 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
-    @PostMapping(path = "/{userId}/userImage",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> insertUserImage(
+    @PostMapping(path = "/{userId}/userImageAndFullName",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> insertUserImageAndFullName(
             @PathVariable("userId")Integer userId,
-            @RequestPart MultipartFile imageFile
+            @RequestPart(name = "userImage",required = false) MultipartFile imageFile,
+            @RequestParam(name = "fullName",required = false) String fullName
     ){
-        UserDTO userDTO =  this.userService.uploadUserImage(imageFile,userId);
+
+        UserDTO userDTO =  this.userService.uploadUserImageAndFullName(imageFile,userId,fullName);
         Map<String,Object> response = new HashMap<>();
-        response.put("message","Image Upload Successful");
+        response.put("message","Image uploaded and fullName is updated successful");
         response.put("userImageUrl",getUserImageUrl(userDTO.getUserId()));
+        response.put("fullName",userDTO.getFullName());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -109,6 +126,15 @@ public class UserController {
         }
     }
 
+
+    @GetMapping("/{userId}/revert_to_googleImage")
+    public ResponseEntity<?> revertToGoogleImage(
+            @PathVariable("userId") Integer userId
+    ){
+         this.userService.revertToGoogleImage(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Profile Picture reverted to google Profile Picture."));
+    }
+    //helper method
     private String getUserImageUrl(Integer userId){
         return "/api/user/" + userId + "/fetchUserImage";
     }

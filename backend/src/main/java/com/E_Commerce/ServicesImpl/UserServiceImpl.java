@@ -4,6 +4,7 @@ import com.E_Commerce.DTO.UserDTO;
 import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.AlreadyExitsException;
+import com.E_Commerce.Exception.ImageInvalidException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.UserMapper;
 import com.E_Commerce.Repository.CartRepository;
@@ -13,6 +14,7 @@ import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -74,6 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDTO saveUser(UserDTO userDTO) {
         User user = this.userMapper.toUser(userDTO);
         if(user.getAddresses() == null){
@@ -81,12 +84,14 @@ public class UserServiceImpl implements UserService {
         }else{
             user.setAddresses(user.getAddresses());
         }
+        user.setHasCustomImage(true);
         User savedUser = this.userRepository.save(user);
         createCartForUser(savedUser);
         return userMapper.toUserDTO(savedUser);
     }
 
     @Override
+    @Transactional
     public UserDTO fetchUser(Integer userId) {
         User user = this.userRepository.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found."));
@@ -110,6 +115,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDTO findByEmail(String email) {
          User user = this.userRepository.findByEmail(email).
                  orElseThrow(()-> new ResourceNotFoundException(email+" not found in server."));
@@ -117,6 +123,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional()
     public UserDTO uploadUserImage(MultipartFile imageFile, Integer userId) {
         User loggedInUser = authUtils.getLoggedInUser();
         if(!userId.equals(loggedInUser.getUserId())){
@@ -125,12 +132,87 @@ public class UserServiceImpl implements UserService {
         try{
             String imageDir = "users";
             User user =  getUser(userId);
+
+            if (Boolean.TRUE.equals(user.getHasCustomImage() && user.getProfileImageUrl() != null)){
+                if(!user.getProfileImageUrl().contains("googleusercontent.com")){
+                    imageService.deleteImage(user.getProfileImageUrl(),user.getUsername());
+                }
+            }
             String imagePath = this.imageService.uploadImage(imageDir,imageFile);
             user.setProfileImageUrl(imagePath);
-            User svedUser = userRepository.save(user);
-            return userMapper.toUserDTO(svedUser);
+            user.setHasCustomImage(true);
+            User savedUser = userRepository.save(user);
+            return userMapper.toUserDTO(savedUser);
         }catch (IOException e){
-            throw new RuntimeException("Image upload failed.");
+            throw new RuntimeException("Image upload failed: "+e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public UserDTO uploadUserImageAndFullName(MultipartFile imageFile, Integer userId, String fullName) {
+        User loggedInUser = authUtils.getLoggedInUser();
+        if (!userId.equals(loggedInUser.getUserId())) {
+            throw new SecurityException("User is not allowed to upload Image or update fullName.");
+        }
+
+        try {
+            String imageDir = "users";
+            User user = getUser(userId);
+
+            // Handle image upload
+            if (imageFile != null && !imageFile.isEmpty()) {
+                // Delete old custom image if exists
+                if (Boolean.TRUE.equals(user.getHasCustomImage()) && user.getProfileImageUrl() != null) {
+                    if (!user.getProfileImageUrl().contains("googleusercontent.com")) {
+                        imageService.deleteImage(user.getProfileImageUrl(),user.getUsername());
+                    }
+                }
+
+                String imagePath = this.imageService.uploadImage(imageDir, imageFile);
+                user.setProfileImageUrl(imagePath);
+                user.setHasCustomImage(true);
+            }
+
+            if (fullName != null && !fullName.trim().isEmpty()) {
+                user.setFullName(fullName.trim());
+            }
+
+            User savedUser = userRepository.save(user);
+            return userMapper.toUserDTO(savedUser);
+
+        } catch (IOException e) {
+            throw new ImageInvalidException("Image upload or fullName update failed: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public UserDTO revertToGoogleImage(Integer userId) {
+        User loggedInUser = authUtils.getLoggedInUser();
+        if (!userId.equals(loggedInUser.getUserId())) {
+            throw new SecurityException("User is not allowed to reset image.");
+        }
+        User user = getUser(userId);
+        if (!"GOOGLE".equals(user.getProvider())) {
+            throw new IllegalStateException("Only Google login users can reset to Google image");
+        }
+        if (user.getGoogleProfileImageUrl() == null) {
+            throw new ResourceNotFoundException("No Google profile image available");
+        }
+
+        try{
+            if(Boolean.TRUE.equals(user.getHasCustomImage() && user.getProfileImageUrl() != null)){
+                if(!user.getProfileImageUrl().contains("googleusercontent.com")){
+                    imageService.deleteImage(user.getProfileImageUrl(),user.getUsername());
+                }
+            }
+
+            user.setProfileImageUrl(user.getGoogleProfileImageUrl());
+            user.setHasCustomImage(false);
+            User savedUser = this.userRepository.save(user);
+            return this.userMapper.toUserDTO(savedUser);
+        }catch (IOException e){
+            throw new RuntimeException("Failed to delete old image: "+e.getMessage());
         }
     }
 

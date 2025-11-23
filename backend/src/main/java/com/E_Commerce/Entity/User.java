@@ -33,7 +33,15 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    private String provider;
+    private String providerId;
     private String profileImageUrl;
+    private String googleProfileImageUrl;
+
+    @Column(name = "has_custom_image")
+    private Boolean hasCustomImage = false;
+
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)

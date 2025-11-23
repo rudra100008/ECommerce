@@ -49,9 +49,11 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
 
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
-        String picture = oAuth2User.getAttribute("picture");
+        String googleImageUrl = oAuth2User.getAttribute("picture");
+        String googleId = oAuth2User.getAttribute("sub");
 
-        User user = saveUser(name,email,picture);
+
+        User user = saveUser(name,email,googleImageUrl,googleId);
         if(user.getCart() == null) {
             createCartForUser(user);
         }
@@ -66,11 +68,11 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
 //    private User saveUser(String name,String email,String picture){
 //
 //    }
-    private User saveUser(String name,String email,String picture){
+    private User saveUser(String name,String email,String picture,String googleId){
         try{
            return this.userRepository.findByEmail(email).map(
-                    existingUser-> updateExistingUser(existingUser,name,picture)
-            ).orElseGet(()->createNewUser(name,email,picture));
+                    existingUser-> updateExistingUser(existingUser,name,picture,googleId)
+            ).orElseGet(()->createNewUser(name,email,picture,googleId));
         }catch (Exception e){
             throw new RuntimeException("Failed to process OAuth2 user",e);
         }
@@ -84,28 +86,49 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
         response.addCookie(cookie);
     }
 
-    private User updateExistingUser(User user, String name, String picture){
+    private User updateExistingUser(User user, String name, String picture, String googleId) {
         boolean needsUpdate = false;
-        if(!Objects.equals(user.getUsername(),name)){
+
+        // Update username if changed
+        if (!Objects.equals(user.getUsername(), name)) {
             user.setUsername(name);
             needsUpdate = true;
         }
-        if(!Objects.equals(user.getProfileImageUrl(),picture)){
-            user.setProfileImageUrl(picture);
+
+        // Update provider ID if not set
+        if (user.getProviderId() == null && googleId != null) {
+            user.setProviderId(googleId);
             needsUpdate = true;
         }
-        return needsUpdate ? this.userRepository.save(user) : user;
 
+        // Update Google profile image URL (but keep custom image if exists)
+        if (!Objects.equals(user.getGoogleProfileImageUrl(), picture)) {
+            user.setGoogleProfileImageUrl(picture);
+            needsUpdate = true;
+
+            // Only update profileImageUrl if user hasn't uploaded a custom image
+            if (!Boolean.TRUE.equals(user.getHasCustomImage())) {
+                user.setProfileImageUrl(picture);
+            }
+        }
+
+        return needsUpdate ? this.userRepository.save(user) : user;
     }
 
-    private User createNewUser(String name,String email,String picture){
+    private User createNewUser(String name,String email,String picture,String googleId){
         Role role = roleRepository.findByRoleName(Role.RoleName.ROLE_CUSTOMER)
                 .orElseThrow(()-> new ResourceNotFoundException(Role.RoleName.ROLE_CUSTOMER +" not found."));
         User newUser = User.builder()
                 .username(name)
                 .email(email)
+                .provider("GOOGLE")
+                .providerId(googleId)
                 .profileImageUrl(picture)
+                .googleProfileImageUrl(picture)
+                .hasCustomImage(false)
                 .password(passwordEncoder.encode(generateRandomPassword()))
+                .addresses(new ArrayList<>())
+                .payments(new ArrayList<>())
                 .roles(Set.of(role))
                 .build();
         this.userRepository.save(newUser);

@@ -14,6 +14,8 @@ public interface UserService {
     UserDTO findByEmail(String email);
 
     UserDTO uploadUserImage(MultipartFile imageFile,Integer userId);
+    UserDTO uploadUserImageAndFullName(MultipartFile imageFile,Integer userId,String fullName);
+    UserDTO revertToGoogleImage(Integer userId);
     byte[] fetchUserImage(String completeImageDir,Integer userId);
 
 }
