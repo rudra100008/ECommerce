@@ -384,7 +384,7 @@ function NavigationProvider(param) {
         columnNumber: 9
     }, this);
 }
-_s(NavigationProvider, "4icKyXTwaZVRV4RUDvDkuvjRdaU=", false, function() {
+_s(NavigationProvider, "BxyGV4WY5fRjtqWYdJsMUpTd8ZA=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNotification"]
     ];

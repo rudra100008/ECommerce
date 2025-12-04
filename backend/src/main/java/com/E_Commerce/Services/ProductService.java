@@ -16,11 +16,11 @@ public interface ProductService {
     ProductDTO createProduct(ProductDTO productDTO);
     ProductDTO findByProductId(Integer productId);
     ProductDTO updateProductImages(List<String> imageUrls,Integer productId);
-    PageInfo<ProductDTO> findProducts(Integer pageNumber, Integer pageSize, Integer categoryId);
+    PageInfo<ProductDTO> findProducts(Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
+    PageInfo<ProductDTO> findProductsByCategoryId(Integer pageNumber, Integer pageSize, Integer categoryId);
     ProductDTO updateProduct(ProductDTO productDTO);
 
     PageInfo<ProductDTO> findRandomProduct(Integer pageNumber,Integer pageSize);
-
     PageInfo<ProductDTO> findRandomProductByCategoryId(Integer pageNumber,Integer pageSize,Integer categoryId);
     void deleteProductsWithoutImages(List<ProductDTO> productDTOS);
 }

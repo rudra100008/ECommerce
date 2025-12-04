@@ -31,4 +31,8 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     // Get limited random products
     @Query(value = "SELECT * FROM products ORDER BY RAND() LIMIT :limit", nativeQuery = true)
     List<Product> findRandomProducts(@Param("limit") int limit);
+
+    @Query("SELECT p FROM Product p WHERE p.createdAt IS NULL")
+    List<Product> findByCreatedAtIsNull();
+
 }

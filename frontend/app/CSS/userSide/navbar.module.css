@@ -137,46 +137,116 @@
 .userImage {
     border-radius: 50%;
 }
-.userBox{
+.noImage{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.noImage:hover{
+     border-color: #4a6cf7;
+    box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
+    transform: scale(1.05);
+}
+
+.noImage p{
+     margin: 0;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.profileMenu{
     position: absolute;
-    right: 20px;
-    top: 50px;
-    background-color: white;
-    width: 120px;
-    padding: 8px;
-    border-radius: 10px;
-    color: rgb(107, 107, 107);
-}
-.userBox p{
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 10px;
-    font-weight: 500;
-    transition: 0.3s ease-in-out;
-}
-.userBox p:hover{
-    background-color: #e4e3e3;
-}
-
-.logoutButton {
-    background-color: rgb(248, 96, 96);
-    padding: 5px 10px;
+    top: calc(100% + 20px);
+    right:0;
+    background-color: #ffffff;
+    min-width: 200px;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
-    color: aliceblue;
-    font-weight: 450;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+    color: rgb(107, 107, 107);
+    z-index: 1000;
+    animation: slideDown 0.3s ease;
+}
+
+.profileMenu::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #ffffff;
+    filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.05));
+}
+
+@keyframes slideDown {
+    from{
+        opacity: 0;
+        transform:translateY(-10px);
+    }
+    to {
+        opacity:1;
+        transform: translateY(0px);
+    }
+}
+.menuItem {
+    padding: 0;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.menuItem:last-child {
+    border-bottom: none;
+}
+
+.menuItem:hover {
+    background-color: #f8fafc;
+}
+
+.menuItem a,
+.menuItem p {
+    display: block;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: #334155;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease;
 }
 
-.logoutButton:active {
-    transform: translateY(-1px);
+.menuItem a:hover,
+.menuItem p:hover {
+    color: #4a6cf7;
+    padding-left: 24px;
 }
 
-.logoutButton:hover {
-    background: red;
-    transform: translateY(-3px);
+.menuItem:last-child p {
+    color: #dc2626;
 }
+
+.menuItem:last-child:hover {
+    background-color: #fef2f2;
+}
+
+.menuItem:last-child p:hover {
+    color: #b91c1c;
+}
+
 
 
 

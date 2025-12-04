@@ -3,11 +3,16 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { fetchCurrentUser } from "../services/UserServices";
 import Error from "next/error";
 import { useNotification } from "./NotificationContext";
+import { fetchCurrentAdmin } from './../services/adminServices/AdminServices';
+import { useRouter } from "next/navigation";
+
 const NavigationContext = createContext();
 
 export function NavigationProvider({ children }) {
+    const router = useRouter();
     const [userLoading,setUserLoading] = useState(false);
     const {success,error} = useNotification();
+    const [adminData,setAdminData] = useState({});
     const [userData, setUserData] = useState({
         username: '',
         email: '',
@@ -17,7 +22,7 @@ export function NavigationProvider({ children }) {
     const loadCurrentUser = async () => {
         setUserLoading(true);
         try {
-            const data = await fetchCurrentUser(success,error);
+            const data = await fetchCurrentUser(success,error,router);
            setUserData(data);
         } catch (error) {
             console.error('Error loading user:', error);
@@ -26,12 +31,24 @@ export function NavigationProvider({ children }) {
         };
 
     }
+    const loadCurrentAdmin = async () =>{
+        try{
+            const data = await fetchCurrentAdmin(error);
+            setAdminData(data);
+
+        }catch(err){
+            console.log("Error: ",err.response.data);
+        }
+    }
     const value = {
         userData,
         setUserData,
         loadCurrentUser,
         userLoading,
-        setUserLoading
+        setUserLoading,
+        adminData,
+        setAdminData,
+        loadCurrentAdmin
     }
     return (
         <NavigationContext.Provider value={value}>

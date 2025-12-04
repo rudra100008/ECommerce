@@ -1,17 +1,20 @@
 package com.E_Commerce.Controller;
 
-import com.E_Commerce.Config.PageConfig;
+import com.E_Commerce.Config.PageConstant;
 import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.DTO.ProductDTO;
 import com.E_Commerce.Entity.ProductImage;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.ProductImageService;
 import com.E_Commerce.Services.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -88,8 +91,8 @@ public class ProductController {
 
     @GetMapping("/fetchProducts")
     public ResponseEntity<?> fetchRandomProducts(
-            @RequestParam(required = false,defaultValue = PageConfig.PAGE_NUMBER,name = "pageNumber")Integer pageNumber,
-            @RequestParam(required = false,defaultValue = PageConfig.PAGE_SIZE,name = "pageSize")Integer pageSize
+            @RequestParam(required = false,defaultValue = PageConstant.PAGE_NUMBER,name = "pageNumber")Integer pageNumber,
+            @RequestParam(required = false,defaultValue = PageConstant.PAGE_SIZE,name = "pageSize")Integer pageSize
     ){
         PageInfo<ProductDTO> productDTOPageInfo = this.productService.findRandomProduct(pageNumber,pageSize);
         this.productService.deleteProductsWithoutImages(productDTOPageInfo.getData());
@@ -107,8 +110,45 @@ public class ProductController {
         productDTO.setImageUrls(getImageUrls(productDTO));
         return  ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
+    @GetMapping("/fetchAllProducts")
+    public ResponseEntity<PageInfo<ProductDTO>> fetchAllProducts(
+            @RequestParam(name = "pageNumber",defaultValue = PageConstant.PAGE_NUMBER,required = false)Integer pageNumber,
+            @RequestParam(name = "pageSize",defaultValue = PageConstant.PAGE_SIZE,required = false)Integer pageSize,
+            @RequestParam(name = "sortBy",defaultValue = PageConstant.SORT_BY,required = false)String sortBy,
+            @RequestParam(name = "sortDir",defaultValue = PageConstant.SORT_DIR,required = false)String sortDir
+    ){
+        PageInfo<ProductDTO> productDTOPageInfo = this.productService.findProducts(
+                pageNumber,
+                pageSize,
+                sortBy,
+                sortDir
+        );
+        productDTOPageInfo.getData()
+                .forEach(productDTO -> productDTO.setImageUrls(getImageUrls(productDTO)));
+        return ResponseEntity.status(HttpStatus.OK).body(productDTOPageInfo);
+    }
+    @PostMapping("/validate-product")
+    public ResponseEntity<?> validateProduct(
+            @Valid @RequestBody ProductDTO productDTO,
+            BindingResult result
+    ){
+        System.out.println("ProductDTO: "+productDTO.toString());
+        if(result.hasErrors()){
+            Map<String,Object> errorResponse = new HashMap<>();
+            for (FieldError fieldError : result.getFieldErrors()) {
+                errorResponse.put(
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()
+                );
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
 
-
+        return ResponseEntity.ok(Map.of(
+                "valid", true,
+                "message", "Product is valid"
+        ));
+    }
 
     // createImageUrl for first product imageUrl
     private ProductDTO setFirstImageUrl(ProductDTO productDTO){

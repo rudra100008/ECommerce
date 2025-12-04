@@ -78,6 +78,10 @@ public class ImageServiceImpl implements ImageService {
     }
 
     private void validateImage(MultipartFile imageFile){
+        String contentType = imageFile.getContentType();
+        if(contentType == null || contentType.startsWith("/image")){
+            throw new ImageInvalidException("Invalid file type: "+imageFile.getOriginalFilename());
+        }
         if(imageFile == null || imageFile.isEmpty()){
             throw  new ImageInvalidException("Image is required.");
         }

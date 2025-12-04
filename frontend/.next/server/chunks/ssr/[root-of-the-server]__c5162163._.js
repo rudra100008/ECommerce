@@ -52,7 +52,11 @@ __turbopack_context__.s([
     "addProductImage",
     ()=>addProductImage,
     "createProduct",
-    ()=>createProduct
+    ()=>createProduct,
+    "validateCategory",
+    ()=>validateCategory,
+    "validateProduct",
+    ()=>validateProduct
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-ssr] (ecmascript)");
 ;
@@ -97,7 +101,7 @@ const addProductImage = async ({ product, images })=>{
         console.log("Sending FormData with productId:", product.productId);
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/api/admin/addProductImage/${product.productId}`, images, {
             headers: {
-                'Content-Type': 'multipart/form-data' // Explicitly set content type
+                'Content-Type': 'multipart/form-data'
             }
         });
         console.log("Res of addProductImage(): ", res);
@@ -107,13 +111,42 @@ const addProductImage = async ({ product, images })=>{
         throw error;
     }
 };
+const validateCategory = async (categoryRequest)=>{
+    try {
+        console.log("CategoryRequest: ", categoryRequest);
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post('/api/category/validate-category', categoryRequest, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log("Reponse of validateCategory: ", response.data);
+    } catch (err) {
+        console.log("Error in validateCategory(): ", err.response.data);
+        throw err;
+    }
+};
+const validateProduct = async (productDTO)=>{
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post('/api/product/validate-product', productDTO, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log("Reponse of validateProduct: ", response.data);
+    } catch (err) {
+        console.log("Error in validateProduct: ", err.response.data);
+        throw err;
+    }
+};
 }),
 "[project]/app/services/CategoryService.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s([
     "fetchAllCategories",
-    ()=>fetchAllCategories
+    ()=>fetchAllCategories,
+    "fetchCategoryById",
+    ()=>fetchCategoryById
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-ssr] (ecmascript)");
 ;
@@ -129,6 +162,15 @@ const fetchAllCategories = async (pageNumber = 0, pageSize = 5)=>{
         return res;
     } catch (error) {
         console.log("fetchAllCategories() in CategoryServices: ", error.response?.data);
+        throw error;
+    }
+};
+const fetchCategoryById = async (categoryId)=>{
+    try {
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/api/category/${categoryId}`);
+        return res.data;
+    } catch (error) {
+        console.log("Error in CategoryServices: ", error.response?.data);
     }
 };
 }),
@@ -138,6 +180,8 @@ const fetchAllCategories = async (pageNumber = 0, pageSize = 5)=>{
 __turbopack_context__.s([
     "addProduct",
     ()=>addProduct,
+    "fetchAllProducts",
+    ()=>fetchAllProducts,
     "fetchProductImageUrls",
     ()=>fetchProductImageUrls,
     "fetchProductsWithCategoryId",
@@ -157,9 +201,9 @@ const fetchProductsWithCategoryId = async (pageNumber = 0, pageSize = 10, catego
         });
         console.log("fetchProductsWithCategoryId() in productServices: ", response);
         return response;
-    } catch (error) {
-        console.log("Error in fetchProductsWithCategoryId(): ", error.response?.data);
-        throw error;
+    } catch (error1) {
+        console.log("Error in fetchProductsWithCategoryId(): ", error1.response?.data);
+        throw error1;
     }
 };
 const fetchProductImageUrls = async (productId)=>{
@@ -167,9 +211,9 @@ const fetchProductImageUrls = async (productId)=>{
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/api/product/imageUrl/${productId}`);
         console.log("Response of fetchProductImageUrls():", response);
         return response;
-    } catch (error) {
-        console.log("Error in fetchProductImageUrls():", error.response?.data);
-        throw error;
+    } catch (error1) {
+        console.log("Error in fetchProductImageUrls():", error1.response?.data);
+        throw error1;
     }
 };
 const updateProduct = async (product = {})=>{
@@ -177,13 +221,14 @@ const updateProduct = async (product = {})=>{
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].put("/api/product/updateProduct", product);
         console.log("Response in updateProduct in productService: ", response);
         return response;
-    } catch (error) {
-        console.log("Error in updateProduct() in productService", error.response?.data);
-        throw error;
+    } catch (error1) {
+        console.log("Error in updateProduct() in productService", error1.response?.data);
+        throw error1;
     }
 };
 const addProduct = async (formData)=>{
     try {
+        console.log("FormData: ", formData);
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post("/api/admin/addProduct", formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -191,9 +236,19 @@ const addProduct = async (formData)=>{
         });
         console.log("Response in addProduct() from ProductService:", response);
         return response;
-    } catch (error) {
-        console.log("Error in addProduct() from ProductService: ", error.response?.data);
-        throw error;
+    } catch (error1) {
+        console.log("Error in addProduct() from ProductService: ", error1.response?.data);
+        throw error1;
+    }
+};
+const fetchAllProducts = async (pageNumber = 0, pageSize = 5, sortBy = "createdAt", sortDir = "asce")=>{
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/api/product/fetchAllProducts?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`);
+        console.log("Response in fetchAllProducts() from ProductService:", response.data);
+        return response.data;
+    } catch (err) {
+        console.log("Error in ProductService: ", error.response?.data);
+        throw err;
     }
 };
 }),
@@ -213,7 +268,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$adminServ
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$CategoryService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/CategoryService.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$adminServices$2f$ProductServices$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/adminServices/ProductServices.js [app-ssr] (ecmascript)");
-'use client';
+"use client";
 ;
 ;
 ;
@@ -225,7 +280,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$adminServ
 ;
 function CategoryForm({ setState, formData, updateFormData }) {
     const [validationError, setValidationError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
-        name: ''
+        name: ""
     });
     const [pageNumbers, setPageNumbers] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [currentPage, setCurrentPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
@@ -241,32 +296,32 @@ function CategoryForm({ setState, formData, updateFormData }) {
     const handleNext = async (e)=>{
         e.preventDefault();
         try {
-            const cleanCategoryData = {
-                name: formData.category.name
-            };
-            console.log("FormData", formData);
-            setState('product');
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$adminServices$2f$ProductCategoryServices$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["validateCategory"])(formData.category);
+            setState("product");
         } catch (error) {
-            console.error("Failed to create category:", error);
+            console.log("Failed to create category:", error.response);
+            setValidationError({
+                name: error.response.data.name
+            });
         }
     };
     const handleCancel = ()=>{
-        router.push("/admin");
         updateFormData({
             category: {
-                categoryId: '',
-                name: ''
+                categoryId: "",
+                name: ""
             },
             product: {
-                productName: '',
-                description: '',
-                price: '',
-                discount: '',
-                sku: '',
-                stockQuantity: ''
+                productName: "",
+                description: "",
+                price: "",
+                discount: "",
+                sku: "",
+                stockQuantity: ""
             },
             images: []
         });
+        router.push("/admin");
     };
     const fetchCategories = async (pageNumber, pageSize)=>{
         console.log("PagNumber: ", pageNumber);
@@ -293,7 +348,7 @@ function CategoryForm({ setState, formData, updateFormData }) {
     };
     const handleCategoryItemClick = (category)=>{
         console.log("Selected category:", category);
-        const currentCategoryName = typeof formData.category === 'string' ? '' : formData.category.name || '';
+        const currentCategoryName = typeof formData.category === "string" ? "" : formData.category.name || "";
         if (currentCategoryName !== category?.name) {
             updateFormData({
                 category: {
@@ -304,8 +359,8 @@ function CategoryForm({ setState, formData, updateFormData }) {
         } else {
             updateFormData({
                 category: {
-                    categoryId: '',
-                    name: ''
+                    categoryId: "",
+                    name: ""
                 }
             });
         }
@@ -332,11 +387,6 @@ function CategoryForm({ setState, formData, updateFormData }) {
             fetchCategories(serverPageNumber, pageInfo.pageSize);
         }
     };
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        console.log("Updated formData.category:", formData.category);
-    }, [
-        formData.category
-    ]);
     const displayCurrentPage = currentPage + 1;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].categoryForm,
@@ -347,13 +397,13 @@ function CategoryForm({ setState, formData, updateFormData }) {
                     children: "Category"
                 }, void 0, false, {
                     fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                    lineNumber: 142,
-                    columnNumber: 17
+                    lineNumber: 147,
+                    columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                lineNumber: 141,
-                columnNumber: 13
+                lineNumber: 146,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputGroup,
@@ -364,8 +414,8 @@ function CategoryForm({ setState, formData, updateFormData }) {
                         children: "Category"
                     }, void 0, false, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                        lineNumber: 145,
-                        columnNumber: 17
+                        lineNumber: 150,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputWrapper,
@@ -375,8 +425,8 @@ function CategoryForm({ setState, formData, updateFormData }) {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].tagIcon
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                lineNumber: 147,
-                                columnNumber: 21
+                                lineNumber: 154,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].textInput,
@@ -393,28 +443,28 @@ function CategoryForm({ setState, formData, updateFormData }) {
                                 placeholder: "Enter category of product"
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                lineNumber: 148,
-                                columnNumber: 21
+                                lineNumber: 155,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                        lineNumber: 146,
-                        columnNumber: 17
+                        lineNumber: 153,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationError,
                         children: validationError.name
                     }, void 0, false, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                        lineNumber: 160,
-                        columnNumber: 17
+                        lineNumber: 169,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                lineNumber: 144,
-                columnNumber: 13
+                lineNumber: 149,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].ButtonGroup,
@@ -428,15 +478,15 @@ function CategoryForm({ setState, formData, updateFormData }) {
                                 icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faArrowLeft"]
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                lineNumber: 168,
-                                columnNumber: 21
+                                lineNumber: 178,
+                                columnNumber: 11
                             }, this),
                             "Cancel"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                        lineNumber: 164,
-                        columnNumber: 17
+                        lineNumber: 173,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         type: "button",
@@ -448,20 +498,20 @@ function CategoryForm({ setState, formData, updateFormData }) {
                                 icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faArrowRight"]
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                lineNumber: 177,
-                                columnNumber: 21
+                                lineNumber: 183,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                        lineNumber: 171,
-                        columnNumber: 17
+                        lineNumber: 181,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                lineNumber: 163,
-                columnNumber: 13
+                lineNumber: 172,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].category,
@@ -470,24 +520,24 @@ function CategoryForm({ setState, formData, updateFormData }) {
                         children: " You can choose category from here"
                     }, void 0, false, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                        lineNumber: 182,
-                        columnNumber: 17
+                        lineNumber: 188,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].categoryList,
                         children: categories.map((category, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: `${__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].categoryItem} ${formData.category.name === category.name ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].selected : ''}`,
+                                className: `${__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].categoryItem} ${formData.category.name === category.name ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].selected : ""}`,
                                 onClick: ()=>handleCategoryItemClick(category),
                                 children: category.name
                             }, index, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                lineNumber: 185,
-                                columnNumber: 25
+                                lineNumber: 191,
+                                columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                        lineNumber: 183,
-                        columnNumber: 17
+                        lineNumber: 189,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].page,
@@ -501,22 +551,22 @@ function CategoryForm({ setState, formData, updateFormData }) {
                                         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faArrowLeft"]
                                     }, void 0, false, {
                                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                        lineNumber: 199,
-                                        columnNumber: 29
+                                        lineNumber: 208,
+                                        columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                    lineNumber: 195,
-                                    columnNumber: 25
+                                    lineNumber: 204,
+                                    columnNumber: 13
                                 }, this),
                                 pageNumbers && pageNumbers.map((pageNumber, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: `${__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].pageNumberItem} ${pageNumber === displayCurrentPage ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].active : ''}`,
+                                        className: `${__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].pageNumberItem} ${pageNumber === displayCurrentPage ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].active : ""}`,
                                         onClick: ()=>handlePageChange(pageNumber),
                                         children: pageNumber
                                     }, index, false, {
                                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                        lineNumber: 202,
-                                        columnNumber: 29
+                                        lineNumber: 212,
+                                        columnNumber: 17
                                     }, this)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: `${__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].pageNumberItem} ${__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$categoryForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].nav}`,
@@ -525,36 +575,36 @@ function CategoryForm({ setState, formData, updateFormData }) {
                                         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faArrowRight"]
                                     }, void 0, false, {
                                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                        lineNumber: 214,
-                                        columnNumber: 29
+                                        lineNumber: 226,
+                                        columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                                    lineNumber: 210,
-                                    columnNumber: 25
+                                    lineNumber: 222,
+                                    columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                            lineNumber: 194,
-                            columnNumber: 21
+                            lineNumber: 203,
+                            columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                        lineNumber: 193,
-                        columnNumber: 17
+                        lineNumber: 202,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-                lineNumber: 181,
-                columnNumber: 13
+                lineNumber: 187,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/AdminComponent/AddProductForm/CategoryForm.js",
-        lineNumber: 140,
-        columnNumber: 9
+        lineNumber: 145,
+        columnNumber: 5
     }, this);
 }
 }),
@@ -564,19 +614,41 @@ __turbopack_context__.v({
   "ButtonGroup": "productForm-module__Lz_Pra__ButtonGroup",
   "InputGroup": "productForm-module__Lz_Pra__InputGroup",
   "active": "productForm-module__Lz_Pra__active",
+  "activeLeftButton": "productForm-module__Lz_Pra__activeLeftButton",
+  "activeRightButton": "productForm-module__Lz_Pra__activeRightButton",
   "backButton": "productForm-module__Lz_Pra__backButton",
   "categoryFilter": "productForm-module__Lz_Pra__categoryFilter",
   "categorySelect": "productForm-module__Lz_Pra__categorySelect",
+  "closeButton": "productForm-module__Lz_Pra__closeButton",
   "disabled": "productForm-module__Lz_Pra__disabled",
+  "fadeIn": "productForm-module__Lz_Pra__fadeIn",
+  "fadeInError": "productForm-module__Lz_Pra__fadeInError",
+  "filterGroup": "productForm-module__Lz_Pra__filterGroup",
+  "filterLabel": "productForm-module__Lz_Pra__filterLabel",
   "header": "productForm-module__Lz_Pra__header",
+  "imageButton": "productForm-module__Lz_Pra__imageButton",
+  "imageModel": "productForm-module__Lz_Pra__imageModel",
+  "inputError": "productForm-module__Lz_Pra__inputError",
   "inputWrapper": "productForm-module__Lz_Pra__inputWrapper",
+  "leftButton": "productForm-module__Lz_Pra__leftButton",
+  "modelImageContainer": "productForm-module__Lz_Pra__modelImageContainer",
+  "modelImages": "productForm-module__Lz_Pra__modelImages",
   "nav": "productForm-module__Lz_Pra__nav",
   "nextButton": "productForm-module__Lz_Pra__nextButton",
   "page": "productForm-module__Lz_Pra__page",
   "pageNumberItem": "productForm-module__Lz_Pra__pageNumberItem",
   "pageNumberList": "productForm-module__Lz_Pra__pageNumberList",
   "productForm": "productForm-module__Lz_Pra__productForm",
+  "productImage": "productForm-module__Lz_Pra__productImage",
   "productTable": "productForm-module__Lz_Pra__productTable",
+  "rightButton": "productForm-module__Lz_Pra__rightButton",
+  "selectIcon": "productForm-module__Lz_Pra__selectIcon",
+  "selectWrapper": "productForm-module__Lz_Pra__selectWrapper",
+  "shakeError": "productForm-module__Lz_Pra__shakeError",
+  "slideDown": "productForm-module__Lz_Pra__slideDown",
+  "slideUp": "productForm-module__Lz_Pra__slideUp",
+  "validationError": "productForm-module__Lz_Pra__validationError",
+  "validationErrorIcon": "productForm-module__Lz_Pra__validationErrorIcon",
 });
 }),
 "[project]/app/AdminComponent/AddProductForm/ProductForm.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
@@ -591,6 +663,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesom
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__ = __turbopack_context__.i("[project]/app/CSS/adminNavbar/AddProductForm/productForm.module.css [app-ssr] (css module)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@fortawesome/free-solid-svg-icons/index.mjs [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$adminServices$2f$ProductCategoryServices$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/adminServices/ProductCategoryServices.js [app-ssr] (ecmascript)");
+;
 ;
 ;
 ;
@@ -598,25 +672,49 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 function ProductForm({ setState, formData, updateFormData }) {
     const [validationError, setValidationError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
-        productName: '',
-        description: '',
-        price: '',
-        discount: '',
-        sku: '',
-        stockQuantity: ''
+        productName: "",
+        description: "",
+        price: "",
+        discount: "",
+        sku: "",
+        stockQuantity: ""
     });
     const handleBack = ()=>{
-        setState('category');
+        setState("category");
     };
     const handleNext = async (e)=>{
         e.preventDefault();
         try {
             formData.product.categoryId = formData.category.categoryId;
             console.log("formData", formData);
-            setState('productImage');
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$adminServices$2f$ProductCategoryServices$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["validateProduct"])(formData.product);
+            setState("productImage");
         } catch (error) {
             console.log("Product creation  failed: ", error.response?.data);
+            const { productName, description, price, discount, stockQuantity } = error.response?.data;
+            setValidationError({
+                productName: productName,
+                description: description,
+                price: price,
+                discount: discount,
+                sku: "",
+                stockQuantity: stockQuantity
+            });
         }
+    };
+    const handleInputChange = (fielName, value)=>{
+        if (validationError[fielName]) {
+            setValidationError((prev)=>({
+                    ...prev,
+                    [fielName]: ''
+                }));
+        }
+        updateFormData({
+            product: {
+                ...formData.product,
+                [fielName]: value
+            }
+        });
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         console.log("ProductForm received formData:", formData);
@@ -634,13 +732,13 @@ function ProductForm({ setState, formData, updateFormData }) {
                     children: "Add a Product"
                 }, void 0, false, {
                     fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                    lineNumber: 38,
-                    columnNumber: 17
+                    lineNumber: 64,
+                    columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                lineNumber: 37,
-                columnNumber: 13
+                lineNumber: 63,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                 children: [
@@ -652,46 +750,58 @@ function ProductForm({ setState, formData, updateFormData }) {
                                 children: "Product Name"
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 42,
-                                columnNumber: 21
+                                lineNumber: 68,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputWrapper,
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                    type: "text",
-                                    name: "productName",
-                                    id: "productName",
-                                    value: formData.product.productName,
-                                    onChange: (e)=>updateFormData({
-                                            product: {
-                                                ...formData.product,
-                                                productName: e.target.value
-                                            }
-                                        }),
-                                    placeholder: "Enter product Name"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                    lineNumber: 44,
-                                    columnNumber: 25
-                                }, this)
-                            }, void 0, false, {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        type: "text",
+                                        name: "productName",
+                                        id: "productName",
+                                        value: formData.product.productName,
+                                        onChange: (e)=>handleInputChange("productName", e.target.value),
+                                        placeholder: "Enter product Name",
+                                        className: `${validationError.productName ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputError : ""}`
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 70,
+                                        columnNumber: 13
+                                    }, this),
+                                    validationError.productName && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationErrorIcon,
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$react$2d$fontawesome$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FontAwesomeIcon"], {
+                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faTriangleExclamation"]
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                            lineNumber: 83,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 82,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 43,
-                                columnNumber: 21
+                                lineNumber: 69,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            validationError.productName && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationError,
                                 children: validationError.productName
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 53,
-                                columnNumber: 21
+                                lineNumber: 88,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                        lineNumber: 41,
-                        columnNumber: 17
+                        lineNumber: 67,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].InputGroup,
@@ -701,46 +811,58 @@ function ProductForm({ setState, formData, updateFormData }) {
                                 children: "Description"
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 56,
-                                columnNumber: 21
+                                lineNumber: 94,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputWrapper,
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                    type: "text",
-                                    name: "description",
-                                    id: "description",
-                                    value: formData.product.description,
-                                    onChange: (e)=>updateFormData({
-                                            product: {
-                                                ...formData.product,
-                                                description: e.target.value
-                                            }
-                                        }),
-                                    placeholder: "Enter description"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                    lineNumber: 58,
-                                    columnNumber: 25
-                                }, this)
-                            }, void 0, false, {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        type: "text",
+                                        name: "description",
+                                        id: "description",
+                                        value: formData.product.description,
+                                        onChange: (e)=>handleInputChange("description", e.target.value),
+                                        placeholder: "Enter description",
+                                        className: `${validationError.description ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputError : ""}`
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 96,
+                                        columnNumber: 13
+                                    }, this),
+                                    validationError.description && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationErrorIcon,
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$react$2d$fontawesome$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FontAwesomeIcon"], {
+                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faTriangleExclamation"]
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                            lineNumber: 109,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 108,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 57,
-                                columnNumber: 21
+                                lineNumber: 95,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            validationError.description && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationError,
                                 children: validationError.description
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 67,
-                                columnNumber: 21
+                                lineNumber: 114,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                        lineNumber: 55,
-                        columnNumber: 17
+                        lineNumber: 93,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].InputGroup,
@@ -750,46 +872,58 @@ function ProductForm({ setState, formData, updateFormData }) {
                                 children: "Price"
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 70,
-                                columnNumber: 21
+                                lineNumber: 120,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputWrapper,
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                    type: "number",
-                                    name: "price",
-                                    id: "price",
-                                    value: formData.product.price,
-                                    onChange: (e)=>updateFormData({
-                                            product: {
-                                                ...formData.product,
-                                                price: e.target.value
-                                            }
-                                        }),
-                                    placeholder: "Enter a price"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                    lineNumber: 72,
-                                    columnNumber: 25
-                                }, this)
-                            }, void 0, false, {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        type: "number",
+                                        name: "price",
+                                        id: "price",
+                                        value: formData.product.price,
+                                        onChange: (e)=>handleInputChange("price", e.target.value),
+                                        placeholder: "Enter a price",
+                                        className: `${validationError.price ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputError : ""}`
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 122,
+                                        columnNumber: 13
+                                    }, this),
+                                    validationError.price && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationErrorIcon,
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$react$2d$fontawesome$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FontAwesomeIcon"], {
+                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faTriangleExclamation"]
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                            lineNumber: 133,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 132,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 71,
-                                columnNumber: 21
+                                lineNumber: 121,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            validationError.price && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationError,
                                 children: validationError.price
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 81,
-                                columnNumber: 21
+                                lineNumber: 138,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                        lineNumber: 69,
-                        columnNumber: 17
+                        lineNumber: 119,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].InputGroup,
@@ -799,46 +933,58 @@ function ProductForm({ setState, formData, updateFormData }) {
                                 children: "Discount"
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 84,
-                                columnNumber: 21
+                                lineNumber: 144,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputWrapper,
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                    type: "number",
-                                    name: "discount",
-                                    id: "discount",
-                                    value: formData.product.discount,
-                                    onChange: (e)=>updateFormData({
-                                            product: {
-                                                ...formData.product,
-                                                discount: e.target.value
-                                            }
-                                        }),
-                                    placeholder: "Enter discount"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                    lineNumber: 86,
-                                    columnNumber: 25
-                                }, this)
-                            }, void 0, false, {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        type: "number",
+                                        name: "discount",
+                                        id: "discount",
+                                        value: formData.product.discount,
+                                        onChange: (e)=>handleInputChange("discount", e.target.value),
+                                        placeholder: "Enter discount",
+                                        className: `${validationError.discount ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputError : ""}`
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 146,
+                                        columnNumber: 13
+                                    }, this),
+                                    validationError.discount && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationErrorIcon,
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$react$2d$fontawesome$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FontAwesomeIcon"], {
+                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faTriangleExclamation"]
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                            lineNumber: 157,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 156,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 85,
-                                columnNumber: 21
+                                lineNumber: 145,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            validationError.discount && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationError,
                                 children: validationError.discount
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 95,
-                                columnNumber: 21
+                                lineNumber: 162,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                        lineNumber: 83,
-                        columnNumber: 17
+                        lineNumber: 143,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].InputGroup,
@@ -848,46 +994,58 @@ function ProductForm({ setState, formData, updateFormData }) {
                                 children: "SKU"
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 98,
-                                columnNumber: 21
+                                lineNumber: 168,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputWrapper,
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                    type: "text",
-                                    name: "sku",
-                                    id: "sku",
-                                    value: formData.product.sku,
-                                    onChange: (e)=>updateFormData({
-                                            product: {
-                                                ...formData.product,
-                                                sku: e.target.value
-                                            }
-                                        }),
-                                    placeholder: "Enter sku"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                    lineNumber: 100,
-                                    columnNumber: 25
-                                }, this)
-                            }, void 0, false, {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        type: "text",
+                                        name: "sku",
+                                        id: "sku",
+                                        value: formData.product.sku,
+                                        onChange: (e)=>handleInputChange("sku", e.target.value),
+                                        placeholder: "Enter sku",
+                                        className: `${validationError.sku ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputError : ""}`
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 170,
+                                        columnNumber: 13
+                                    }, this),
+                                    validationError.sku && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationErrorIcon,
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$react$2d$fontawesome$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FontAwesomeIcon"], {
+                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faTriangleExclamation"]
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                            lineNumber: 181,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 180,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 99,
-                                columnNumber: 21
+                                lineNumber: 169,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            validationError.sku && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationError,
                                 children: validationError.sku
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 109,
-                                columnNumber: 21
+                                lineNumber: 186,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                        lineNumber: 97,
-                        columnNumber: 17
+                        lineNumber: 167,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].InputGroup,
@@ -897,52 +1055,64 @@ function ProductForm({ setState, formData, updateFormData }) {
                                 children: "Stock Quantity"
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 112,
-                                columnNumber: 21
+                                lineNumber: 190,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputWrapper,
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                    type: "number",
-                                    name: "stockQuantity",
-                                    id: "stockQuantity",
-                                    value: formData.product.stockQuantity,
-                                    onChange: (e)=>updateFormData({
-                                            product: {
-                                                ...formData.product,
-                                                stockQuantity: e.target.value
-                                            }
-                                        }),
-                                    placeholder: "Enter stock quantity"
-                                }, void 0, false, {
-                                    fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                    lineNumber: 114,
-                                    columnNumber: 25
-                                }, this)
-                            }, void 0, false, {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                        type: "number",
+                                        name: "stockQuantity",
+                                        id: "stockQuantity",
+                                        value: formData.product.stockQuantity,
+                                        onChange: (e)=>handleInputChange("stockQuantity", e.target.value),
+                                        placeholder: "Enter stock quantity",
+                                        className: `${validationError.stockQuantity ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].inputError : ""}`
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 192,
+                                        columnNumber: 13
+                                    }, this),
+                                    validationError.stockQuantity && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationErrorIcon,
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$react$2d$fontawesome$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FontAwesomeIcon"], {
+                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faTriangleExclamation"]
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                            lineNumber: 205,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
+                                        lineNumber: 204,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 113,
-                                columnNumber: 21
+                                lineNumber: 191,
+                                columnNumber: 11
                             }, this),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                            validationError.stockQuantity && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].validationError,
                                 children: validationError.stockQuantity
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 123,
-                                columnNumber: 21
+                                lineNumber: 210,
+                                columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                        lineNumber: 111,
-                        columnNumber: 17
+                        lineNumber: 189,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                lineNumber: 40,
-                columnNumber: 13
+                lineNumber: 66,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$AddProductForm$2f$productForm$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].ButtonGroup,
@@ -956,15 +1126,15 @@ function ProductForm({ setState, formData, updateFormData }) {
                                 icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faArrowLeft"]
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 133,
-                                columnNumber: 21
+                                lineNumber: 218,
+                                columnNumber: 11
                             }, this),
                             "Back"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                        lineNumber: 128,
-                        columnNumber: 17
+                        lineNumber: 217,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         type: "button",
@@ -976,26 +1146,26 @@ function ProductForm({ setState, formData, updateFormData }) {
                                 icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faArrowRight"]
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                                lineNumber: 142,
-                                columnNumber: 21
+                                lineNumber: 223,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                        lineNumber: 136,
-                        columnNumber: 17
+                        lineNumber: 221,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-                lineNumber: 127,
-                columnNumber: 13
+                lineNumber: 216,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/AdminComponent/AddProductForm/ProductForm.js",
-        lineNumber: 36,
-        columnNumber: 9
+        lineNumber: 62,
+        columnNumber: 5
     }, this);
 }
 }),

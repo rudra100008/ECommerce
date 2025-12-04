@@ -2,17 +2,18 @@ module.exports = [
 "[project]/app/CSS/adminNavbar/navbar.module.css [app-ssr] (css module)", ((__turbopack_context__) => {
 
 __turbopack_context__.v({
+  "adminProfileSection": "navbar-module__eAp2dq__adminProfileSection",
   "container": "navbar-module__eAp2dq__container",
   "groupItems": "navbar-module__eAp2dq__groupItems",
   "icons": "navbar-module__eAp2dq__icons",
   "navbar": "navbar-module__eAp2dq__navbar",
   "navlist": "navbar-module__eAp2dq__navlist",
   "navlistItem": "navbar-module__eAp2dq__navlistItem",
+  "noProfile": "navbar-module__eAp2dq__noProfile",
   "search": "navbar-module__eAp2dq__search",
   "searchIcon": "navbar-module__eAp2dq__searchIcon",
   "searchInput": "navbar-module__eAp2dq__searchInput",
   "staggeredBar": "navbar-module__eAp2dq__staggeredBar",
-  "userProfile": "navbar-module__eAp2dq__userProfile",
 });
 }),
 "[project]/app/AdminComponent/AdminNavbar.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
@@ -26,11 +27,49 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$react$2d$fontawesome$2f$dist$2f$index$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@fortawesome/react-fontawesome/dist/index.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__ = __turbopack_context__.i("[project]/app/CSS/adminNavbar/navbar.module.css [app-ssr] (css module)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@fortawesome/free-solid-svg-icons/index.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Context/NavigationContext.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+'use client';
+;
+;
 ;
 ;
 ;
 ;
 function AdminNavbar({ showSideBar }) {
+    const { adminData, loadCurrentAdmin } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useNavigation"])();
+    const profileClickRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])();
+    const [showProfileMenu, setShowProfileMenu] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const getUrl = (url)=>{
+        if (!url) return null;
+        if (url.startsWith("/api/")) {
+            return `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"}${url};`;
+        }
+        return url;
+    };
+    const handleProfileClick = ()=>{
+        setShowProfileMenu((prev)=>!prev);
+    };
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const handleClickOutside = (event)=>{
+            if (profileClickRef.current && !profileClickRef.current.contains(event.target)) {
+                setShowProfileMenu(false);
+            }
+        };
+        if (showProfileMenu) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return ()=>{
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [
+        showProfileMenu
+    ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        loadCurrentAdmin();
+    }, []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].container,
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -43,12 +82,12 @@ function AdminNavbar({ showSideBar }) {
                         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faBarsStaggered"]
                     }, void 0, false, {
                         fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                        lineNumber: 10,
+                        lineNumber: 45,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                    lineNumber: 9,
+                    lineNumber: 44,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -63,7 +102,7 @@ function AdminNavbar({ showSideBar }) {
                                     icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faMagnifyingGlass"]
                                 }, void 0, false, {
                                     fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                                    lineNumber: 15,
+                                    lineNumber: 50,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -72,23 +111,23 @@ function AdminNavbar({ showSideBar }) {
                                     placeholder: "Search here"
                                 }, void 0, false, {
                                     fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                                    lineNumber: 16,
+                                    lineNumber: 51,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                            lineNumber: 14,
+                            lineNumber: 49,
                             columnNumber: 25
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                        lineNumber: 13,
+                        lineNumber: 48,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                    lineNumber: 12,
+                    lineNumber: 47,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -104,61 +143,86 @@ function AdminNavbar({ showSideBar }) {
                                         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faBell"]
                                     }, void 0, false, {
                                         fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                                        lineNumber: 27,
+                                        lineNumber: 62,
                                         columnNumber: 37
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                                    lineNumber: 26,
+                                    lineNumber: 61,
                                     columnNumber: 33
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                                lineNumber: 25,
+                                lineNumber: 60,
                                 columnNumber: 29
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                            lineNumber: 24,
+                            lineNumber: 59,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].navlistItem,
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
-                                href: "#",
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].userProfile,
-                                    children: "User"
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                ref: profileClickRef,
+                                onClick: handleProfileClick,
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].adminProfileContainer,
+                                children: adminData.profileImageUrl ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].adminProfileSection,
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                                        src: getUrl(adminData.profileImageUrl),
+                                        alt: adminData.username || "No Image",
+                                        width: 45,
+                                        height: 45,
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].adminProfile
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AdminNavbar.js",
+                                        lineNumber: 71,
+                                        columnNumber: 49
+                                    }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                                    lineNumber: 33,
-                                    columnNumber: 33
+                                    lineNumber: 70,
+                                    columnNumber: 45
+                                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$adminNavbar$2f$navbar$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].noProfile,
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        children: adminData?.username?.charAt(0)?.toUpperCase() || "A"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/AdminComponent/AdminNavbar.js",
+                                        lineNumber: 81,
+                                        columnNumber: 48
+                                    }, this)
+                                }, void 0, false, {
+                                    fileName: "[project]/app/AdminComponent/AdminNavbar.js",
+                                    lineNumber: 80,
+                                    columnNumber: 45
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                                lineNumber: 32,
-                                columnNumber: 29
+                                lineNumber: 67,
+                                columnNumber: 33
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                            lineNumber: 31,
+                            lineNumber: 66,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-                    lineNumber: 23,
+                    lineNumber: 58,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-            lineNumber: 8,
+            lineNumber: 43,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/AdminComponent/AdminNavbar.js",
-        lineNumber: 7,
+        lineNumber: 42,
         columnNumber: 9
     }, this);
 }
@@ -564,6 +628,7 @@ const updateProduct = async (product = {})=>{
 };
 const addProduct = async (formData)=>{
     try {
+        console.log("FormData: ", formData);
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post("/api/admin/addProduct", formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -582,7 +647,9 @@ const addProduct = async (formData)=>{
 
 __turbopack_context__.s([
     "fetchAllCategories",
-    ()=>fetchAllCategories
+    ()=>fetchAllCategories,
+    "fetchCategoryById",
+    ()=>fetchCategoryById
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-ssr] (ecmascript)");
 ;
@@ -598,6 +665,15 @@ const fetchAllCategories = async (pageNumber = 0, pageSize = 5)=>{
         return res;
     } catch (error) {
         console.log("fetchAllCategories() in CategoryServices: ", error.response?.data);
+        throw error;
+    }
+};
+const fetchCategoryById = async (categoryId)=>{
+    try {
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/api/category/${categoryId}`);
+        return res.data;
+    } catch (error) {
+        console.log("Error in CategoryServices: ", error.response?.data);
     }
 };
 }),
@@ -1539,7 +1615,7 @@ function ProductTable() {
         }
     };
     const handleRightButton = ()=>{
-        if (selectedProductImage.length > imageIndex) {
+        if (selectedProductImage.length - 1 > imageIndex) {
             setImageIndex((prev)=>prev + 1);
         }
     };

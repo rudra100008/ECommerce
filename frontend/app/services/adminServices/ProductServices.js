@@ -42,6 +42,7 @@ export const updateProduct  = async (product={}) => {
 
 export const addProduct = async (formData) => {
     try {
+        console.log("FormData: ",formData)
         const response = await api.post("/api/admin/addProduct", formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -52,5 +53,16 @@ export const addProduct = async (formData) => {
     } catch (error) {
         console.log("Error in addProduct() from ProductService: ", error.response?.data);
         throw error;
+    }
+}
+
+export const fetchAllProducts = async(pageNumber = 0,pageSize = 5 , sortBy = "createdAt",sortDir ="asce")=>{
+    try{
+        const response = await api.get(`/api/product/fetchAllProducts?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`);
+        console.log("Response in fetchAllProducts() from ProductService:", response.data);
+        return response.data;
+    }catch(err){
+        console.log("Error in ProductService: ", error.response?.data);
+        throw err;
     }
 }

@@ -1,6 +1,7 @@
 package com.E_Commerce.Controller;
 
 import com.E_Commerce.DTO.UserDTO;
+import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.UserRepository;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,52 +35,50 @@ public class UserController {
     private final ImageService imageService;
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
-//    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser(){
+    public ResponseEntity<?> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
         Object principal = authentication.getPrincipal();
-        if(principal instanceof UserDetails ){
+        User user = null;
+
+        if (principal instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) principal;
-            User user = this.userRepository.findByEmail(userDetails.getUsername())
-                    .orElseThrow(()-> new ResourceNotFoundException("user not found"));
-            Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("userId", user.getUserId());
-            responseBody.put("email", user.getEmail());
-            responseBody.put("username", user.getUsername());
-            if(Boolean.TRUE .equals(user.getHasCustomImage())){
-                responseBody.put("profileImageUrl",getUserImageUrl(user.getUserId()));
-            }else {
-                responseBody.put("profileImageUrl", user.getProfileImageUrl());
-            }
-            responseBody.put("fullName",user.getFullName()); 
-            responseBody.put("cartId",user.getCart().getId());
-            responseBody.put("hasCustomImage",user.getHasCustomImage());
-            responseBody.put("roles",user.getRoles());
-            return  ResponseEntity.ok(responseBody);
+            user = this.userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         } else if (principal instanceof DefaultOAuth2User) {
             DefaultOAuth2User oAuth2User = (DefaultOAuth2User) principal;
-            User user = this.userRepository.findByEmail(oAuth2User.getAttribute("email"))
-                    .orElseThrow(()-> new ResourceNotFoundException("user not found"));
-            Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("userId", user.getUserId());
-            responseBody.put("email", user.getEmail());
-            responseBody.put("username", user.getUsername());
-            if(Boolean.TRUE .equals(user.getHasCustomImage())){
-                responseBody.put("profileImageUrl",getUserImageUrl(user.getUserId()));
-            }else {
-                responseBody.put("profileImageUrl", user.getProfileImageUrl());
-            }
-            responseBody.put("fullName",user.getFullName());
-            responseBody.put("cartId",user.getCart().getId());
-            responseBody.put("hasCustomImage",user.getHasCustomImage());
-            responseBody.put("roles",user.getRoles());
-            return  ResponseEntity.ok(responseBody);
+            user = this.userRepository.findByEmail(oAuth2User.getAttribute("email"))
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("userId", user.getUserId());
+        responseBody.put("email", user.getEmail());
+        responseBody.put("username", user.getUsername());
+
+        if (Boolean.TRUE.equals(user.getHasCustomImage())) {
+            responseBody.put("profileImageUrl", getUserImageUrl(user.getUserId()));
+        } else {
+            responseBody.put("profileImageUrl", user.getProfileImageUrl());
+        }
+
+        responseBody.put("fullName", user.getFullName());
+        responseBody.put("hasCustomImage", user.getHasCustomImage());
+        responseBody.put("roles", getRoles(user));
+
+        if (user.getCart() != null) {
+            responseBody.put("cartId", user.getCart().getId());
+        } else {
+            responseBody.put("cartId", null); // or create a cart here if needed
+        }
+
+        return ResponseEntity.ok(responseBody);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -137,5 +137,9 @@ public class UserController {
     //helper method
     private String getUserImageUrl(Integer userId){
         return "/api/user/" + userId + "/fetchUserImage";
+    }
+
+    private List<Role.RoleName> getRoles(User user){
+        return user.getRoles().stream().map(Role::getRoleName).toList();
     }
 }

@@ -1,5 +1,6 @@
 package com.E_Commerce.ServicesImpl;
 
+import com.E_Commerce.Config.PageConstant;
 import com.E_Commerce.DTO.CategoryRequest;
 import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.DTO.ProductDTO;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,28 +44,36 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
     private final ProductMapper productMapper;
+    private final static List<String> ALLOWED_SORT_FIELDS = List.of("createdAt", "updatedAt", "productName", "price", "productId");
 
     Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
+    @Transactional
     public ProductDTO createProductWithImages(ProductDTO productDTO, CategoryRequest categoryRequest, List<MultipartFile> imageFiles) {
        List<String> imageNames = new ArrayList<>();
        try{
            for(MultipartFile imageFile: imageFiles){
-               if(imageFile != null || !imageFile.isEmpty()){
-                   String imageName = this.imageService.uploadImage(productDTO.getProductName(),imageFile);
-                   imageNames.add(imageName);
+               if(imageFile != null && !imageFile.isEmpty()){
+                   String imageName = this.imageService.uploadImage(productDTO.getProductName().trim(),imageFile);
+                   imageNames.add(imageName.trim());
                }
            }
        }catch (IOException e){
            throw new ImageInvalidException("Image not uploaded: "+ e.getMessage());
        }
-       Category category = this.categoryService.createCategory(categoryRequest.getName());
+      Category category;
+       if(categoryRequest.getCategoryId() != null){
+           category = this.categoryService.findById(categoryRequest.getCategoryId());
+       }else{
+           category = this.categoryService.createCategory(categoryRequest.getName().trim());
+       }
        String sku = generateSku(productDTO,category);
        productDTO.setSku(sku);
        productDTO.setCategoryId(category.getCategoryId());
        productDTO.setImageUrls(imageNames);
        Product product = this.productMapper.toProduct(productDTO);
+       product.setCategory(category);
        Product savedProduct = this.productRepository.save(product);
         return productMapper.toProductDTO(savedProduct);
     }
@@ -80,6 +90,7 @@ public class ProductServiceImpl implements ProductService {
 
 
         Product product = productMapper.toProduct(productDTO);
+        product.setCategory(category);
         Product savedProduct = this.productRepository.save(product);
         return productMapper.toProductDTO(savedProduct);
     }
@@ -96,6 +107,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductDTO updateProductImages(List<String> imageUrls,Integer productId) {
        Product existingProduct = this.productRepository.findById(productId)
                .orElseThrow(()-> new ResourceNotFoundException("Product not found."));
@@ -115,8 +127,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public PageInfo<ProductDTO> findProducts(Integer pageNumber, Integer pageSize,String sortBy,String sortDir) {
+        String validateSortBy = ALLOWED_SORT_FIELDS.contains(sortBy)? sortBy :PageConstant.SORT_BY;
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(validateSortBy).descending() : Sort.by(validateSortBy).ascending();
+        Pageable productPageable = PageRequest.of(pageNumber,pageSize,sort);
+        Page<Product> productPage = this.productRepository.findAll(productPageable);
+        List<Product> productList = productPage.getContent();
+        List<ProductDTO> productDTOList = productList.stream()
+                .map(product -> this.productMapper.toProductDTO(product)).toList();
+        return new PageInfo<>(
+                productDTOList,
+                pageNumber,
+                pageSize,
+                productPage.getTotalPages(),
+                productPage.getTotalElements(),
+                productPage.isLast()
+        );
+    }
+
+    @Override
     @Transactional(readOnly = true)
-    public PageInfo<ProductDTO> findProducts(Integer pageNumber, Integer pageSize, Integer categoryId) {
+    public PageInfo<ProductDTO>  findProductsByCategoryId(Integer pageNumber, Integer pageSize, Integer categoryId) {
         if (categoryId == null || categoryId <= 0) {
             throw new IllegalArgumentException("Category ID must be positive");
         }
@@ -143,6 +175,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public ProductDTO updateProduct(ProductDTO productDTO) {
         Category category = this.categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(()-> new ResourceNotFoundException("Category not found in server."));
@@ -162,6 +195,8 @@ public class ProductServiceImpl implements ProductService {
             product.setProductName(productDTO.getProductName());
         if(productDTO.getStockQuantity() != null)
             product.getInventory().setStockQuantity(productDTO.getStockQuantity());
+
+        product.setCategory(category);
         Product  updatedProduct = this.productRepository.save(product);
         return this.productMapper.toProductDTO(updatedProduct);
     }
@@ -184,6 +219,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public PageInfo<ProductDTO> findRandomProductByCategoryId(Integer pageNumber, Integer pageSize, Integer categoryId) {
         this.categoryRepository.findById(categoryId)
                 .orElseThrow(()-> new ResourceNotFoundException("CategoryId not found in server."));

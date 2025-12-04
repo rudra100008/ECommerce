@@ -18,8 +18,6 @@ import java.util.List;
 @Builder
 public class CategoryRequest {
     private Integer categoryId;
-    @NotNull(message = "Category is required.")
     @NotBlank(message = "Category is required.")
     private String name;
-    private List<Product> products = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
-package com.E_Commerce.Entity;
+package com.E_Commerce.DTO;
 
+import com.E_Commerce.Entity.Role;
 import lombok.Data;
 
 @Data

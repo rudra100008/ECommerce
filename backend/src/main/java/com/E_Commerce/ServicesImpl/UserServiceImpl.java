@@ -1,6 +1,7 @@
 package com.E_Commerce.ServicesImpl;
 
 import com.E_Commerce.DTO.UserDTO;
+import com.E_Commerce.Entity.Address;
 import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.AlreadyExitsException;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -119,7 +121,21 @@ public class UserServiceImpl implements UserService {
     public UserDTO findByEmail(String email) {
          User user = this.userRepository.findByEmail(email).
                  orElseThrow(()-> new ResourceNotFoundException(email+" not found in server."));
-        return userMapper.toUserDTO(user);
+        UserDTO userDTO = userMapper.toUserDTO(user);
+         if(Boolean.TRUE.equals(user.getHasCustomImage())){
+             userDTO.setProfileImageUrl(getUserImageUrl(user.getUserId()));
+         }else{
+             userDTO.setProfileImageUrl(user.getProfileImageUrl());
+         }
+         List<Integer> adddressIds = user.getAddresses().stream().
+                 map(Address::getAddressId).toList();
+         userDTO.setAddressIds(adddressIds);
+         if(user.getCart() != null){
+             userDTO.setCartId(user.getCart().getId());
+         }
+
+         return userDTO;
+
     }
 
     @Override
@@ -237,5 +253,9 @@ public class UserServiceImpl implements UserService {
     private User getUser(Integer userId){
         return userRepository.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("user not found"));
+    }
+
+    private String getUserImageUrl(Integer userId){
+        return "/api/user/" + userId + "/fetchUserImage";
     }
 }

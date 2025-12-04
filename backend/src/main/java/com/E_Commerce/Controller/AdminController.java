@@ -1,20 +1,21 @@
 package com.E_Commerce.Controller;
 
-import com.E_Commerce.Config.PageConfig;
-import com.E_Commerce.DTO.CategoryDTO;
-import com.E_Commerce.DTO.CategoryRequest;
-import com.E_Commerce.DTO.PageInfo;
-import com.E_Commerce.DTO.ProductDTO;
+import com.E_Commerce.Config.PageConstant;
+import com.E_Commerce.DTO.*;
 import com.E_Commerce.Entity.Category;
 import com.E_Commerce.Entity.ProductImage;
-import com.E_Commerce.Services.CategoryService;
-import com.E_Commerce.Services.ImageService;
-import com.E_Commerce.Services.ProductImageService;
-import com.E_Commerce.Services.ProductService;
+import com.E_Commerce.Mapper.UserMapper;
+import com.E_Commerce.Repository.UserRepository;
+import com.E_Commerce.Services.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,25 @@ public class AdminController {
     private final ImageService imageService;
     private final CategoryService categoryService;
     private final ProductImageService productImageService;
+    private final UserService userService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    @GetMapping("/me")
+    public ResponseEntity<?> currentAdmin(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UserDTO userDTO = new UserDTO();
+        Object principal = authentication.getPrincipal();
+        if(principal instanceof UserDetails userDetails){
+            userDTO = this.userService.findByEmail(userDetails.getUsername());
+        } else if (principal instanceof DefaultOAuth2User auth2User) {
+            userDTO = this.userService.findByEmail(auth2User.getAttribute("email"));
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+    }
 
 
     @PostMapping("/addProduct")
@@ -50,7 +70,7 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
         ProductDTO savedProductDTO = new ProductDTO();
-        if(categoryRequest != null  && productDTO != null && imageFiles != null || !imageFiles.isEmpty()) {
+        if(categoryRequest != null  && productDTO != null && imageFiles != null && !imageFiles.isEmpty()) {
              savedProductDTO = this.productService.createProductWithImages(productDTO, categoryRequest, imageFiles);
         }
         Map<String,Object> response = new HashMap<>();
@@ -89,12 +109,12 @@ public class AdminController {
 
     @GetMapping("/products/category/{categoryId}")
     public ResponseEntity<?> fetchProductsWithCategory(
-            @RequestParam(defaultValue = PageConfig.PAGE_NUMBER,required = false,name = "pageNumber")Integer pageNumber,
-            @RequestParam(defaultValue = PageConfig.PAGE_SIZE,required = false,name = "pageSize")Integer pageSize,
+            @RequestParam(defaultValue = PageConstant.PAGE_NUMBER,required = false,name = "pageNumber")Integer pageNumber,
+            @RequestParam(defaultValue = PageConstant.PAGE_SIZE,required = false,name = "pageSize")Integer pageSize,
             @PathVariable(name = "categoryId")Integer categoryId
     ){
         Category category = this.categoryService.findById(categoryId);
-        PageInfo<ProductDTO> productDTOPageInfo = this.productService.findProducts(pageNumber,pageSize,categoryId);
+        PageInfo<ProductDTO> productDTOPageInfo = this.productService. findProductsByCategoryId(pageNumber,pageSize,categoryId);
 
         this.productService.deleteProductsWithoutImages(productDTOPageInfo.getData());
 
@@ -130,6 +150,11 @@ public class AdminController {
             imageUrls.add(imageUrl);
         });
         return imageUrls;
+    }
+
+    // helper method
+    private String getUserImageUrl(Integer userId){
+        return "/api/user/" + userId + "/fetchUserImage";
     }
 
 }

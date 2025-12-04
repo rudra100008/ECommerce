@@ -1,8 +1,9 @@
 'use client'
 import api from "../Component/axiosInterceptor";
 import { useNotification } from "../Context/NotificationContext";
+import { logout } from "./LoginServices";
 
-export const fetchCurrentUser = async (success, error) => {
+export const fetchCurrentUser = async (success, error,router) => {
   try {
     const response = await api.get('/api/user/me')
     console.log("CurrentUser: ", response.data);
@@ -10,17 +11,17 @@ export const fetchCurrentUser = async (success, error) => {
     return data;
   } catch (err) {
     console.log("CurrenUser: ", err);
-    const { message } = err.response?.data;
+    const { message , redirectUrl} = err.response?.data;
     if (err.response.data && err.response.status === 401) {
       error(message);
       setTimeout(() => {
-        window.location.href = "/login"
+       logout(router,success);
       }, 3000)
     }
     else if (err.response.data && err.response.status === 403) {
       error(message)
       setTimeout(() => {
-        window.location.href = "/login"
+        window.location.href = redirectUrl
       }, 3000)
     }
     throw err;

@@ -57,6 +57,7 @@
     font-size: 1rem;
     box-sizing: border-box;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .inputWrapper input[type='text']::placeholder,
@@ -73,6 +74,82 @@
     transform: scale(1.01);
 }
 
+/* Enhanced Error Styles */
+.inputError {
+    border: 2px solid #ef4444 !important;
+    background: #fef2f2 !important;
+    animation: shakeError 0.4s ease-in-out;
+}
+
+.inputError:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.3) !important;
+}
+
+.validationErrorIcon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ef4444;
+    font-size: 1.1rem;
+    pointer-events: none;
+    animation: fadeInError 0.3s ease-in;
+}
+
+.validationError {
+    color: #dc2626;
+    font-size: 0.813rem;
+    font-weight: 500;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.4;
+    animation: slideDown 0.3s ease-out;
+}
+
+.validationError::before {
+    content: '•';
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* Animations */
+@keyframes shakeError {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-4px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(4px);
+    }
+}
+
+@keyframes fadeInError {
+    from {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 
 
@@ -86,7 +163,7 @@
 
 .nextButton,
 .backButton {
-    padding: 14px 28px;
+    padding: 12px 28px;
     border: none;
     border-radius: 10px;
     font-size: 1rem;
@@ -101,21 +178,24 @@
 }
 
 .nextButton {
-    background: linear-gradient(135deg, #4caf50, #81c784);
+    background: #4a6cf7;
+    color: #ffffff;
 }
 
 .nextButton:hover {
-    background: linear-gradient(135deg, #43a047, #66bb6a);
-    transform: translateY(-3px);
+    background: #3b5ce8;
+    transform: translateX(2px);
+    box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
 }
 
 .backButton {
-    background: linear-gradient(135deg, #f44336, #e57373);
+    background: #f1f5f9;
+    color: #475569;
 }
 
 .backButton:hover {
-    background: linear-gradient(135deg, #d32f2f, #ef5350);
-    transform: translateY(-3px);
+    background: #e2e8f0;
+    transform: translateX(-2px);
 }
 
 .nextButton:active,
@@ -425,14 +505,14 @@
     transform: translateY(0);
 }
 
-/* Style for active/current page */
+
 .pageNumberItem.active {
     background-color: #3b82f6;
     border-color: #3b82f6;
     color: white;
 }
 
-/* Style for navigation arrows (if you add them) */
+
 .pageNumberItem.nav {
     background-color: #f8fafc;
     border-color: #e2e8f0;
@@ -466,26 +546,65 @@
     gap: 12px;
     padding: 16px;
 }
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
+.filterLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filterLabel svg {
+    font-size: 14px;
+}
+.selectWrapper {
+    position: relative;
+}
 
 .categorySelect {
-    padding: 10px 16px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    background: white;
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
     color: #4a5568;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
     outline: none;
-    transition: all 0.2s ease;
-    min-width: 200px;
+    transition: all 0.3s ease;
+    appearance: none;
 }
+
 
 .categorySelect:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+    border-color: white;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
 }
 
+
 .categorySelect:hover {
-    border-color: #cbd5e0;
+    background: white;
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.selectIcon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #667eea;
+    font-size: 16px;
+    pointer-events: none;
 }

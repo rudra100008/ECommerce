@@ -1,6 +1,6 @@
 import api from "../Component/axiosInterceptor";
 
-export const logout = async ({router,success})=>{
+export const logout = async (router,success)=>{
     try{
         const res = await api.get('/api/auth/logout');
         const {message} = res.data;

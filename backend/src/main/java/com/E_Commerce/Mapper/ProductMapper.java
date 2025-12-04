@@ -21,6 +21,8 @@ public interface ProductMapper {
     @Mapping(source = "inventory.reservedQuantity", target = "reservedQuantity")
     @Mapping(target = "availableQuantity",expression = "java(getAvailableQuantity(product))")
     @Mapping(target = "isInStock",expression = "java(isProductInStock(product))")
+    @Mapping(target = "createdAt",source = "createdAt")
+    @Mapping(target = "updatedAt",source = "updatedAt")
     ProductDTO toProductDTO(Product product);
 
 
@@ -52,28 +54,18 @@ public interface ProductMapper {
                 .cartItems(new ArrayList<>())
                 .build();
 
-       Category category = new Category();
-       category.setCategoryId(productDTO.getCategoryId());
-       product.setCategory(category);
-
-
-       if(productDTO.getImageUrls() != null && !productDTO.getImageUrls().isEmpty()){
-           List<ProductImage> productImages = new ArrayList<>();
-           for(String imageUrl : productDTO.getImageUrls()){
-               ProductImage productImage = ProductImage.builder()
-                       .imageUrl(imageUrl)
-                       .product(product)
-                       .build();
-               productImages.add(productImage);
-           }
-
+       if (productDTO.getImageUrls() != null && !productDTO.getImageUrls().isEmpty()) {
+           List<ProductImage> productImages = mapUrlsToImages(productDTO.getImageUrls(), product);
            product.setProductImages(productImages);
        }
 
+       Integer stockQuantity = productDTO.getStockQuantity();
+       Integer reservedQuantity = productDTO.getReservedQuantity() != null ?
+               productDTO.getReservedQuantity() : 0;
        if (productDTO.getStockQuantity() != null) {
            Inventory inventory = Inventory.builder()
-                   .stockQuantity(productDTO.getStockQuantity())
-                   .reservedQuantity(productDTO.getReservedQuantity())
+                   .stockQuantity(stockQuantity)
+                   .reservedQuantity(reservedQuantity)
                    .product(product)
                    .build();
            product.setInventory(inventory);
@@ -81,7 +73,21 @@ public interface ProductMapper {
 
         return product;
     }
+    default List<ProductImage> mapUrlsToImages(List<String> imageUrls, Product product) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            return new ArrayList<>();
+        }
 
+        List<ProductImage> productImages = new ArrayList<>();
+        for (String imageUrl : imageUrls) {
+            ProductImage productImage = ProductImage.builder()
+                    .imageUrl(imageUrl)
+                    .product(product)
+                    .build();
+            productImages.add(productImage);
+        }
+        return productImages;
+    }
     @Named("mapImagesToUrl")
     default List<String> mapImagesToUrl(List<ProductImage> productImage){
 

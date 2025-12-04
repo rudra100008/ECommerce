@@ -57,6 +57,7 @@
   padding: 14px 18px 14px 50px;
   font-size: 1rem;
   transition: all .3s;
+  position: relative;
 }
 
 .productForm-module__Lz_Pra__inputWrapper input[type="text"]::placeholder, .productForm-module__Lz_Pra__inputWrapper input[type="number"]::placeholder {
@@ -69,6 +70,84 @@
   border-color: #4a6cf7;
   transform: scale(1.01);
   box-shadow: 0 0 8px rgba(74, 108, 247, .25);
+}
+
+.productForm-module__Lz_Pra__inputError {
+  animation: .4s ease-in-out productForm-module__Lz_Pra__shakeError;
+  background: #fef2f2 !important;
+  border: 2px solid #ef4444 !important;
+}
+
+.productForm-module__Lz_Pra__inputError:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 8px rgba(239, 68, 68, .3) !important;
+}
+
+.productForm-module__Lz_Pra__validationErrorIcon {
+  color: #ef4444;
+  pointer-events: none;
+  font-size: 1.1rem;
+  animation: .3s ease-in productForm-module__Lz_Pra__fadeInError;
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+}
+
+.productForm-module__Lz_Pra__validationError {
+  color: #dc2626;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: .813rem;
+  font-weight: 500;
+  line-height: 1.4;
+  animation: .3s ease-out productForm-module__Lz_Pra__slideDown;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__validationError:before {
+  content: "•";
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+@keyframes productForm-module__Lz_Pra__shakeError {
+  0%, 100% {
+    transform: translateX(0);
+  }
+
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes productForm-module__Lz_Pra__fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-50%)scale(.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(-50%)scale(1);
+  }
+}
+
+@keyframes productForm-module__Lz_Pra__slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .productForm-module__Lz_Pra__ButtonGroup {
@@ -86,7 +165,7 @@
   border-radius: 10px;
   align-items: center;
   gap: 8px;
-  padding: 14px 28px;
+  padding: 12px 28px;
   font-size: 1rem;
   font-weight: 600;
   transition: all .3s;
@@ -95,21 +174,24 @@
 }
 
 .productForm-module__Lz_Pra__nextButton {
-  background: linear-gradient(135deg, #4caf50, #81c784);
+  color: #fff;
+  background: #4a6cf7;
 }
 
 .productForm-module__Lz_Pra__nextButton:hover {
-  background: linear-gradient(135deg, #43a047, #66bb6a);
-  transform: translateY(-3px);
+  background: #3b5ce8;
+  transform: translateX(2px);
+  box-shadow: 0 4px 12px rgba(74, 108, 247, .3);
 }
 
 .productForm-module__Lz_Pra__backButton {
-  background: linear-gradient(135deg, #f44336, #e57373);
+  color: #475569;
+  background: #f1f5f9;
 }
 
 .productForm-module__Lz_Pra__backButton:hover {
-  background: linear-gradient(135deg, #d32f2f, #ef5350);
-  transform: translateY(-3px);
+  background: #e2e8f0;
+  transform: translateX(-2px);
 }
 
 .productForm-module__Lz_Pra__nextButton:active, .productForm-module__Lz_Pra__backButton:active {
@@ -444,26 +526,68 @@
   display: flex;
 }
 
+.productForm-module__Lz_Pra__filterGroup {
+  flex-direction: column;
+  gap: 8px;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__filterLabel {
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+}
+
+.productForm-module__Lz_Pra__filterLabel svg {
+  font-size: 14px;
+}
+
+.productForm-module__Lz_Pra__selectWrapper {
+  position: relative;
+}
+
 .productForm-module__Lz_Pra__categorySelect {
   color: #4a5568;
   cursor: pointer;
-  background: #fff;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, .95);
+  border: 2px solid rgba(255, 255, 255, .2);
+  border-radius: 12px;
   outline: none;
-  min-width: 200px;
-  padding: 10px 16px;
+  width: 100%;
+  padding: 12px 40px 12px 16px;
   font-size: 14px;
-  transition: all .2s;
+  font-weight: 500;
+  transition: all .3s;
 }
 
 .productForm-module__Lz_Pra__categorySelect:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, .1);
+  background: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, .2);
 }
 
 .productForm-module__Lz_Pra__categorySelect:hover {
-  border-color: #cbd5e0;
+  background: #fff;
+  border-color: rgba(255, 255, 255, .4);
+  transform: translateY(-1px);
+}
+
+.productForm-module__Lz_Pra__selectIcon {
+  color: #667eea;
+  pointer-events: none;
+  font-size: 16px;
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
 }
 
 /*# sourceMappingURL=app_CSS_adminNavbar_AddProductForm_productForm_module_css_bad6b30c._.single.css.map*/

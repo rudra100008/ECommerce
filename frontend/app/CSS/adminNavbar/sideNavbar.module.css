@@ -1,218 +1,302 @@
+/* this is sideNabar css */
 .container {
-    width: 200px;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-    transition: all 0.3s ease-in-out;
-    border-right: 1px solid #e2e8f0;
-    z-index: 100;
-    overflow-x: hidden;
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  width: 260px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  transition: all 0.3s ease-in-out;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 100;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  -ms-overflow-style: none;
 }
 
 .container::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .container.closed {
-    width: 100px;
+  width: 80px;
 }
 
-/* Title Styles */
+.titleSection {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.logoIcon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  transition: transform 0.3s ease;
+}
+
+.logoIcon:hover {
+  transform: rotate(5deg) scale(1.05);
+}
+
 .title {
-    text-align: center;
-    margin: 10px;
-    padding: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    font-weight: 500;
-    font-size: 20px;
-    border-radius: 20px;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
 }
 
-.title:hover {
-    color: blue;
-    font-weight: 550;
-    border: 3px solid blue;
-    background-color: lightblue;
+.container.closed .title {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
 /* Navigation Structure */
 .navbar {
-    display: flex;
-    flex-direction: column;
-    padding: 24px 16px;
-    height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 12px;
+  height: 100vh;
 }
 
 .navlist {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 /* Base Nav Item Styles */
 .navlistitem {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    cursor: pointer;
-    border-radius: 12px;
-    width: 100%;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-sizing: border-box;
-    background-color: transparent;
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  border-radius: 12px;
+  width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  background-color: transparent;
+  position: relative;
+  overflow: hidden;
 }
 
 .navlistitem:hover {
-    background-color: #f0efef;
-    transform: translateX(4px);
+  background-color: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
 }
 
 .navItemContainer {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    width: 100%;
-    gap: 16px;
-    transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  width: 100%;
+  gap: 14px;
+  transition: all 0.3s ease;
 }
 
 /* Icon and Text Styles */
 .faIcon {
-    transition: all 0.3s ease;
-    color: #64748b;
-    flex-shrink: 0;
+  transition: all 0.3s ease;
+  color: #94a3b8;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
 }
 
 .cartIcon {
-    transition: all 0.3s ease;
-    color: #64748b;
-    margin-left: auto;
-    flex-shrink: 0;
+  transition: all 0.3s ease;
+  color: #94a3b8;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .navlistitem span {
-    color: #3f3f3f;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    flex-shrink: 0;
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex: 1;
 }
 
 /* Active States */
 .navlistitem.active {
-    background-color: #fffbeb;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.15) 0%,
+    rgba(139, 92, 246, 0.15) 100%
+  );
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .navlistitem.active .faIcon,
-.navlistitem.active .cartIcon,
+.navlistitem.active .cartIcon {
+  color: #60a5fa;
+}
 .navlistitem.active span {
-    color: #d97706;
+  color: #ffffff;
+  font-weight: 600;
 }
 
 .navlistitem.activeSubItem {
-    background-color: #fffbeb;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.1) 0%,
+    rgba(139, 92, 246, 0.1) 100%
+  );
 }
 
 .navlistitem.activeSubItem .faIcon,
-.navlistitem.activeSubItem .cartIcon,
+.navlistitem.activeSubItem .cartIcon {
+  color: #60a5fa;
+}
+
 .navlistitem.activeSubItem span {
-    color: #d97706;
+  color: #ffffff;
 }
 
 /* Sub Items Styles */
 .subItems {
-    margin-left: 20px;
-    margin-bottom: 8px;
-    animation: slideDown 0.3s ease-out;
+  margin-left: 16px;
+  padding-left: 28px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: slideDown 0.3s ease-out;
 }
 
 .subItems p,
 .subItems a {
-    display: block;
-    padding: 8px 12px;
-    margin-bottom: 4px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    font-weight: 500;
-    cursor: pointer;
-    color: #3f3f3f;
-    text-decoration: none;
-    font-size: 13px;
+  display: block;
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  cursor: pointer;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 14px;
+  position: relative;
+}
+
+.subItems p::before,
+.subItems a::before {
+  content: "";
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #475569;
+  transition: all 0.2s ease;
 }
 
 .subItems p:hover,
 .subItems a:hover {
-    background-color: #e5e6e7;
-    color: #161616;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  padding-left: 18px;
+}
+.subItems p:hover::before,
+.subItems a:hover::before {
+    background: #60a5fa;
+    transform: translateY(-50%) scale(1.3);
 }
 
 .subItems p.active,
 .subItems a.active {
-    background-color: #fffbeb;
-    color: #d97706;
-    font-weight: 600;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.2) 0%,
+    rgba(139, 92, 246, 0.2) 100%
+  );
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.subItems p.active::before,
+.subItems a.active::before {
+    background: #60a5fa;
+    transform: translateY(-50%) scale(1.5);
 }
 
 /* Closed State Styles */
-.container.closed .title {
-    padding: 4px;
-    font-weight: 450;
-    font-size: 15px;
-    word-wrap: break-word;
+.container.closed .titleSection {
+  padding: 24px 8px;
+  justify-content: center;
 }
-
-.container.closed .title:hover {
-    color: blue;
-    font-weight: 500;
-    border: 3px solid blue;
-    background-color: lightblue;
+.container.closed .logoIcon {
+  width: 38px;
+  height: 38px;
 }
 
 .container.closed .navlistitem {
-    padding: 14px;
-    justify-content: center;
-    border-radius: 14px;
+  padding: 14px 12px;
+  justify-content: center;
 }
 
 .container.closed .navlistitem .navItemContainer {
-    justify-content: center;
-    gap: 0;
+  justify-content: center;
+  gap: 0;
 }
 
 .container.closed .navlistitem span {
-    opacity: 0;
-    visibility: hidden;
-    width: 0;
-    transform: translateX(-10px);
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
-.container.closed .navlistitem .faIcon,
+.container.closed .navlistitem .faIcon {
+  margin: 0;
+  transform: scale(1.1);
+}
+
 .container.closed .navlistitem .cartIcon {
-    margin: 0;
-    transform: scale(1.15);
+  display: none;
 }
 
 .container.closed .navlistitem:hover {
-    background-color: #f0f0f0;
-    transform: scale(1.08);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
 }
 
 .container.closed .subItems {
-    display: none; /* Hide subitems in closed state */
+  display: none;
 }
 
-/* Animation */
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 200px;
+    transform: translateY(0);
+  }
 }

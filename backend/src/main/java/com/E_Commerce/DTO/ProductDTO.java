@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -22,6 +23,7 @@ public class ProductDTO {
     private String productName;
 
     @Size(max = 10000,message = "Description should be less than 1000 characters")
+    @NotBlank(message = "description is required")
     private String description;
 
     @NotNull(message = "Price is required.")
@@ -35,17 +37,21 @@ public class ProductDTO {
 
     private String sku;
 
-    @NotNull(message = "Category is required.")
+
     private Integer categoryId;
 
     private List<String> imageUrls;
 
     @NotNull(message = "stock quantity is required")
+    @Min(value = 1,message = "At least 1 item is required in stock")
     private Integer stockQuantity;
     private Integer reservedQuantity;
     private Integer availableQuantity;
     private Boolean isActive;
     @JsonProperty("isInStock")
     private boolean isInStock;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
 }

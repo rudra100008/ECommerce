@@ -1,13 +1,19 @@
 package com.E_Commerce.Controller;
 
 import com.E_Commerce.DTO.CategoryDTO;
+import com.E_Commerce.DTO.CategoryRequest;
 import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.Entity.Category;
 import com.E_Commerce.Services.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +40,26 @@ public class CategoryController {
         Category category = categoryService.findById(categoryId);
         CategoryDTO categoryDTO = new CategoryDTO(category.getCategoryId(),category.getName());
         return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
+    }
+
+
+    @PostMapping("/validate-category")
+    public ResponseEntity<Map<String,Object>>  validateCategory(
+            @Valid @RequestBody CategoryRequest categoryRequest,
+            BindingResult result
+            ){
+        System.out.println("CategoryRequest: "+ categoryRequest.toString());
+        if(result.hasErrors()){
+            Map<String,Object> errorResponse = new HashMap<>();
+            result.getFieldErrors()
+                    .forEach(fieldError ->
+                            errorResponse.put(fieldError.getField(),fieldError.getDefaultMessage()));
+            return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "valid", true,
+                "message", "Category is valid"
+        ));
     }
 }

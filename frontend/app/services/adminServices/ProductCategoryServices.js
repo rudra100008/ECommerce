@@ -41,12 +41,12 @@ export const addProductImage = async ({ product, images }) => {
 
         const res = await api.post(
             `/api/admin/addProductImage/${product.productId}`,
-            images,  // This should now be the FormData object
+            images, 
             {
                 headers: {
-                    'Content-Type': 'multipart/form-data'  // Explicitly set content type
+                    'Content-Type': 'multipart/form-data'  
                 }
-                // Remove responseType: 'blob' unless you're expecting a file back
+                
             }
         );
         console.log("Res of addProductImage(): ", res);
@@ -54,6 +54,35 @@ export const addProductImage = async ({ product, images }) => {
     } catch (error) {
         console.log("Error in addProductImage(): ", error.response?.data);
         throw error;
+    }
+}
+
+export const validateCategory = async (categoryRequest) =>{
+    try{
+        console.log("CategoryRequest: ",categoryRequest)
+        const response = await api.post('/api/category/validate-category',categoryRequest,{
+            headers:{
+                'Content-Type':'application/json'
+            }
+        });
+        console.log("Reponse of validateCategory: ",response.data)
+    }catch(err){
+        console.log("Error in validateCategory(): ",err.response.data);
+        throw err;
+    }
+}
+
+export const validateProduct = async (productDTO)=>{
+    try{
+        const response = await api.post('/api/product/validate-product',productDTO,{
+            headers:{
+                'Content-Type':'application/json'
+            }
+        })
+         console.log("Reponse of validateProduct: ",response.data)
+    }catch(err){
+        console.log("Error in validateProduct: ",err.response.data);
+        throw err;
     }
 }
 
