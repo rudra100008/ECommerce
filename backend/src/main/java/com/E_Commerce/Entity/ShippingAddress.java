@@ -1,5 +1,6 @@
 package com.E_Commerce.Entity;
 
+import com.E_Commerce.Enum.AddressType;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,4 +18,8 @@ public class ShippingAddress {
     private String shippingMunicipality;
     private Integer shippingWardNumber;
     private String shippingLandmark;
+    private String shippingArea;
+    private String houseNumber;
+    private AddressType addressType;
 }
+

@@ -20,6 +20,9 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     boolean existsBySku(String sku);
     boolean existsByProductName(String productName);
 
+    @Query("SELECT p FROM Product p where p.productId IN :ids ")
+    List<Product> findAllProductByIds(@Param("ids")List<Integer> productIds);
+
     @Query("SELECT p FROM Product p where p.category.categoryId = :categoryId")
     Page<Product> findProductByCategoryId(@Param("categoryId") Integer categoryId, Pageable pageable);
 
