@@ -324,6 +324,10 @@
   overflow-y: scroll;
 }
 
+.mainContent-module__iKJb5W__firstSection {
+  display: flex;
+}
+
 .mainContent-module__iKJb5W__pageContainer::-webkit-scrollbar {
   display: none;
 }

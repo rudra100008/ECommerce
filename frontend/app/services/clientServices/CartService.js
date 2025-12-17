@@ -32,9 +32,9 @@ export const fetchProductInCart = async (cartId) =>{
 
 export const updateQuantityOfItem = async(cartItemId,quantity) =>{
     try{
-        const resposne = await api.post(`/api/cart/${cartItemId}/update-quantity/${quantity}`);
-        console.log("Response of updateQuantity: ",resposne);
-        return resposne.data;
+        const response = await api.post(`/api/cart/${cartItemId}/update-quantity/${quantity}`);
+        console.log("Response of updateQuantity: ",response);
+        return response.data;
     }catch(err){
         console.log("Error in CartService: ",err.response?.data)
         throw err;
@@ -48,5 +48,16 @@ export const deleteCartItemFromCart = async(cartItemId) => {
     }catch(err){
         console.log("Error in CartService: ",err.response?.data)
         throw err;
+    }
+}
+
+export const calculateSubTotal = async(cartItems)=>{
+    try{
+        if(!cartItems) return;
+        const response = await api.post(`/api/order/getSubTotal`,cartItems);
+        console.log("Response in CartService: ",response.data);
+        return response.data;
+    }catch(err){
+        console.log("Error in CartService: ",err.response.data)
     }
 }

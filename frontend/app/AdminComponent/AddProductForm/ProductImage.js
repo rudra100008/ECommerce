@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faUpload, faX } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
 import { addProduct } from '../../services/adminServices/ProductServices';
+import {useNotification} from '../../Context/NotificationContext'
 
 export default function ProductImage({ setState, formData, updateFormData }) {
     const [previewUrls, setPreviewUrls] = useState([]);
     const router = useRouter();
+    const {success,error,clear} = useNotification()
     const handleBack = () => {
         //  if(formData.images){
         //     const newPreviewUrls = formData.images.map(file => URL.createObjectURL(file));
@@ -61,8 +63,15 @@ export default function ProductImage({ setState, formData, updateFormData }) {
             );
             const res = await addProduct(formDataToSend);
             setTimeout(() => router.push("/admin"), 2000)
-        } catch (error) {
-            console.log("Error in handleSubmit() in productImage", error.response?.data);
+        } catch (err) {
+            console.log("Error in handleSubmit() in productImage", err.response?.data);
+            if(err.response.data  && err.response.data.status === 400){
+                const {message} = err.response.data;
+                error(message);
+                setTimeout(()=>{
+                    clear();
+                },3000)
+            }
         }
     }
     useEffect(() => {

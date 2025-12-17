@@ -1,6 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation";
-import { useAuth } from "../Context/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import { useEffect } from "react";
 
 export const RouteGuard = ({ children, requiredRole = null }) => {
@@ -25,7 +25,7 @@ export const RouteGuard = ({ children, requiredRole = null }) => {
     }
   }, [user, loading, requiredRole, router, redirectUrl]);
 
-  if (loading) {
+  if (loading || !user) {
     return <div>Loading...</div>;
   }
 

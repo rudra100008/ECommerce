@@ -503,6 +503,8 @@ const useNavigation = ()=>{
 __turbopack_context__.s([
     "addToCart",
     ()=>addToCart,
+    "calculateSubTotal",
+    ()=>calculateSubTotal,
     "deleteCartItemFromCart",
     ()=>deleteCartItemFromCart,
     "fetchProductInCart",
@@ -541,9 +543,9 @@ const fetchProductInCart = async (cartId)=>{
 };
 const updateQuantityOfItem = async (cartItemId, quantity)=>{
     try {
-        const resposne = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/api/cart/${cartItemId}/update-quantity/${quantity}`);
-        console.log("Response of updateQuantity: ", resposne);
-        return resposne.data;
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/api/cart/${cartItemId}/update-quantity/${quantity}`);
+        console.log("Response of updateQuantity: ", response);
+        return response.data;
     } catch (err) {
         console.log("Error in CartService: ", err.response?.data);
         throw err;
@@ -556,6 +558,16 @@ const deleteCartItemFromCart = async (cartItemId)=>{
     } catch (err) {
         console.log("Error in CartService: ", err.response?.data);
         throw err;
+    }
+};
+const calculateSubTotal = async (cartItems)=>{
+    try {
+        if (!cartItems) return;
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/api/order/getSubTotal`, cartItems);
+        console.log("Response in CartService: ", response.data);
+        return response.data;
+    } catch (err) {
+        console.log("Error in CartService: ", err.response.data);
     }
 };
 }),
@@ -612,7 +624,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$Navigation
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Context/NotificationContext.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/clientServices/CartService.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$ProductService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/clientServices/ProductService.js [app-ssr] (ecmascript)");
-'use client';
+"use client";
 ;
 ;
 ;
@@ -624,12 +636,12 @@ function CartProvider({ children }) {
     const { userData } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useNavigation"])();
     const { error: showError } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useNotification"])();
     const [cartItems, setCartItems] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [checkedCartItems, setCheckedCartItems] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [cart, setCart] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({});
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    // console.log("CartProvider - userData:", userData);
-    // console.log("CartProvider - cartItems:", cartItems);
     const fetchCartItems = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async ()=>{
         if (!userData?.cartId) {
+            console.log("cartItem becomes empty->26");
             setCartItems([]);
             return;
         }
@@ -639,7 +651,6 @@ function CartProvider({ children }) {
             console.log("Cart", response.Cart);
             const { Cart } = response;
             setCart(Cart);
-            // Use Cart.cartItem instead of cartItems (which is empty initially)
             if (Cart.cartItem && Cart.cartItem.length > 0) {
                 const productPromises = Cart.cartItem.map(async (cartItem)=>{
                     try {
@@ -683,7 +694,6 @@ function CartProvider({ children }) {
         };
         try {
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addToCart"])(userData.cartId, cartItem);
-            // Refresh cart items after adding
             await fetchCartItems();
             return true;
         } catch (err) {
@@ -705,38 +715,60 @@ function CartProvider({ children }) {
     }, [
         fetchCartItems
     ]);
-    const updateItemQuantity = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async (cartItemId, quantity)=>{
+    const updateItemQuantity = async (cartItemId, quantity)=>{
         if (quantity < 1) {
             quantity = 1;
         }
         try {
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["updateQuantityOfItem"])(cartItemId, quantity);
-            await fetchCartItems();
+            const data = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["updateQuantityOfItem"])(cartItemId, quantity);
+            console.log("CartItems: ", cartItems);
+            setCartItems((prev)=>prev.map((item)=>item.cartItemId === data.cartItemId ? {
+                        ...item,
+                        quantity: data.quantity
+                    } : item));
         } catch (err) {
             console.log("Error updating quantity:", err.response?.data);
             throw err;
         }
-    }, [
-        fetchCartItems
-    ]);
+    };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (userData?.cartId) {
             fetchCartItems();
         } else {
-            setCartItems([]); // Clear cart items if no cartId
+            setCartItems([]);
         }
     }, [
         userData?.cartId
     ]);
+    const handleCheckBox = (cartItem)=>{
+        setCheckedCartItems((prev)=>{
+            const exists = prev.some((item)=>item.cartItemId === cartItem.cartItemId);
+            if (exists) {
+                return prev.filter((item)=>item.cartItemId !== cartItem.cartItemId);
+            } else {
+                return [
+                    ...prev,
+                    cartItem
+                ];
+            }
+        });
+    };
+    const clearCheckedCart = ()=>{
+        setCheckedCartItems([]);
+    };
     const value = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>({
             cartItems,
+            checkedCartItems,
+            setCheckedCartItems,
             cart,
             loading,
             fetchCartItems,
             addItemToCart,
             removeItemFromCart,
             updateItemQuantity,
-            cartItemCount: cartItems.length
+            handleCheckBox,
+            clearCheckedCart,
+            cartItemCount: cartItems?.length
         }), [
         cartItems,
         cart,
@@ -751,8 +783,8 @@ function CartProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/app/Context/CartContext.js",
-        lineNumber: 137,
-        columnNumber: 9
+        lineNumber: 181,
+        columnNumber: 10
     }, this);
 }
 const useCart = ()=>{

@@ -493,6 +493,8 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 __turbopack_context__.s([
     "addToCart",
     ()=>addToCart,
+    "calculateSubTotal",
+    ()=>calculateSubTotal,
     "deleteCartItemFromCart",
     ()=>deleteCartItemFromCart,
     "fetchProductInCart",
@@ -533,9 +535,9 @@ const fetchProductInCart = async (cartId)=>{
 };
 const updateQuantityOfItem = async (cartItemId, quantity)=>{
     try {
-        const resposne = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/cart/".concat(cartItemId, "/update-quantity/").concat(quantity));
-        console.log("Response of updateQuantity: ", resposne);
-        return resposne.data;
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/cart/".concat(cartItemId, "/update-quantity/").concat(quantity));
+        console.log("Response of updateQuantity: ", response);
+        return response.data;
     } catch (err) {
         var _err_response;
         console.log("Error in CartService: ", (_err_response = err.response) === null || _err_response === void 0 ? void 0 : _err_response.data);
@@ -550,6 +552,16 @@ const deleteCartItemFromCart = async (cartItemId)=>{
         var _err_response;
         console.log("Error in CartService: ", (_err_response = err.response) === null || _err_response === void 0 ? void 0 : _err_response.data);
         throw err;
+    }
+};
+const calculateSubTotal = async (cartItems)=>{
+    try {
+        if (!cartItems) return;
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/order/getSubTotal", cartItems);
+        console.log("Response in CartService: ", response.data);
+        return response.data;
+    } catch (err) {
+        console.log("Error in CartService: ", err.response.data);
     }
 };
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
@@ -617,7 +629,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientSer
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$ProductService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/clientServices/ProductService.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
-'use client';
+"use client";
 ;
 ;
 ;
@@ -630,13 +642,13 @@ function CartProvider(param) {
     const { userData } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNavigation"])();
     const { error: showError } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNotification"])();
     const [cartItems, setCartItems] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [checkedCartItems, setCheckedCartItems] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [cart, setCart] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({});
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    // console.log("CartProvider - userData:", userData);
-    // console.log("CartProvider - cartItems:", cartItems);
     const fetchCartItems = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "CartProvider.useCallback[fetchCartItems]": async ()=>{
             if (!(userData === null || userData === void 0 ? void 0 : userData.cartId)) {
+                console.log("cartItem becomes empty->26");
                 setCartItems([]);
                 return;
             }
@@ -646,7 +658,6 @@ function CartProvider(param) {
                 console.log("Cart", response.Cart);
                 const { Cart } = response;
                 setCart(Cart);
-                // Use Cart.cartItem instead of cartItems (which is empty initially)
                 if (Cart.cartItem && Cart.cartItem.length > 0) {
                     const productPromises = Cart.cartItem.map({
                         "CartProvider.useCallback[fetchCartItems].productPromises": async (cartItem)=>{
@@ -695,7 +706,6 @@ function CartProvider(param) {
             };
             try {
                 await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["addToCart"])(userData.cartId, cartItem);
-                // Refresh cart items after adding
                 await fetchCartItems();
                 return true;
             } catch (err) {
@@ -722,44 +732,64 @@ function CartProvider(param) {
     }["CartProvider.useCallback[removeItemFromCart]"], [
         fetchCartItems
     ]);
-    const updateItemQuantity = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
-        "CartProvider.useCallback[updateItemQuantity]": async (cartItemId, quantity)=>{
-            if (quantity < 1) {
-                quantity = 1;
-            }
-            try {
-                await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateQuantityOfItem"])(cartItemId, quantity);
-                await fetchCartItems();
-            } catch (err) {
-                var _err_response;
-                console.log("Error updating quantity:", (_err_response = err.response) === null || _err_response === void 0 ? void 0 : _err_response.data);
-                throw err;
-            }
+    const updateItemQuantity = async (cartItemId, quantity)=>{
+        if (quantity < 1) {
+            quantity = 1;
         }
-    }["CartProvider.useCallback[updateItemQuantity]"], [
-        fetchCartItems
-    ]);
+        try {
+            const data = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateQuantityOfItem"])(cartItemId, quantity);
+            console.log("CartItems: ", cartItems);
+            setCartItems((prev)=>prev.map((item)=>item.cartItemId === data.cartItemId ? {
+                        ...item,
+                        quantity: data.quantity
+                    } : item));
+        } catch (err) {
+            var _err_response;
+            console.log("Error updating quantity:", (_err_response = err.response) === null || _err_response === void 0 ? void 0 : _err_response.data);
+            throw err;
+        }
+    };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "CartProvider.useEffect": ()=>{
             if (userData === null || userData === void 0 ? void 0 : userData.cartId) {
                 fetchCartItems();
             } else {
-                setCartItems([]); // Clear cart items if no cartId
+                setCartItems([]);
             }
         }
     }["CartProvider.useEffect"], [
         userData === null || userData === void 0 ? void 0 : userData.cartId
     ]);
+    const handleCheckBox = (cartItem)=>{
+        setCheckedCartItems((prev)=>{
+            const exists = prev.some((item)=>item.cartItemId === cartItem.cartItemId);
+            if (exists) {
+                return prev.filter((item)=>item.cartItemId !== cartItem.cartItemId);
+            } else {
+                return [
+                    ...prev,
+                    cartItem
+                ];
+            }
+        });
+    };
+    const clearCheckedCart = ()=>{
+        setCheckedCartItems([]);
+    };
     const value = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "CartProvider.useMemo[value]": ()=>({
                 cartItems,
+                checkedCartItems,
+                setCheckedCartItems,
                 cart,
                 loading,
                 fetchCartItems,
                 addItemToCart,
                 removeItemFromCart,
                 updateItemQuantity,
-                cartItemCount: cartItems.length
+                handleCheckBox,
+                clearCheckedCart,
+                cartItemCount: cartItems === null || cartItems === void 0 ? void 0 : cartItems.length
             })
     }["CartProvider.useMemo[value]"], [
         cartItems,
@@ -775,11 +805,11 @@ function CartProvider(param) {
         children: children
     }, void 0, false, {
         fileName: "[project]/app/Context/CartContext.js",
-        lineNumber: 137,
-        columnNumber: 9
+        lineNumber: 181,
+        columnNumber: 10
     }, this);
 }
-_s(CartProvider, "3N3ALrLDxiur9ooHKq5PIs9NXU8=", false, function() {
+_s(CartProvider, "F8lKnlufLrfLb9L7Nl2v2VJ1CbM=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNavigation"],
         __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNotification"]

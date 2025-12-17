@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 15, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Lenovo/Documents/ECommerce/frontend/app/order/shippingAddress/page.js"],"sourcesContent":["\r\nexport default function ShippingAddress(){\r\n    return(\r\n        <div>\r\n            Shipping Address Form\r\n        </div>\r\n    )\r\n}"],"names":[],"mappings":";;;;;;AACe,SAAS;IACpB,qBACI,8OAAC;kBAAI;;;;;;AAIb","debugId":null}}]
+}

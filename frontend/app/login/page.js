@@ -102,7 +102,7 @@ export default function LoginPage() {
                         )
                     }
                     </button>
-                    <span><a href="#">Forget password?</a></span>
+                    <span><a href="/login/forgetPassword">Forget password?</a></span>
                 </div>
             </form>
             <div className={style.divider}>

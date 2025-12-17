@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { fetchCurrentUser } from "../services/UserServices";
-import { useNotification } from "./NotificationContext";
+import { useNotification } from "../Context/NotificationContext";
 
 export const useAuth = () => {
   const router = useRouter();
@@ -15,10 +15,12 @@ export const useAuth = () => {
       const user = await fetchCurrentUser(success, error);
       setUser(user);
     } catch (err) {
-      const { message, redirectUrl } = err.response?.data;
-      setUser({});
-      if (err.response.data && err.response.status === 403) {
-        setRedirectUrl(redirectUrl);
+      if (err.response.data) {
+        const { message, redirectUrl } = err.response?.data;
+        setUser({});
+        if (err.response.status === 403) {
+          setRedirectUrl(redirectUrl);
+        }
       }
     } finally {
       setLoading(false);

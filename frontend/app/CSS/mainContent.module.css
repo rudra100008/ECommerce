@@ -13,6 +13,10 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
+.firstSection{
+    display: flex;
+    
+}
 
 .pageContainer::-webkit-scrollbar {
     display: none;

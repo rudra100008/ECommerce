@@ -1,137 +1,350 @@
 .cartTableContainer {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
+
 .cartTableContainer h2 {
-    text-align: center;
-    font-size: 36px;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-    margin-bottom: 40px;
-    color: #1a202c;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  text-align: center;
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  margin-bottom: 40px;
+  color: #1a202c;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
+
 .loading {
-    text-align: center;
-    padding: 40px;
-    font-size: 18px;
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #667eea;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .emptyCart {
-    text-align: center;
-    padding: 40px;
-    font-size: 18px;
-    color: #666;
+  text-align: center;
+  padding: 60px 40px;
+  font-size: 20px;
+  color: #666;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .cartTableBody {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 30px;
-    background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 30px;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .tableHead {
-    background-color: #f8f9fa;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .headRow th {
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-    color: #333;
-    border-bottom: 2px solid #dee2e6;
+  padding: 18px 15px;
+  text-align: center;
+  font-weight: 600;
+  color: white;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+}
+
+.tableBody {
+  background-color: white;
+}
+
+.bodyRow {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bodyRow:hover {
+  background-color: #f8f9ff;
+  transform: scale(1.01);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  z-index: 1;
 }
 
 .bodyRow td {
-    padding: 15px;
-    border-bottom: 1px solid #dee2e6;
+  padding: 20px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: center;
+  vertical-align: middle;
+  transition: all 0.3s ease;
+}
+
+.bodyRow:last-child td {
+  border-bottom: none;
+}
+
+.bodyRow td:first-child {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 16px;
 }
 
 .imageButton {
-    background-color: rgba(83, 240, 52, 0.68);
-    padding: 5px 10px;
-    color: white;
-    font-weight: 500;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
+  background: linear-gradient(135deg, #53f034 0%, #3dd626 100%);
+  padding: 10px 20px;
+  color: white;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(83, 240, 52, 0.3);
 }
 
 .imageButton:hover {
-    transform: translateY(-3px);
-    background-color: rgba(83, 240, 52, 0.78);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(83, 240, 52, 0.4);
+  background: linear-gradient(135deg, #3dd626 0%, #2fc41e 100%);
 }
 
 .imageButton:active {
-    transform: translateY(1px);
+  transform: translateY(0px);
 }
 
 .productName {
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: #333;
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+  text-align: left;
+  padding-left: 20px !important;
 }
 
 .price,
 .totalPrice {
-    font-weight: 600;
-    color: #333;
+  font-weight: 700;
+  color: #667eea;
+  font-size: 16px;
 }
 
 .quantity {
-    /* Remove flex properties from the td itself */
+  text-align: center;
 }
 
 .quantityControls {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 25px;
+  border: 2px solid #e9ecef;
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
 }
 
 .plusButton,
 .minusButton {
-    background-color: rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    padding: 5px;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
 }
 
 .plusButton:hover,
 .minusButton:hover {
-    background-color: rgba(0, 0, 0, 0.3);
+  transform: scale(1.15);
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.5);
+}
+
+.plusButton:active,
+.minusButton:active {
+  transform: scale(0.95);
 }
 
 .removeButton {
-    color: white;
-    background-color: rgba(226, 27, 27, 0.7);
-    padding: 5px 10px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease-in-out;
+  color: white;
+  background: linear-gradient(135deg, #e21b1b 0%, #c41515 100%);
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 8px rgba(226, 27, 27, 0.3);
 }
 
 .removeButton:hover {
-    transform: translateY(-3px);
-    background-color: rgba(226, 27, 27, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(226, 27, 27, 0.5);
+  background: linear-gradient(135deg, #c41515 0%, #a01111 100%);
 }
 
 .removeButton:active {
-    transform: translateY(1px);
+  transform: translateY(0px);
+}
+
+.checkBoxSection {
+  text-align: center;
+}
+
+.checkBox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+  transition: all 0.2s ease;
+}
+
+.checkBox:hover {
+  transform: scale(1.15);
+}
+
+/* Order Section Design */
+.orderSection {
+  background: white;
+  padding: 30px;
+  max-height: fit-content;
+  width: 400px;
+  margin: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  position: sticky;
+  top: 20px;
+  border: 2px solid #f0f0f0;
+}
+
+.orderSection .title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #333;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.detailSection {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.subTotalSection,
+.shippingFeeSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.subTotalSection p,
+.shippingFeeSection p {
+  font-size: 16px;
+  color: #555;
+  margin: 0;
+  font-weight: 500;
+}
+
+.subTotalSection span,
+.shippingFeeSection span {
+  font-weight: 700;
+  color: #667eea;
+  font-size: 18px;
+}
+
+.buttonSection {
+  margin-top: 15px;
+}
+
+.buttonSection button {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 1;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.buttonSection button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.buttonSection button:active {
+  transform: translateY(0px);
+}
+
+.disabledButton,
+.disabledButton a {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  pointer-events: none;
+}
+
+.disabledButton:hover {
+  transform: none !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cartTableContainer {
+    padding: 10px;
+    margin: 0 10px;
+  }
+
+  .cartTableBody {
+    font-size: 12px;
+  }
+
+  .headRow th {
+    padding: 12px 8px;
+    font-size: 11px;
+  }
+
+  .bodyRow td {
+    padding: 12px 8px;
+  }
+
+  .orderSection {
+    width: 100%;
+    margin: 20px 0;
+  }
 }
