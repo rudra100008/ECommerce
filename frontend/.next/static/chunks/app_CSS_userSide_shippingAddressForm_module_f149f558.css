@@ -9,15 +9,23 @@
 }
 
 .shippingAddressForm-module__5kppgW__title {
+  text-align: center;
   margin-bottom: 30px;
 }
 
 .shippingAddressForm-module__5kppgW__title h3 {
-  text-align: center;
   color: #1a1a1a;
   margin: 0;
   font-size: 24px;
   font-weight: 600;
+}
+
+.shippingAddressForm-module__5kppgW__title span {
+  text-align: center;
+  color: #484848;
+  margin: 0;
+  font-size: 12px;
+  display: inline-block;
 }
 
 .shippingAddressForm-module__5kppgW__FormSection {
@@ -101,6 +109,12 @@
 
 .shippingAddressForm-module__5kppgW__selectGroup::-ms-expand {
   display: none;
+}
+
+select:disabled {
+  cursor: not-allowed;
+  color: #9ca3af;
+  background-color: #f9fafb;
 }
 
 @media (max-width: 768px) {

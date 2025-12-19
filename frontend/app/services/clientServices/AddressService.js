@@ -42,3 +42,36 @@ export const updateAddress = async (address = {}) =>{
         console.log("Error in AddressService:",err.response.data)
     }
 }
+
+export const getProvinces = async()=>{
+    try{
+        const response = await api.get(`/api/address/province`);
+        console.log("Response in addressService: ",response);
+        return response.data;
+    }catch(err){
+        console.log("Error in AddressService: ",err.response.data);
+        throw err;
+    }
+}
+
+export const getDistricts = async(provinceId = null)=>{
+    try{
+        const response  = await api.get(`/api/address/district/${provinceId}`);
+        console.log("Response in AddressService: ",response.data)
+        return response.data
+    }catch(err){
+        console.log("Error in AddressService: ",err.response.data)
+        return err;
+    }
+}
+
+export const getMunicipalities = async(districtId = null)=>{
+    try{
+        const response  = await api.get(`/api/address/municipality/${districtId}`);
+        console.log("Response in AddressService: ",response.data);
+        return response.data
+    }catch(err){
+        console.log("Error in AddressService: ",err.response.data)
+        return err;
+    }
+}
