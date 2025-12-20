@@ -144,3 +144,78 @@ select:disabled {
   border-color: #ef4444;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
+
+.actionGroup {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.actionGroup > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancelButton,
+.submitButton {
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.cancelButton {
+  background-color: #ffffff;
+  color: #374151;
+  border: 1.5px solid #e5e7eb;
+}
+
+.cancelButton:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.cancelButton:active {
+  background-color: #f3f4f6;
+}
+
+.submitButton {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: 1.5px solid #3b82f6;
+}
+
+.submitButton:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.submitButton:active {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.submitButton:disabled,
+.cancelButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .actionGroup > div {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .cancelButton,
+  .submitButton {
+    width: 100%;
+    padding: 14px 32px;
+  }
+}

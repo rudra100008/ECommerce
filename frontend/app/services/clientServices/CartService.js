@@ -7,6 +7,7 @@ export const addToCart = async(cartId,cartItem)=>{
             cartId:cartId,
             cartItemDTO:cartItem
         }
+        console.log("RequestData: ",requestData)
         const response = await api.post("/api/cart/addToCart",requestData);
         console.log("Response in CartService: ",response)
         return response.data;
@@ -54,7 +55,7 @@ export const deleteCartItemFromCart = async(cartItemId) => {
 export const calculateSubTotal = async(cartItems)=>{
     try{
         if(!cartItems) return;
-        const response = await api.post(`/api/order/getSubTotal`,cartItems);
+        const response = await api.post(`/api/cart/getSubTotal`,cartItems);
         console.log("Response in CartService: ",response.data);
         return response.data;
     }catch(err){

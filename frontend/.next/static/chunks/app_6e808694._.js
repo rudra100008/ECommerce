@@ -280,30 +280,40 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Context/NotificationContext.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$LoginServices$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/LoginServices.js [app-client] (ecmascript)");
-'use client';
+"use client";
 ;
 ;
 ;
 const fetchCurrentUser = async (success, error, router)=>{
     try {
-        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get('/api/user/me');
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/api/user/me");
         console.log("CurrentUser: ", response.data);
         const data = response.data;
         return data;
     } catch (err) {
         var _err_response;
-        console.log("CurrenUser: ", err);
+        if (!err.response) {
+            console.error("Network error or server not reachable:", err.message);
+            error("Unable to connect to server. Please check your connection.");
+            throw err;
+        }
         const { message, redirectUrl } = (_err_response = err.response) === null || _err_response === void 0 ? void 0 : _err_response.data;
-        if (err.response.data && err.response.status === 401) {
+        if (err.response.status === 401) {
+            var _err_reponse;
+            console.log("Error in UserService: ", (_err_reponse = err.reponse) === null || _err_reponse === void 0 ? void 0 : _err_reponse.data);
             error(message);
             setTimeout(()=>{
                 (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$LoginServices$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["logout"])(router, success);
             }, 3000);
-        } else if (err.response.data && err.response.status === 403) {
+        } else if (err.response.status === 403) {
+            var _err_reponse1;
+            console.log("Error in UserService: ", (_err_reponse1 = err.reponse) === null || _err_reponse1 === void 0 ? void 0 : _err_reponse1.data);
             error(message);
             setTimeout(()=>{
                 window.location.href = redirectUrl;
             }, 3000);
+        } else {
+            error("Unexcepted error occured.");
         }
         throw err;
     }
@@ -312,7 +322,7 @@ const updateUserImageAndFullName = async (userId, formDataToSend, error)=>{
     try {
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/user/".concat(userId, "/userImageAndFullName"), formDataToSend, {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                "Content-Type": "multipart/form-data"
             }
         });
         console.log("Response in UserService: ", response);
@@ -342,7 +352,7 @@ const revertToGooglePic = async (userId, success, error)=>{
         success(response.data.message);
         return response.data;
     } catch (err) {
-        console.log('err in UserService: ', err.response.body);
+        console.log("err in UserService: ", err.response.body);
     }
 };
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
@@ -510,6 +520,7 @@ const addToCart = async (cartId, cartItem)=>{
             cartId: cartId,
             cartItemDTO: cartItem
         };
+        console.log("RequestData: ", requestData);
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/cart/addToCart", requestData);
         console.log("Response in CartService: ", response);
         return response.data;
@@ -557,7 +568,7 @@ const deleteCartItemFromCart = async (cartItemId)=>{
 const calculateSubTotal = async (cartItems)=>{
     try {
         if (!cartItems) return;
-        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/order/getSubTotal", cartItems);
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/cart/getSubTotal", cartItems);
         console.log("Response in CartService: ", response.data);
         return response.data;
     } catch (err) {

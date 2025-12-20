@@ -2,9 +2,23 @@
 import { useEffect, useState } from "react";
 import style from "../../CSS/userSide/shippingAddressForm.module.css";
 import { useAddressData } from "../../hooks/useAddressData";
+import { cancelOrder } from "../../services/clientServices/OrderService";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function ShippingAddress() {
+  const [isMunicipalitySelected, setIsMunicipalitySelected] = useState(true);
+  const router = useRouter();
+  const pathName = usePathname();
   const [shippingAddress, setShippingAddress] = useState({
+    shippingDistrict: "",
+    shippingProvince: "",
+    shippingMunicipality: "",
+    shippingWardNumber: "",
+    shippingLandmark: "",
+    houseNumber: "",
+    addressType: "",
+  });
+  const [validationErr, setValidationErr] = useState({
     shippingDistrict: "",
     shippingProvince: "",
     shippingMunicipality: "",
@@ -32,6 +46,17 @@ export default function ShippingAddress() {
     handleSelectedDistrict,
   } = useAddressData();
 
+  const isAllowedPaths = (path) => {
+    const allowedPaths = [
+      "/order",
+      "/order/payment",
+      "/order/confirm",
+      "/order/shippingAddress",
+    ];
+    return allowedPaths.some(
+      (allowedPath) => path === allowedPath || path.startWith(`${allowedPath}/`)
+    );
+  };
   const onShippingAddressChange = (e) => {
     const { name, value } = e.target;
     console.log("Name: ", name, "value: ", value);
@@ -41,7 +66,7 @@ export default function ShippingAddress() {
     } else if (name === "shippingDistrict") {
       handleSelectedDistrict(value);
     } else if (name === "shippingMunicipality") {
-
+      setIsMunicipalitySelected(false);
       addWards(parseInt(value, 10));
     }
   };
@@ -51,14 +76,48 @@ export default function ShippingAddress() {
     setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDataSubmit = () => {};
+  const handleDataSubmit = async (e) => {
+    try {
+      e.preventDefault();
+    } catch (err) {
+      console.log(err.response?.data);
+    }
+  };
 
-  const handleCancelClick = () => {};
+  const handleCancelClick = () => {
+    cancelPendingOrder();
+    router.push("/cart");
+  };
+
+  const cancelPendingOrder = async () => {
+    const orderId = localStorage.getItem("orderId");
+    console.log("OrderId: ",orderId)
+    if (orderId) {
+      try {
+        await cancelOrder(orderId);
+        localStorage.removeItem("orderId");
+      } catch (error) {
+        console.error("Failed to cancel order:", error);
+      }
+    }
+  };
 
   useEffect(() => {
     fetchProvince();
   }, []);
 
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      if (!isAllowedPaths(url)) {
+        cancelPendingOrder();
+      }
+    };
+
+    router.events?.on("routeChangeStart", handleRouteChange);
+    return () => {
+      router.events?.off("routeChangeStart", handleRouteChange);
+    };
+  }, [router]);
   useEffect(() => {
     if (selectedAddress.provinceId !== null) {
       fetchDistrict(selectedAddress.provinceId);
@@ -67,7 +126,6 @@ export default function ShippingAddress() {
       fetchMunicipality(selectedAddress.districtId);
     }
   }, [selectedAddress.provinceId, selectedAddress.districtId]);
-
 
   return (
     <div className={style.FormContainer}>
@@ -208,13 +266,15 @@ export default function ShippingAddress() {
                   value={shippingAddress.shippingWardNumber}
                   onChange={onShippingAddressChange}
                   className={style.selectGroup}
+                  disabled={isMunicipalitySelected}
                 >
                   <option value={""}>Select a wardNumber</option>
-                  <option value={"6"}>6</option>
                   {wards &&
                     wards.length > 0 &&
                     wards.map((ward, index) => (
-                      <option key={index} value={ward}>{ward}</option>
+                      <option key={index} value={ward}>
+                        {ward}
+                      </option>
                     ))}
                 </select>
               </div>
@@ -229,7 +289,11 @@ export default function ShippingAddress() {
               >
                 Cancel
               </button>
-              <button className={style.submitButton} type="submit">
+              <button
+                onClick={handleDataSubmit}
+                className={style.submitButton}
+                type="submit"
+              >
                 Submit
               </button>
             </div>

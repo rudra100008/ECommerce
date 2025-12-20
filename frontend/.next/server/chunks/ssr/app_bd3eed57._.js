@@ -919,6 +919,102 @@ const useOrderSection = ()=>{
     };
 };
 }),
+"[project]/app/services/clientServices/OrderService.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "cancelOrder",
+    ()=>cancelOrder,
+    "createOrder",
+    ()=>createOrder
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-ssr] (ecmascript)");
+;
+const createOrder = async (orderRequest)=>{
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/api/order`, orderRequest);
+        console.log("Response in OrderService: ", response);
+        return response.data;
+    } catch (err) {
+        console.log("Error in OrderService: ", err.response?.data);
+        throw err;
+    }
+};
+const cancelOrder = async (orderId)=>{
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].delete(`/api/order/${orderId}`);
+        console.log("Response in OrderService: ", response.data);
+    } catch (err) {
+        console.log("Error in OrderService: ", err.response?.data);
+        throw err;
+    }
+};
+}),
+"[project]/app/hooks/useOrder.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "useOrder",
+    ()=>useOrder
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/clientServices/OrderService.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$CartContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Context/CartContext.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$hooks$2f$useAuth$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/hooks/useAuth.js [app-ssr] (ecmascript)");
+;
+;
+;
+;
+const useOrder = ()=>{
+    const { checkedCartItems } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$CartContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCart"])();
+    const { user } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$hooks$2f$useAuth$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useAuth"])();
+    const [orderItems, setOrderItems] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [order, setOrder] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
+        orderId: '',
+        orderDate: null,
+        status: '',
+        totalAmount: null,
+        userId: user.userId,
+        createdAt: null,
+        updatedAt: null,
+        orderItemIds: [],
+        shippingAddress: {}
+    });
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        console.log("CheckedCartItem in useOrder: ", checkedCartItems);
+    }, []);
+    const saveOrder = async ()=>{
+        try {
+            const items = [];
+            checkedCartItems.forEach((item)=>items.push({
+                    quantity: item.quantity,
+                    productId: item.productId,
+                    priceAtPurchase: item.product.price,
+                    discountPurchase: item.product.discount
+                }));
+            console.log("items: ", items);
+            setOrderItems(items);
+            const orderData = {
+                orderDTO: {
+                    userId: user.userId
+                },
+                orderItemDTOs: items
+            };
+            const response = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createOrder"])(orderData);
+            setOrder(order);
+            localStorage.setItem("orderId", order.orderId);
+            console.log("Response in userOrder: ", response);
+        } catch (err) {
+            console.log("Error in userOrder: ", err.response?.data);
+        }
+    };
+    return {
+        orderItems,
+        order,
+        saveOrder
+    };
+};
+}),
 "[project]/app/Component/OrderSummary.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
@@ -934,7 +1030,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$CartContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Context/CartContext.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Context/NotificationContext.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$hooks$2f$useOrder$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/hooks/useOrder.js [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 ;
@@ -949,26 +1047,42 @@ function OrderSummary() {
     const { subTotal, setSubTotal, fetchSubTotal } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$hooks$2f$useOrderSection$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOrderSection"])();
     const { checkedCartItems } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$CartContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCart"])();
     const [shippingFee, setShippingFee] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0.0);
-    const isButtonDisabled = checkedCartItems.length === 0;
-    const handleProceedToCheckOut = (e)=>{
+    const { order, orderItems, saveOrder } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$hooks$2f$useOrder$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useOrder"])();
+    const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const isButtonDisabled = checkedCartItems.length === 0 || isLoading;
+    const handleProceedToCheckOut = async (e)=>{
+        e.preventDefault(); // Prevent default navigation
         if (checkedCartItems.length === 0) {
-            e.preventDefault();
-            e.stopPropagation();
             error("Please select at least one item to proceed to checkout.");
             return;
+        }
+        try {
+            setIsLoading(true);
+            await saveOrder();
+            router.push("/order/shippingAddress");
+        } catch (err) {
+            error("Failed to create order. Please try again.");
+            console.error("Error in handleProceedToCheckOut:", err);
+        } finally{
+            setIsLoading(false);
         }
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         console.log("checkedCartItems changed:", checkedCartItems);
-        console.log("Array length:", checkedCartItems.length);
         if (checkedCartItems.length === 0) {
-            console.log("Empty cart, skipping subtotal calculation");
             setSubTotal(0);
             return;
         } else if (checkedCartItems.length > 0) {
-            console.log("Fetching subtotal...");
             fetchSubTotal();
         }
+        const items = [];
+        checkedCartItems.forEach((item)=>items.push({
+                quantity: item.quantity,
+                productId: item.productId,
+                priceAtPurchase: item.product.price,
+                discountPurchase: item.product.discount
+            }));
+        console.log("items: ", items);
     }, [
         checkedCartItems
     ]);
@@ -981,12 +1095,12 @@ function OrderSummary() {
                     children: "Order Summary"
                 }, void 0, false, {
                     fileName: "[project]/app/Component/OrderSummary.js",
-                    lineNumber: 43,
+                    lineNumber: 69,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/Component/OrderSummary.js",
-                lineNumber: 42,
+                lineNumber: 68,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1003,18 +1117,18 @@ function OrderSummary() {
                                     children: subTotal
                                 }, void 0, false, {
                                     fileName: "[project]/app/Component/OrderSummary.js",
-                                    lineNumber: 48,
+                                    lineNumber: 74,
                                     columnNumber: 52
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/Component/OrderSummary.js",
-                            lineNumber: 47,
+                            lineNumber: 73,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/Component/OrderSummary.js",
-                        lineNumber: 46,
+                        lineNumber: 72,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1026,18 +1140,18 @@ function OrderSummary() {
                                     children: shippingFee
                                 }, void 0, false, {
                                     fileName: "[project]/app/Component/OrderSummary.js",
-                                    lineNumber: 53,
+                                    lineNumber: 79,
                                     columnNumber: 27
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/Component/OrderSummary.js",
-                            lineNumber: 52,
+                            lineNumber: 78,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/Component/OrderSummary.js",
-                        lineNumber: 51,
+                        lineNumber: 77,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1046,39 +1160,31 @@ function OrderSummary() {
                             disabled: isButtonDisabled,
                             className: isButtonDisabled ? __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$userSide$2f$cartItemTable$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].disabledButton : "",
                             onClick: handleProceedToCheckOut,
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                onClick: (e)=>isButtonDisabled && e.preventDefault(),
-                                href: isButtonDisabled ? "#" : "/order/shippingAddress",
-                                children: "Proceed To Check Out"
-                            }, void 0, false, {
-                                fileName: "[project]/app/Component/OrderSummary.js",
-                                lineNumber: 62,
-                                columnNumber: 13
-                            }, this)
+                            children: isLoading ? "Processing..." : "Proceed To Check Out"
                         }, void 0, false, {
                             fileName: "[project]/app/Component/OrderSummary.js",
-                            lineNumber: 57,
+                            lineNumber: 83,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/Component/OrderSummary.js",
-                        lineNumber: 56,
+                        lineNumber: 82,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/Component/OrderSummary.js",
-                lineNumber: 45,
+                lineNumber: 71,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/Component/OrderSummary.js",
-        lineNumber: 41,
+        lineNumber: 67,
         columnNumber: 5
     }, this);
 }
 }),
 ];
 
-//# sourceMappingURL=app_8d7bdf21._.js.map
+//# sourceMappingURL=app_bd3eed57._.js.map

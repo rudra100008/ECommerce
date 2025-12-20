@@ -15,7 +15,7 @@ export const useAuth = () => {
       const user = await fetchCurrentUser(success, error);
       setUser(user);
     } catch (err) {
-      if (err.response.data) {
+      if (err.response) {
         const { message, redirectUrl } = err.response?.data;
         setUser({});
         if (err.response.status === 403) {

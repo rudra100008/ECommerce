@@ -144,4 +144,76 @@ select:disabled {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, .1);
 }
 
+.shippingAddressForm-module__5kppgW__actionGroup {
+  border-top: 1px solid #e5e7eb;
+  margin-top: 32px;
+  padding-top: 24px;
+}
+
+.shippingAddressForm-module__5kppgW__actionGroup > div {
+  justify-content: flex-end;
+  gap: 12px;
+  display: flex;
+}
+
+.shippingAddressForm-module__5kppgW__cancelButton, .shippingAddressForm-module__5kppgW__submitButton {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  padding: 12px 32px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all .2s;
+}
+
+.shippingAddressForm-module__5kppgW__cancelButton {
+  color: #374151;
+  background-color: #fff;
+  border: 1.5px solid #e5e7eb;
+}
+
+.shippingAddressForm-module__5kppgW__cancelButton:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.shippingAddressForm-module__5kppgW__cancelButton:active {
+  background-color: #f3f4f6;
+}
+
+.shippingAddressForm-module__5kppgW__submitButton {
+  color: #fff;
+  background-color: #3b82f6;
+  border: 1.5px solid #3b82f6;
+}
+
+.shippingAddressForm-module__5kppgW__submitButton:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, .2);
+}
+
+.shippingAddressForm-module__5kppgW__submitButton:active {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.shippingAddressForm-module__5kppgW__submitButton:disabled, .shippingAddressForm-module__5kppgW__cancelButton:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+@media (max-width: 768px) {
+  .shippingAddressForm-module__5kppgW__actionGroup > div {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .shippingAddressForm-module__5kppgW__cancelButton, .shippingAddressForm-module__5kppgW__submitButton {
+    width: 100%;
+    padding: 14px 32px;
+  }
+}
+
 /*# sourceMappingURL=app_CSS_userSide_shippingAddressForm_module_f149f558.css.map*/
