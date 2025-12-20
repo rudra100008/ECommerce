@@ -1,22 +1,19 @@
 package com.E_Commerce.ServicesImpl;
 
 import com.E_Commerce.DTO.OrderItemDTO;
-import com.E_Commerce.Entity.Inventory;
-import com.E_Commerce.Entity.Order;
-import com.E_Commerce.Entity.OrderItem;
-import com.E_Commerce.Entity.Product;
+import com.E_Commerce.Entity.*;
+import com.E_Commerce.Enum.ReservationStatus;
 import com.E_Commerce.Exception.InsufficientStockException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.OrderItemMapper;
-import com.E_Commerce.Repository.InventoryRepository;
-import com.E_Commerce.Repository.OrderItemRepository;
-import com.E_Commerce.Repository.OrderRepository;
-import com.E_Commerce.Repository.ProductRepository;
+import com.E_Commerce.Repository.*;
 import com.E_Commerce.Services.OrderItemService;
+import com.E_Commerce.Services.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,12 +26,14 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final InventoryRepository inventoryRepository;
+    private final ReservationRepository reservationRepository;
+    private final ReservationService reservationService; // Add this
 
     @Override
     @Transactional
     public List<OrderItemDTO> addOrderItemDTOs(List<OrderItemDTO> orderItemDTOList) {
-      List<OrderItem> savedOrderItem = saveOrderItem(orderItemDTOList);
-      return this.orderItemMapper.toOrderItemDTOs(savedOrderItem);
+        List<OrderItem> savedOrderItem = saveOrderItem(orderItemDTOList);
+        return this.orderItemMapper.toOrderItemDTOs(savedOrderItem);
     }
 
     @Override
@@ -43,15 +42,27 @@ public class OrderItemServiceImpl implements OrderItemService {
         return saveOrderItem(orderItemDTOList);
     }
 
+    @Override
+    public void removeOrderItems(List<OrderItem> orderItems,User user) {
+        removeOrderItemsWithReservation(orderItems,user);
+    }
 
     private List<OrderItem> saveOrderItem(List<OrderItemDTO> dtos){
         Order order = getOrder(dtos.getFirst().getOrderId());
-        Map<Integer,Product> productMap = getProductMap(dtos);
-        checkStockAvailability(dtos,productMap);
-        updateInventory(dtos,productMap);
+        User user = order.getUser(); // Get user from order
+
+        Map<Integer, Product> productMap = getProductMap(dtos);
+
+        checkUserReservations(dtos, user.getUserId());
+
+        checkStockAvailability(dtos, productMap);
+
+        updateInventoryAndConvertReservations(dtos, productMap, user.getUserId());
+
         List<OrderItem> orderItems = dtos.stream()
-                .map(orderItemDTO -> createOrderItem(orderItemDTO,order,productMap))
+                .map(orderItemDTO -> createOrderItem(orderItemDTO, order, productMap))
                 .collect(Collectors.toList());
+
         return this.orderItemRepository.saveAll(orderItems);
     }
 
@@ -64,19 +75,18 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         List<Product> productList = this.productRepository.findAllById(productIds);
         if(productList.size() != productIds.size()){
-            throw new ResourceNotFoundException("One or more not found");
+            throw new ResourceNotFoundException("One or more products not found");
         }
 
         return productList.stream()
                 .collect(Collectors.toMap(Product::getProductId, Function.identity()));
     }
 
-    private OrderItem createOrderItem(OrderItemDTO orderItemDTO,Order order,Map<Integer,Product> productMap){
+    private OrderItem createOrderItem(OrderItemDTO orderItemDTO, Order order, Map<Integer, Product> productMap){
         Product product = productMap.get(orderItemDTO.getProductId());
         if (product == null) {
             throw new ResourceNotFoundException("Product not found: " + orderItemDTO.getProductId());
         }
-
 
         Double subTotal = orderItemDTO.getSubTotal();
         if(subTotal == null){
@@ -85,8 +95,9 @@ public class OrderItemServiceImpl implements OrderItemService {
             Double discount = orderItemDTO.getDiscountAtPurchase() != null ?
                     orderItemDTO.getDiscountAtPurchase() : product.getDiscount();
 
-            subTotal = (price - (discount != null ? discount : 0.0))*orderItemDTO.getQuantity();
+            subTotal = (price - (discount != null ? discount : 0.0)) * orderItemDTO.getQuantity();
         }
+
         OrderItem orderItem = this.orderItemMapper.toOrderItem(orderItemDTO);
         orderItem.setProduct(product);
         orderItem.setOrder(order);
@@ -100,8 +111,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
 
         return orderItem;
-
-
     }
 
     private void validateOrderItemDTOs(List<OrderItemDTO> dtos){
@@ -128,45 +137,93 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
     }
 
-    private void checkStockAvailability(List<OrderItemDTO> orderItemDTOS,Map<Integer,Product> productMap){
-        for (OrderItemDTO orderItemDTO:orderItemDTOS){
+    private void checkStockAvailability(List<OrderItemDTO> orderItemDTOS, Map<Integer, Product> productMap){
+        for (OrderItemDTO orderItemDTO : orderItemDTOS){
             Product product = productMap.get(orderItemDTO.getProductId());
             Inventory inventory = this.inventoryRepository.findByProduct(product)
-                    .orElseThrow(()-> new ResourceNotFoundException("Product not found."));
-            if(Boolean.FALSE.equals(inventory.isInStock())){
-                throw new InsufficientStockException("Product  not in stock.");
-            }
+                    .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for product: " + product.getProductName()));
+
             if(inventory.getAvailableQuantity() < orderItemDTO.getQuantity()){
                 throw new InsufficientStockException(
                         "Insufficient stock for " + product.getProductName() +
                                 ". Available: " + inventory.getAvailableQuantity() +
                                 ", Requested: " + orderItemDTO.getQuantity());
             }
-
         }
     }
 
-    private void updateInventory(List<OrderItemDTO> orderItemDTOS,Map<Integer,Product> productMap){
-        for (OrderItemDTO orderItemDTO:orderItemDTOS){
+    private void checkUserReservations(List<OrderItemDTO> dtos, Integer userId) {
+        for (OrderItemDTO dto : dtos) {
+            Reservation reservation = this.reservationRepository.findActiveReservationByUserAndProduct(
+                    userId, dto.getProductId(), LocalDateTime.now());
+
+            if (reservation == null) {
+                throw new IllegalArgumentException("No active reservation found for product: " + dto.getProductId());
+            }
+
+            if (!reservation.getReservedQuantity().equals(dto.getQuantity())) {
+                throw new IllegalArgumentException(
+                        "Reservation quantity mismatch for product " + dto.getProductId() +
+                                ". Reserved: " + reservation.getReservedQuantity() +
+                                ", Ordered: " + dto.getQuantity());
+            }
+        }
+    }
+
+    private void updateInventoryAndConvertReservations(List<OrderItemDTO> orderItemDTOS,
+                                                       Map<Integer, Product> productMap,
+                                                       Integer userId) {
+        for (OrderItemDTO orderItemDTO : orderItemDTOS) {
             Product product = productMap.get(orderItemDTO.getProductId());
+
             Inventory inventory = this.inventoryRepository.findByProduct(product)
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Inventory not found for product: " + product.getProductName()));
-            Integer newQuantity = inventory.getAvailableQuantity() - orderItemDTO.getQuantity();
-            if(newQuantity < 0){
-                product.setIsActive(false);
-                throw new InsufficientStockException(
-                        "Stock update failed for " + product.getProductName());
+
+            Reservation reservation = this.reservationRepository.findActiveReservationByUserAndProduct(
+                    userId, orderItemDTO.getProductId(), LocalDateTime.now());
+            if (reservation == null) {
+                throw new ResourceNotFoundException("Active reservation not found for product: " + product.getProductName());
             }
-            inventory.setStockQuantity(newQuantity);
-            product.setIsActive(true);
+
+
+            int newStockQuantity = inventory.getStockQuantity() - orderItemDTO.getQuantity();
+            if (newStockQuantity < 0) {
+                throw new InsufficientStockException(
+                        "Stock update failed for " + product.getProductName() +
+                                ". Not enough physical stock.");
+            }
+
+            inventory.setStockQuantity(newStockQuantity);
             this.inventoryRepository.save(inventory);
+
+            reservation.setStatus(ReservationStatus.CONVERTED_TO_ORDER);
+            this.reservationRepository.save(reservation);
+
+            if (newStockQuantity == 0) {
+                product.setIsActive(false);
+                this.productRepository.save(product);
+            }
         }
+    }
+
+
+    private void removeOrderItemsWithReservation(List<OrderItem> orderItems,User user){
+        List<Reservation> reservations = new ArrayList<>();
+        for (OrderItem orderItem : orderItems){
+            Reservation reservation = this.reservationRepository
+                    .findReservationByUserAndProduct(
+                            user.getUserId(),
+                            orderItem.getProduct().getProductId(),
+                            LocalDateTime.now()
+                    );
+            reservations.add(reservation);
+        }
+        this.reservationRepository.deleteAll(reservations);
+        this.orderItemRepository.deleteAll(orderItems);
     }
     private Order getOrder(int orderId){
         return this.orderRepository.findById(orderId)
-                .orElseThrow(()-> new ResourceNotFoundException("Order cannot be processed."));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
     }
-
-
 }

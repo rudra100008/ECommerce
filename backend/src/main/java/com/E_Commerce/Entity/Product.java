@@ -61,6 +61,7 @@ public class Product {
     private List<CartItem> cartItems = new ArrayList<>();
 
 
+
     public Double getTotalPrice(){
         return this.price - (this.discount != null ? this.discount : 0.0);
     }

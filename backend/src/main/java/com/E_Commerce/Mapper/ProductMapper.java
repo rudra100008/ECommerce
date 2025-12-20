@@ -1,10 +1,7 @@
 package com.E_Commerce.Mapper;
 
 import com.E_Commerce.DTO.ProductDTO;
-import com.E_Commerce.Entity.Category;
-import com.E_Commerce.Entity.Inventory;
-import com.E_Commerce.Entity.Product;
-import com.E_Commerce.Entity.ProductImage;
+import com.E_Commerce.Entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -63,11 +60,12 @@ public interface ProductMapper {
        Integer reservedQuantity = productDTO.getReservedQuantity() != null ?
                productDTO.getReservedQuantity() : 0;
        if (productDTO.getStockQuantity() != null) {
+
            Inventory inventory = Inventory.builder()
                    .stockQuantity(stockQuantity)
-                   .reservedQuantity(reservedQuantity)
                    .product(product)
                    .build();
+
            product.setInventory(inventory);
        }
 

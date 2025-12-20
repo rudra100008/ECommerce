@@ -21,24 +21,8 @@ public class InventoryServiceImpl implements InventoryService {
         return getInventory(product);
     }
 
-    @Override
-    public Inventory updateReservedQuantity(Integer productId, Integer reservedQuantity) {
-        Product product = getProduct(productId);
-        Inventory inventory = getInventory(product);
-        inventory.reserveQuantity(reservedQuantity);
-         return  inventoryRepository.save(inventory);
 
-    }
-    @Override
-    @Transactional
-    public Inventory releaseReservedStock(Integer productId, Integer quantity) {
-        Product product = getProduct(productId);
-        Inventory inventory = getInventory(product);
 
-        inventory.releaseReservedQuantity(quantity);
-
-        return inventoryRepository.save(inventory);
-    }
 
     @Override
     public Inventory updateStockQuantity(Integer productId, Integer stockQuantity) {

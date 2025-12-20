@@ -21,7 +21,6 @@ public interface InventoryMapper {
         Inventory inventory = Inventory.builder()
                 .id(inventoryDTO.getId())
                 .stockQuantity(inventoryDTO.getStockQuantity())
-                .reservedQuantity(inventoryDTO.getReservedQuantity())
                 .build();
 
         // Create a Product reference with just the ID

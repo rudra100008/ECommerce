@@ -21,21 +21,21 @@ public class InventoryController {
         Inventory inventory = this.inventoryService.getProductDataInInventory(productId);
         return ResponseEntity.status(HttpStatus.OK).body(inventory);
     }
-    @PutMapping("/{productId}/reserved-quantity/{reservedQuantity}")
-    public ResponseEntity<?> updateReserveQuantity(
-            @PathVariable("productId")Integer productId,
-            @PathVariable("reservedQuantity")Integer reservedQuantity
-    ){
-        Inventory inventory = this.inventoryService.updateReservedQuantity(productId, reservedQuantity);
-        return  ResponseEntity.status(HttpStatus.OK).body(inventory);
-    }
-
-    @PutMapping("/{productId}/release-reserve-quantity/{reservedQuantity}")
-    public ResponseEntity<?> releaseReserveQuantity(
-            @PathVariable("productId")Integer productId,
-            @PathVariable("reservedQuantity")Integer reservedQuantity
-    ){
-        Inventory inventory = this.inventoryService.releaseReservedStock(productId,reservedQuantity);
-        return  ResponseEntity.status(HttpStatus.OK).body(inventory);
-    }
+//    @PutMapping("/{productId}/reserved-quantity/{reservedQuantity}")
+//    public ResponseEntity<?> updateReserveQuantity(
+//            @PathVariable("productId")Integer productId,
+//            @PathVariable("reservedQuantity")Integer reservedQuantity
+//    ){
+//        Inventory inventory = this.inventoryService.updateReservedQuantity(productId, reservedQuantity);
+//        return  ResponseEntity.status(HttpStatus.OK).body(inventory);
+//    }
+//
+//    @PutMapping("/{productId}/release-reserve-quantity/{reservedQuantity}")
+//    public ResponseEntity<?> releaseReserveQuantity(
+//            @PathVariable("productId")Integer productId,
+//            @PathVariable("reservedQuantity")Integer reservedQuantity
+//    ){
+//        Inventory inventory = this.inventoryService.releaseReservedStock(productId,reservedQuantity);
+//        return  ResponseEntity.status(HttpStatus.OK).body(inventory);
+//    }
 }

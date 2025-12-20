@@ -48,4 +48,23 @@ public class User {
     private Cart cart;
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Reservation> reservations = new ArrayList<>();
+
+
+    public void addReservation(Reservation reservation){
+        if(this.reservations ==  null){
+            this.reservations = new ArrayList<>();
+        }
+        this.reservations.add(reservation);
+        reservation.setUser(this);
+    }
+    public void removeReservation(Reservation reservation){
+        if(this.reservations == null){
+            this.reservations = new ArrayList<>();
+        }
+         this.reservations.remove(reservation);
+        reservation.setUser(null);
+    }
 }

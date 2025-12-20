@@ -17,8 +17,6 @@ public class OrderItemDTO {
     private Double discountAtPurchase;
     private Double subTotal; // (priceAtPurchase - discountAtPurchase) * quantity
 
-
-
     private Integer orderId;
 
 

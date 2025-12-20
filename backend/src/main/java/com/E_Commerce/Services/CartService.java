@@ -13,4 +13,7 @@ public interface CartService {
     CartDTO fetchCartById(Integer cartId);
 
     void deleteCartById(Integer cartId);
+
+    CartDTO getCartByUserId(Integer userId);
+    void clearCart(Integer cartId);
 }

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -73,5 +74,14 @@ public class CartController {
     ){
         this.cartItemService.deleteCartItem(cartItemId);
         return ResponseEntity.ok("Cart Item is removed.");
+    }
+    @PostMapping("/getSubTotal")
+    public ResponseEntity<?> getSubTotal(
+            @RequestBody List<CartItemDTO> cartItemDTOs
+    ){
+        System.out.println("CartItemDTO: " +cartItemDTOs.toString());
+        Double subTotal = this.cartItemService.getSubTotal(cartItemDTOs);
+        System.out.println("SubTotal: "+subTotal);
+        return ResponseEntity.status(HttpStatus.OK).body(subTotal);
     }
 }

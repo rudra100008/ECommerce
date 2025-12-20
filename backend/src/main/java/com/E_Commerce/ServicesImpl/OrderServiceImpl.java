@@ -3,16 +3,12 @@ package com.E_Commerce.ServicesImpl;
 import com.E_Commerce.DTO.CartItemDTO;
 import com.E_Commerce.DTO.OrderDTO;
 import com.E_Commerce.DTO.OrderItemDTO;
-import com.E_Commerce.Entity.Order;
-import com.E_Commerce.Entity.OrderItem;
-import com.E_Commerce.Entity.Product;
-import com.E_Commerce.Entity.User;
+import com.E_Commerce.DTO.ShippingAddressDTO;
+import com.E_Commerce.Entity.*;
 import com.E_Commerce.Enum.OrderStatus;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.OrderMapper;
-import com.E_Commerce.Repository.OrderRepository;
-import com.E_Commerce.Repository.ProductRepository;
-import com.E_Commerce.Repository.UserRepository;
+import com.E_Commerce.Repository.*;
 import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.OrderItemService;
 import com.E_Commerce.Services.OrderServices;
@@ -33,6 +29,8 @@ public class OrderServiceImpl implements OrderServices {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final AuthUtils authUtils;
+    private final ReservationRepository reservationRepository;
+    private final InventoryRepository inventoryRepository;
 
 
     @Override
@@ -78,7 +76,17 @@ public class OrderServiceImpl implements OrderServices {
 
     @Override
     public void cancelOrder(Integer orderId) {
+        Order order = this.orderRepository.findById(orderId)
+                .orElseThrow(()-> new ResourceNotFoundException("Failed to cancel order:Order not found."));
+        validateUser(order.getUser().getUserId());
+        this.orderItemService.removeOrderItems(order.getOrderItems(),order.getUser());
+        this.orderRepository.delete(order);
 
+    }
+
+    @Override
+    public ShippingAddressDTO saveShippingAddress(ShippingAddressDTO shippingAddressDTO) {
+        return null;
     }
 
     //helper method
@@ -120,8 +128,11 @@ public class OrderServiceImpl implements OrderServices {
     }
 
     private void updateOrderWithOrderItem(List<OrderItem> orderItems ,Order order){
+        order.getOrderItems().clear();
 
-        order.setOrderItems(orderItems);
+        for (OrderItem orderItem:orderItems){
+            order.addOrderItem(orderItem);
+        }
         Double totalAmount = getTotalAmount(orderItems);
         order.setTotalAmount(totalAmount);
     }
