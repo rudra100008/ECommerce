@@ -11,5 +11,6 @@ public interface OrderServices {
     OrderDTO createOrder(OrderDTO orderDTO, List<OrderItemDTO> orderItemDTOS);
     Double getSubTotal(List<CartItemDTO> cartItemDTOs);
     void cancelOrder(Integer orderId);
-    ShippingAddressDTO saveShippingAddress(ShippingAddressDTO shippingAddressDTO);
+    OrderDTO saveShippingAddress(ShippingAddressDTO shippingAddressDTO,Integer orderId,Integer userId);
+    OrderDTO saveFullNameAndPhoneNumberInOrder(OrderDTO orderDTO);
 }

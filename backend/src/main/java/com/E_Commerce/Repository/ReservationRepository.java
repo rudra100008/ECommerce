@@ -29,8 +29,9 @@ public interface ReservationRepository  extends JpaRepository<Reservation,Intege
             @Param("now")LocalDateTime now);
     @Query("SELECT r FROM Reservation r WHERE r.user.userId =:userId "+
             "AND r.inventory.product.productId =:productId "+
+            "AND r.status = 'CONVERTED_TO_ORDER' " +
             "AND r.expiresAt > :now ")
-    Reservation findReservationByUserAndProduct(
+    Reservation findConvertedToOrderReservationByUserAndProduct(
             @Param("userId")Integer userId,
             @Param("productId")Integer productId,
             @Param("now")LocalDateTime now

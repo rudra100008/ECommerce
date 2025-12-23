@@ -44,7 +44,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public void removeOrderItems(List<OrderItem> orderItems,User user) {
-        removeOrderItemsWithReservation(orderItems,user);
+        removeOrderItemsAndChangeReservation(orderItems,user);
     }
 
     private List<OrderItem> saveOrderItem(List<OrderItemDTO> dtos){
@@ -55,7 +55,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         checkUserReservations(dtos, user.getUserId());
 
-        checkStockAvailability(dtos, productMap);
+
 
         updateInventoryAndConvertReservations(dtos, productMap, user.getUserId());
 
@@ -208,18 +208,19 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
 
-    private void removeOrderItemsWithReservation(List<OrderItem> orderItems,User user){
+    private void removeOrderItemsAndChangeReservation(List<OrderItem> orderItems,User user){
         List<Reservation> reservations = new ArrayList<>();
         for (OrderItem orderItem : orderItems){
             Reservation reservation = this.reservationRepository
-                    .findReservationByUserAndProduct(
+                    .findConvertedToOrderReservationByUserAndProduct(
                             user.getUserId(),
                             orderItem.getProduct().getProductId(),
                             LocalDateTime.now()
                     );
+            reservation.setStatus(ReservationStatus.ACTIVE);
             reservations.add(reservation);
         }
-        this.reservationRepository.deleteAll(reservations);
+        this.reservationRepository.saveAll(reservations);
         this.orderItemRepository.deleteAll(orderItems);
     }
     private Order getOrder(int orderId){

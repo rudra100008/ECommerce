@@ -85,8 +85,28 @@ public class OrderServiceImpl implements OrderServices {
     }
 
     @Override
-    public ShippingAddressDTO saveShippingAddress(ShippingAddressDTO shippingAddressDTO) {
-        return null;
+    public OrderDTO saveShippingAddress(ShippingAddressDTO shippingAddressDTO,Integer orderId,Integer userId) {
+        User user = validateUser(userId);
+        Order order = this.orderRepository.findPendingOrderByOrderIdAndUserId(
+                orderId,
+                user.getUserId()
+        );
+        ShippingAddress shippingAddress = toShippingAddress(shippingAddressDTO);
+        order.setShippingAddress(shippingAddress);
+        order.setOrderDate(LocalDateTime.now().plusWeeks(2));
+        Order savedOrder =this.orderRepository.save(order);
+        return   this.orderMapper.toOrderDTO(savedOrder);
+    }
+
+    @Override
+    public OrderDTO saveFullNameAndPhoneNumberInOrder(OrderDTO orderDTO) {
+        validateUser(orderDTO.getUserId());
+        validateFullNameAndPhoneNumber(orderDTO);
+        Order order = this.orderRepository.findPendingOrderByOrderIdAndUserId(orderDTO.getOrderId(), orderDTO.getUserId());
+        order.setFullName(orderDTO.getFullName());
+        order.setPhoneNumber(orderDTO.getPhoneNumber());
+        Order savedOrder = this.orderRepository.save(order);
+        return this.orderMapper.toOrderDTO(savedOrder);
     }
 
     //helper method
@@ -98,12 +118,23 @@ public class OrderServiceImpl implements OrderServices {
         return this.userRepository.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
     }
+    private void validateFullNameAndPhoneNumber(OrderDTO orderDTO){
+        if (orderDTO.getFullName() == null || orderDTO.getFullName().trim().isEmpty()){
+            throw new RuntimeException("Full Name is required");
+        }
+        if(orderDTO.getPhoneNumber() == null || orderDTO.getPhoneNumber().trim().isEmpty()){
+            throw new RuntimeException("Phone number is required");
+        }
+    }
     private Order createAndSaveOrder(OrderDTO orderDTO, User user) {
         Order order = orderMapper.toOrder(orderDTO);
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
-        order.setShippingAddress(orderDTO.getShippingAddress());
+        if(orderDTO.getShippingAddressDTO() != null){
+            ShippingAddress shippingAddress = toShippingAddress(orderDTO.getShippingAddressDTO());
+            order.setShippingAddress(shippingAddress);
+        }
 
         order.setOrderItems(new ArrayList<>());
 
@@ -143,5 +174,20 @@ public class OrderServiceImpl implements OrderServices {
               .filter(Objects::nonNull)
               .mapToDouble(Double::doubleValue)
               .sum();
+    }
+
+    private ShippingAddress toShippingAddress(ShippingAddressDTO shippingAddressDTO){
+        return  ShippingAddress.
+                builder()
+                .addressType(shippingAddressDTO.getAddressType())
+                .shippingArea(shippingAddressDTO.getShippingArea())
+                .shippingDistrict(shippingAddressDTO.getShippingDistrict())
+                .shippingLandmark(shippingAddressDTO.getShippingLandmark())
+                .houseNumber(shippingAddressDTO.getHouseNumber())
+                .shippingDistrict(shippingAddressDTO.getShippingDistrict())
+                .shippingMunicipality(shippingAddressDTO.getShippingMunicipality())
+                .shippingProvince(shippingAddressDTO.getShippingProvince())
+                .shippingWardNumber(shippingAddressDTO.getShippingWardNumber())
+                .build();
     }
 }

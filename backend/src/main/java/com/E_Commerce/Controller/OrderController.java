@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,14 +37,7 @@ public class OrderController {
         ));
     }
 
-    @PostMapping("/shippingAddress")
-    public ResponseEntity<?> postShippingAddress(
-            @Valid @RequestBody ShippingAddressDTO shippingAddressDTO,
-            BindingResult result
-    ){
-        ShippingAddressDTO savedAddress = this.orderServices.saveShippingAddress(shippingAddressDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(savedAddress);
-    }
+
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<?> deleteOrder(
@@ -51,6 +46,27 @@ public class OrderController {
         this.orderServices.cancelOrder(orderId);
         return null;
     }
+
+    @PostMapping("/{orderId}/shippingAddress/user/{userId}")
+    public ResponseEntity<?> saveShippingAddress(
+            @PathVariable("orderId") Integer orderId,
+            @PathVariable("userId") Integer userId,
+
+            @Valid @RequestBody OrderDTO orderDTO,
+            BindingResult result
+    ){
+        if(result.hasErrors()){
+            Map<String,Object> errorRes = new HashMap<>();
+            result.getFieldErrors()
+                    .forEach(error -> errorRes.put(error.getField(),error.getDefaultMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorRes);
+        }
+         this.orderServices.saveShippingAddress(orderDTO.getShippingAddressDTO(),orderId,userId);
+        OrderDTO savedOrderDTO = this.orderServices.saveFullNameAndPhoneNumberInOrder(orderDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(savedOrderDTO);
+    }
+
+
 
 //    @PostMapping("/getSubTotal")
 //    public ResponseEntity<?> getSubTotal(
@@ -62,3 +78,4 @@ public class OrderController {
 //        return ResponseEntity.status(HttpStatus.OK).body(subTotal);
 //    }
 }
+

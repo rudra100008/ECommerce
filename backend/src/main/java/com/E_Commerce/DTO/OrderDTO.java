@@ -3,6 +3,7 @@ package com.E_Commerce.DTO;
 
 import com.E_Commerce.Entity.ShippingAddress;
 import com.E_Commerce.Enum.OrderStatus;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,8 @@ public class OrderDTO {
 
 
     private Integer userId;
+    private String fullName;
+    private String phoneNumber;
 
     @Builder.Default
     private List<Integer> orderItemIds = new ArrayList<>();
@@ -32,7 +35,7 @@ public class OrderDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
-    private ShippingAddress shippingAddress;
+    @Valid
+    private ShippingAddressDTO shippingAddressDTO;
 
 }

@@ -32,6 +32,9 @@ public class Order {
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
+    private String fullName;
+    private String phoneNumber;
+
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
