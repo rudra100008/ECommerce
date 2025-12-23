@@ -310,18 +310,11 @@
 .buttonSection button:active {
   transform: translateY(0px);
 }
-
-.disabledButton,
-.disabledButton a {
+.buttonSection button:disabled {
   opacity: 0.5;
   cursor: not-allowed !important;
-  pointer-events: none;
 }
 
-.disabledButton:hover {
-  transform: none !important;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {

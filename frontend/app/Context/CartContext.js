@@ -21,7 +21,7 @@ const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const { userData } = useNavigation();
-  const { error: showError } = useNotification();
+  const { success, error: showError,clear } = useNotification();
   const [cartItems, setCartItems] = useState([]);
   const [checkedCartItems,setCheckedCartItems] = useState([]);
   const [cart, setCart] = useState({});
@@ -84,8 +84,12 @@ export function CartProvider({ children }) {
       };
 
       try {
-        await addToCart(userData.cartId, cartItem);
+        const data = await addToCart(userData.cartId, cartItem);
         await fetchCartItems();
+        success(data.message)
+        setTimeout(()=>{
+          clear()
+        },4000)
         return true;
       } catch (err) {
         console.log("Error adding to cart:", err.response?.data);

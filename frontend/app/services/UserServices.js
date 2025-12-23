@@ -6,7 +6,7 @@ import { logout } from "./LoginServices";
 export const fetchCurrentUser = async (success, error, router) => {
   try {
     const response = await api.get("/api/user/me");
-    console.log("CurrentUser: ", response.data);
+    // console.log("CurrentUser: ", response.data);
     const data = response.data;
     return data;
   } catch (err) {

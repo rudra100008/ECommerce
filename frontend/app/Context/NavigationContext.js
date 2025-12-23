@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { fetchCurrentUser } from "../services/UserServices";
 import Error from "next/error";
 import { useNotification } from "./NotificationContext";
@@ -10,7 +10,7 @@ const NavigationContext = createContext();
 
 export function NavigationProvider({ children }) {
     const router = useRouter();
-    const [userLoading,setUserLoading] = useState(false);
+    const [userLoading,setUserLoading] = useState(true);
     const {success,error} = useNotification();
     const [adminData,setAdminData] = useState({});
     const [userData, setUserData] = useState({
@@ -19,7 +19,7 @@ export function NavigationProvider({ children }) {
         profileImageUrl: '',
         roles: []
     })
-    const loadCurrentUser = async () => {
+    const loadCurrentUser =useCallback( async () => {
         setUserLoading(true);
         try {
             const data = await fetchCurrentUser(success,error,router);
@@ -30,7 +30,7 @@ export function NavigationProvider({ children }) {
             setUserLoading(false);
         };
 
-    }
+    },[success,error,router])
     const loadCurrentAdmin = async () =>{
         try{
             const data = await fetchCurrentAdmin(error);

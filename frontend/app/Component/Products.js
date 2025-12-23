@@ -58,14 +58,18 @@ export default function Products({ products, setProducts }) {
     const handleAddToCart = async (product) => {
         try {
             await addItemToCart(product);
-             console.log("Cart items after add:", cartItems);
-            success("Product added to cart successfully!");
+            
             setTimeout(() => {
                 clear();
             }, 6000);
         } catch (err) {
-            console.log("Error in Product: ", err.response?.data);
-            error("Failed to add to cart. Please try later.");
+            if(err.response){
+                 console.log("Error in handleAddToCart: ", err.response?.data);
+                if(err.response.data && err.response.data.status === 400){
+                    const {message} = err.response.data;
+                    error(message)
+                }
+            }
             setTimeout(() => {
                 clear();
             }, 6000);

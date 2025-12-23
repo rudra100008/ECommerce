@@ -1,14 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import style from "../../CSS/userSide/shippingAddressForm.module.css";
 import { useAddressData } from "../../hooks/useAddressData";
-import { cancelOrder } from "../../services/clientServices/OrderService";
-import { usePathname, useRouter } from "next/navigation";
+import { cancelOrder, saveShippingAddress } from "../../services/clientServices/OrderService";
+import { useRouter } from "next/navigation";
+import { useNavigation } from "@/app/Context/NavigationContext";
 
 export default function ShippingAddress() {
   const [isMunicipalitySelected, setIsMunicipalitySelected] = useState(true);
   const router = useRouter();
-  const pathName = usePathname();
+  const { userData ,loadCurrentUser} = useNavigation();
+  
   const [shippingAddress, setShippingAddress] = useState({
     shippingDistrict: "",
     shippingProvince: "",
@@ -16,21 +18,16 @@ export default function ShippingAddress() {
     shippingWardNumber: "",
     shippingLandmark: "",
     houseNumber: "",
-    addressType: "",
+    addressType: "HOUSE",
   });
-  const [validationErr, setValidationErr] = useState({
-    shippingDistrict: "",
-    shippingProvince: "",
-    shippingMunicipality: "",
-    shippingWardNumber: "",
-    shippingLandmark: "",
-    houseNumber: "",
-    addressType: "",
+  
+  const [validationErr, setValidationErr] = useState({});
+  
+  const [userInfo, setUserInfo] = useState({
+    fullName: userData?.fullName || "",
+    phoneNumber: userData?.phoneNumber || "",
   });
-  const [userData, setUserData] = useState({
-    fullName: "",
-    phoneNumber: "",
-  });
+
   const {
     province,
     district,
@@ -41,26 +38,19 @@ export default function ShippingAddress() {
     fetchDistrict,
     fetchMunicipality,
     addWards,
-
     handleSelectedProvince,
     handleSelectedDistrict,
   } = useAddressData();
 
-  const isAllowedPaths = (path) => {
-    const allowedPaths = [
-      "/order",
-      "/order/payment",
-      "/order/confirm",
-      "/order/shippingAddress",
-    ];
-    return allowedPaths.some(
-      (allowedPath) => path === allowedPath || path.startWith(`${allowedPath}/`)
-    );
-  };
   const onShippingAddressChange = (e) => {
     const { name, value } = e.target;
-    console.log("Name: ", name, "value: ", value);
     setShippingAddress((prev) => ({ ...prev, [name]: value }));
+    
+    // Clear error for this field
+    if (validationErr[name]) {
+      setValidationErr((prev) => ({ ...prev, [name]: "" }));
+    }
+    
     if (name === "shippingProvince") {
       handleSelectedProvince(value);
     } else if (name === "shippingDistrict") {
@@ -73,32 +63,82 @@ export default function ShippingAddress() {
 
   const handleUserDataChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prev) => ({ ...prev, [name]: value }));
+    setUserInfo((prev) => ({ ...prev, [name]: value }));
+    
+  
+    if (validationErr[name]) {
+      setValidationErr((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleDataSubmit = async (e) => {
+    e.preventDefault();
+    
     try {
-      e.preventDefault();
+      console.log("Shipping Address submit...");
+      const orderId = localStorage.getItem("orderId");
+      console.log("OrderId: ",orderId)
+      if (!userData || !orderId) {
+        console.error("Missing userData or orderId");
+        return;
+      }
+
+      // Construct the complete OrderDTO
+      const orderRequest = {
+        orderId: parseInt(orderId, 10),
+        userId: userData.userId,
+        fullName: userInfo.fullName,
+        phoneNumber: userInfo.phoneNumber,
+        shippingAddressDTO: {
+          ...shippingAddress,
+          shippingWardNumber: parseInt(shippingAddress.shippingWardNumber, 10)
+        }
+      };
+
+      console.log("Sending order request:", orderRequest);
+      
+      const data = await saveShippingAddress(orderId, userData.userId, orderRequest);
+      console.log("Data in handleSubmit: ", data);
+      
+      localStorage.removeItem("orderId");
+      router.push("/order/review");
+      
     } catch (err) {
-      console.log(err.response?.data);
+      console.error("Error submitting form:", err);
+      
+      if (err.response) {
+        console.error("Error response:", err.response.data);
+        
+        if (err.response.status === 400) {
+         
+          const errors = err.response.data;
+          
+          const transformedErrors = {};
+          Object.keys(errors).forEach(key => {
+            const newKey = key.replace('shippingAddressDTO.', '');
+            transformedErrors[newKey] = errors[key];
+          });
+          
+          setValidationErr(transformedErrors);
+        }
+      }
     }
   };
 
   const handleCancelClick = () => {
-    cancelPendingOrder();
-    router.push("/cart");
-  };
-
-  const cancelPendingOrder = async () => {
     const orderId = localStorage.getItem("orderId");
-    console.log("OrderId: ",orderId)
     if (orderId) {
-      try {
-        await cancelOrder(orderId);
-        localStorage.removeItem("orderId");
-      } catch (error) {
-        console.error("Failed to cancel order:", error);
-      }
+      cancelOrder(orderId)
+        .then(() => {
+          localStorage.removeItem("orderId");
+          router.push("/cart");
+        })
+        .catch((error) => {
+          console.error("Failed to cancel order:", error);
+          router.push("/cart");
+        });
+    } else {
+      router.push("/cart");
     }
   };
 
@@ -107,17 +147,14 @@ export default function ShippingAddress() {
   }, []);
 
   useEffect(() => {
-    const handleRouteChange = (url) => {
-      if (!isAllowedPaths(url)) {
-        cancelPendingOrder();
-      }
-    };
+    if (userData) {
+      setUserInfo({
+        fullName: userData.fullName || "",
+        phoneNumber: userData.phoneNumber || "",
+      });
+    }
+  }, [userData]);
 
-    router.events?.on("routeChangeStart", handleRouteChange);
-    return () => {
-      router.events?.off("routeChangeStart", handleRouteChange);
-    };
-  }, [router]);
   useEffect(() => {
     if (selectedAddress.provinceId !== null) {
       fetchDistrict(selectedAddress.provinceId);
@@ -127,6 +164,15 @@ export default function ShippingAddress() {
     }
   }, [selectedAddress.provinceId, selectedAddress.districtId]);
 
+  useEffect(()=>{
+    const fetchCurrentUser = async()=>{
+      await loadCurrentUser();
+    }
+    console.log("Loading current user...")
+    fetchCurrentUser();
+ 
+  },[])
+  console.log("UserData: ",userData)
   return (
     <div className={style.FormContainer}>
       <div className={style.title}>
@@ -134,32 +180,40 @@ export default function ShippingAddress() {
         <span>Select a province for district and municipality</span>
       </div>
       <div className={style.FormSection}>
-        <form onSubmit={handleDataSubmit}>
+        <form noValidate onSubmit={handleDataSubmit}>
           <div className={style.Form}>
-            <div className={style.inpputSection}>
-              <label htmlFor="fullName">Full Name</label>
+            <div className={style.inputSection}>
+              <label htmlFor="fullName">Full Name *</label>
               <div className={style.inputGroup}>
                 <input
                   id="fullName"
                   name="fullName"
-                  value={userData.fullName}
+                  value={userInfo.fullName}
                   onChange={handleUserDataChange}
-                  placeholder="Enter a full Name"
+                  placeholder="Enter full name"
+                  required
                 />
               </div>
+              {validationErr.fullName && (
+                <span className={style.error}>{validationErr.fullName}</span>
+              )}
             </div>
 
             <div className={style.inputSection}>
-              <label htmlFor="phoneNumber">Phone Number</label>
+              <label htmlFor="phoneNumber">Phone Number *</label>
               <div className={style.inputGroup}>
                 <input
                   id="phoneNumber"
                   name="phoneNumber"
-                  value={userData.phoneNumber}
+                  value={userInfo.phoneNumber}
                   onChange={handleUserDataChange}
                   placeholder="Enter phone number"
+                  required
                 />
               </div>
+              {validationErr.phoneNumber && (
+                <span className={style.error}>{validationErr.phoneNumber}</span>
+              )}
             </div>
 
             <div className={style.inputSection}>
@@ -173,10 +227,13 @@ export default function ShippingAddress() {
                   placeholder="Enter house number"
                 />
               </div>
+              {validationErr.houseNumber && (
+                <span className={style.error}>{validationErr.houseNumber}</span>
+              )}
             </div>
 
             <div className={style.inputSection}>
-              <label htmlFor="">Land Mark</label>
+              <label htmlFor="shippingLandmark">Land Mark</label>
               <div className={style.inputGroup}>
                 <input
                   id="shippingLandmark"
@@ -184,13 +241,16 @@ export default function ShippingAddress() {
                   value={shippingAddress.shippingLandmark}
                   onChange={onShippingAddressChange}
                   type="text"
-                  placeholder="Enter a  land mark"
+                  placeholder="Enter a landmark"
                 />
               </div>
+              {validationErr.shippingLandmark && (
+                <span className={style.error}>{validationErr.shippingLandmark}</span>
+              )}
             </div>
 
             <div className={style.inputSection}>
-              <label htmlFor="">Province</label>
+              <label htmlFor="shippingProvince">Province *</label>
               <div className={style.inputGroup}>
                 <select
                   id="shippingProvince"
@@ -198,67 +258,73 @@ export default function ShippingAddress() {
                   value={shippingAddress.shippingProvince}
                   onChange={onShippingAddressChange}
                   className={style.selectGroup}
+                  required
                 >
-                  <option value={""}>Select a province</option>
-                  {province &&
-                    province.length > 0 &&
-                    province.map((province, index) => (
-                      <option key={index} value={province.provinceId}>
-                        {province.englishName}
-                      </option>
-                    ))}
+                  <option value="">Select a province</option>
+                  {province?.map((prov, index) => (
+                    <option key={index} value={prov.provinceId}>
+                      {prov.englishName}
+                    </option>
+                  ))}
                 </select>
               </div>
+              {validationErr.shippingProvince && (
+                <span className={style.error}>{validationErr.shippingProvince}</span>
+              )}
             </div>
 
             <div className={style.inputSection}>
-              <label>District</label>
+              <label htmlFor="shippingDistrict">District *</label>
               <div className={style.inputGroup}>
                 <select
                   id="shippingDistrict"
                   name="shippingDistrict"
                   value={shippingAddress.shippingDistrict}
                   onChange={onShippingAddressChange}
-                  className={`${style.selectGroup}`}
+                  className={style.selectGroup}
                   disabled={selectedAddress.provinceId === null}
+                  required
                 >
-                  <option value={""}>Select a district</option>
-                  {district &&
-                    district.length > 0 &&
-                    district.map((district, index) => (
-                      <option key={index} value={district.districtId}>
-                        {district.englishName}
-                      </option>
-                    ))}
+                  <option value="">Select a district</option>
+                  {district?.map((dist, index) => (
+                    <option key={index} value={dist.districtId}>
+                      {dist.englishName}
+                    </option>
+                  ))}
                 </select>
               </div>
+              {validationErr.shippingDistrict && (
+                <span className={style.error}>{validationErr.shippingDistrict}</span>
+              )}
             </div>
 
             <div className={style.inputSection}>
-              <label htmlFor="">Municipality</label>
+              <label htmlFor="shippingMunicipality">Municipality *</label>
               <div className={style.inputGroup}>
                 <select
                   id="shippingMunicipality"
                   name="shippingMunicipality"
                   value={shippingAddress.shippingMunicipality}
                   onChange={onShippingAddressChange}
-                  className={`${style.selectGroup}`}
+                  className={style.selectGroup}
                   disabled={selectedAddress.districtId === null}
+                  required
                 >
-                  <option value={""}>Select a municipality</option>
-                  {municipality &&
-                    municipality.length > 0 &&
-                    municipality.map((municipality, index) => (
-                      <option key={index} value={municipality.municipalityId}>
-                        {municipality.englishName}
-                      </option>
-                    ))}
+                  <option value="">Select a municipality</option>
+                  {municipality?.map((muni, index) => (
+                    <option key={index} value={muni.municipalityId}>
+                      {muni.englishName}
+                    </option>
+                  ))}
                 </select>
               </div>
+              {validationErr.shippingMunicipality && (
+                <span className={style.error}>{validationErr.shippingMunicipality}</span>
+              )}
             </div>
 
             <div className={style.inputSection}>
-              <label htmlFor="">Ward number</label>
+              <label htmlFor="shippingWardNumber">Ward Number *</label>
               <div className={style.inputGroup}>
                 <select
                   id="shippingWardNumber"
@@ -267,36 +333,57 @@ export default function ShippingAddress() {
                   onChange={onShippingAddressChange}
                   className={style.selectGroup}
                   disabled={isMunicipalitySelected}
+                  required
                 >
-                  <option value={""}>Select a wardNumber</option>
-                  {wards &&
-                    wards.length > 0 &&
-                    wards.map((ward, index) => (
-                      <option key={index} value={ward}>
-                        {ward}
-                      </option>
-                    ))}
+                  <option value="">Select ward number</option>
+                  {wards?.map((ward, index) => (
+                    <option key={index} value={ward}>
+                      {ward}
+                    </option>
+                  ))}
                 </select>
               </div>
+              {validationErr.shippingWardNumber && (
+                <span className={style.error}>{validationErr.shippingWardNumber}</span>
+              )}
+            </div>
+
+            <div className={style.inputSection}>
+              <label htmlFor="addressType">Address Type *</label>
+              <div className={style.inputGroup}>
+                <select
+                  id="addressType"
+                  name="addressType"
+                  value={shippingAddress.addressType}
+                  onChange={onShippingAddressChange}
+                  className={style.selectGroup}
+                  required
+                >
+                  <option value="HOUSE">House</option>
+                  <option value="APARTMENT">Apartment</option>
+                  <option value="OFFICE">Office</option>
+                </select>
+              </div>
+              {validationErr.addressType && (
+                <span className={style.error}>{validationErr.addressType}</span>
+              )}
             </div>
           </div>
+
           <div className={style.actionGroup}>
-            <div>
-              <button
-                onClick={handleCancelClick}
-                className={style.cancelButton}
-                type="button"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDataSubmit}
-                className={style.submitButton}
-                type="submit"
-              >
-                Submit
-              </button>
-            </div>
+            <button
+              onClick={handleCancelClick}
+              className={style.cancelButton}
+              type="button"
+            >
+              Cancel
+            </button>
+            <button
+              className={style.submitButton}
+              type="submit"
+            >
+              Submit
+            </button>
           </div>
         </form>
       </div>

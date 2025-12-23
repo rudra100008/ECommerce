@@ -1497,7 +1497,7 @@ const useAuth = ()=>{
             const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$UserServices$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fetchCurrentUser"])(success, error);
             setUser(user);
         } catch (err) {
-            if (err.response.data) {
+            if (err.response) {
                 const { message, redirectUrl } = err.response?.data;
                 setUser({});
                 if (err.response.status === 403) {

@@ -287,7 +287,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$LoginServ
 const fetchCurrentUser = async (success, error, router)=>{
     try {
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/api/user/me");
-        console.log("CurrentUser: ", response.data);
+        // console.log("CurrentUser: ", response.data);
         const data = response.data;
         return data;
     } catch (err) {

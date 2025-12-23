@@ -33,7 +33,6 @@ export default function OrderSummary() {
       router.push("/order/shippingAddress");
       
     } catch (err) {
-      error("Failed to create order. Please try again.");
       console.error("Error in handleProceedToCheckOut:", err);
     } finally {
       setIsLoading(false);
@@ -82,7 +81,6 @@ export default function OrderSummary() {
         <div className={style.buttonSection}>
           <button
             disabled={isButtonDisabled}
-            className={isButtonDisabled ? style.disabledButton : ""}
             onClick={handleProceedToCheckOut}
           >
             {isLoading ? "Processing..." : "Proceed To Check Out"}

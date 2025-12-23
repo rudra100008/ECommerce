@@ -306,15 +306,9 @@
   transform: translateY(0);
 }
 
-.cartItemTable-module__vLRN3G__disabledButton, .cartItemTable-module__vLRN3G__disabledButton a {
+.cartItemTable-module__vLRN3G__buttonSection button:disabled {
   opacity: .5;
-  pointer-events: none;
   cursor: not-allowed !important;
-}
-
-.cartItemTable-module__vLRN3G__disabledButton:hover {
-  transform: none !important;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, .4) !important;
 }
 
 @media (max-width: 768px) {

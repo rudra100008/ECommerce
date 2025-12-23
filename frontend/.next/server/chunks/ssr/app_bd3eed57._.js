@@ -942,6 +942,7 @@ const createOrder = async (orderRequest)=>{
 };
 const cancelOrder = async (orderId)=>{
     try {
+        console.log("Cancelling a order");
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].delete(`/api/order/${orderId}`);
         console.log("Response in OrderService: ", response.data);
     } catch (err) {
@@ -1001,8 +1002,8 @@ const useOrder = ()=>{
                 orderItemDTOs: items
             };
             const response = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createOrder"])(orderData);
-            setOrder(order);
-            localStorage.setItem("orderId", order.orderId);
+            setOrder(response.data);
+            localStorage.setItem("orderId", response.data.orderId);
             console.log("Response in userOrder: ", response);
         } catch (err) {
             console.log("Error in userOrder: ", err.response?.data);

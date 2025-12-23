@@ -207,6 +207,17 @@ select:disabled {
   opacity: 0.5;
 }
 
+.error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.inputSection {
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
   .actionGroup > div {
     flex-direction: column-reverse;

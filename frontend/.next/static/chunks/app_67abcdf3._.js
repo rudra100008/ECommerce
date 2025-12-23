@@ -227,6 +227,7 @@ const createOrder = async (orderRequest)=>{
 };
 const cancelOrder = async (orderId)=>{
     try {
+        console.log("Cancelling a order");
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].delete("/api/order/".concat(orderId));
         console.log("Response in OrderService: ", response.data);
     } catch (err) {
@@ -265,6 +266,8 @@ function ShippingAddress() {
     const [isMunicipalitySelected, setIsMunicipalitySelected] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const pathName = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
+    const [orderId, setOrderId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const hasCancelledRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [shippingAddress, setShippingAddress] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
         shippingDistrict: "",
         shippingProvince: "",
@@ -288,15 +291,6 @@ function ShippingAddress() {
         phoneNumber: ""
     });
     const { province, district, municipality, wards, fetchProvince, selectedAddress, fetchDistrict, fetchMunicipality, addWards, handleSelectedProvince, handleSelectedDistrict } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$hooks$2f$useAddressData$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAddressData"])();
-    const isAllowedPaths = (path)=>{
-        const allowedPaths = [
-            "/order",
-            "/order/payment",
-            "/order/confirm",
-            "/order/shippingAddress"
-        ];
-        return allowedPaths.some((allowedPath)=>path === allowedPath || path.startWith("".concat(allowedPath, "/")));
-    };
     const onShippingAddressChange = (e)=>{
         const { name, value } = e.target;
         console.log("Name: ", name, "value: ", value);
@@ -332,18 +326,49 @@ function ShippingAddress() {
         cancelPendingOrder();
         router.push("/cart");
     };
-    const cancelPendingOrder = async ()=>{
-        const orderId = localStorage.getItem("orderId");
-        console.log("OrderId: ", orderId);
-        if (orderId) {
-            try {
-                await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cancelOrder"])(orderId);
-                localStorage.removeItem("orderId");
-            } catch (error) {
-                console.error("Failed to cancel order:", error);
+    const isAllowedPaths = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "ShippingAddress.useCallback[isAllowedPaths]": (path)=>{
+            const allowedPaths = [
+                "/order",
+                "/order/payment",
+                "/order/confirm",
+                "/order/shippingAddress",
+                "/order/review",
+                "/checkout"
+            ];
+            // Also allow the exact current path
+            if (path === pathName) return true;
+            return allowedPaths.some({
+                "ShippingAddress.useCallback[isAllowedPaths]": (allowedPath)=>path === allowedPath || path.startsWith("".concat(allowedPath, "/"))
+            }["ShippingAddress.useCallback[isAllowedPaths]"]);
+        }
+    }["ShippingAddress.useCallback[isAllowedPaths]"], [
+        pathName
+    ]);
+    const cancelPendingOrder = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "ShippingAddress.useCallback[cancelPendingOrder]": async ()=>{
+            if (hasCancelledRef.current) return;
+            const currentOrderId = localStorage.getItem("orderId");
+            console.log("Cancelling order:", currentOrderId);
+            if (currentOrderId) {
+                try {
+                    hasCancelledRef.current = true;
+                    await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cancelOrder"])(currentOrderId);
+                    localStorage.removeItem("orderId");
+                } catch (error) {
+                    console.error("Failed to cancel order:", error);
+                }
             }
         }
-    };
+    }["ShippingAddress.useCallback[cancelPendingOrder]"], []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "ShippingAddress.useEffect": ()=>{
+            if ("TURBOPACK compile-time truthy", 1) {
+                const orderId = localStorage.getItem("orderId");
+                setOrderId(orderId);
+            }
+        }
+    }["ShippingAddress.useEffect"], []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "ShippingAddress.useEffect": ()=>{
             fetchProvince();
@@ -354,9 +379,11 @@ function ShippingAddress() {
             var _router_events;
             const handleRouteChange = {
                 "ShippingAddress.useEffect.handleRouteChange": (url)=>{
-                    if (!isAllowedPaths(url)) {
-                        cancelPendingOrder();
+                    if (isAllowedPaths(url)) {
+                        return;
                     }
+                    console.log("Navigating away from order flow to:", url);
+                    cancelPendingOrder();
                 }
             }["ShippingAddress.useEffect.handleRouteChange"];
             (_router_events = router.events) === null || _router_events === void 0 ? void 0 : _router_events.on("routeChangeStart", handleRouteChange);
@@ -368,8 +395,47 @@ function ShippingAddress() {
             })["ShippingAddress.useEffect"];
         }
     }["ShippingAddress.useEffect"], [
-        router
+        router,
+        isAllowedPaths,
+        cancelPendingOrder
     ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "ShippingAddress.useEffect": ()=>{
+            return ({
+                "ShippingAddress.useEffect": ()=>{
+                    if (!isAllowedPaths(pathName)) {
+                        cancelPendingOrder();
+                    }
+                }
+            })["ShippingAddress.useEffect"];
+        }
+    }["ShippingAddress.useEffect"], [
+        pathName,
+        isAllowedPaths,
+        cancelPendingOrder
+    ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "ShippingAddress.useEffect": ()=>{
+            const orderId = localStorage.getItem('orderId');
+            hasCancelledRef.current = false;
+        }
+    }["ShippingAddress.useEffect"], [
+        orderId
+    ]);
+    //
+    //   useEffect(() => {
+    //   const handleBeforeUnload = (e) => {
+    //     const orderId = localStorage.getItem("orderId");
+    //     if (orderId && !hasCancelledRef.current) {
+    //       e.preventDefault();
+    //       e.returnValue = "You have an order in progress. Are you sure you want to leave?";
+    //     }
+    //   };
+    //   window.addEventListener("beforeunload", handleBeforeUnload);
+    //   return () => {
+    //     window.removeEventListener("beforeunload", handleBeforeUnload);
+    //   };
+    // }, []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "ShippingAddress.useEffect": ()=>{
             if (selectedAddress.provinceId !== null) {
@@ -393,20 +459,20 @@ function ShippingAddress() {
                         children: "Shipping Address"
                     }, void 0, false, {
                         fileName: "[project]/app/order/shippingAddress/page.js",
-                        lineNumber: 133,
+                        lineNumber: 190,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: "Select a province for district and municipality"
                     }, void 0, false, {
                         fileName: "[project]/app/order/shippingAddress/page.js",
-                        lineNumber: 134,
+                        lineNumber: 191,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/order/shippingAddress/page.js",
-                lineNumber: 132,
+                lineNumber: 189,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -425,7 +491,7 @@ function ShippingAddress() {
                                             children: "Full Name"
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 140,
+                                            lineNumber: 197,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -438,18 +504,18 @@ function ShippingAddress() {
                                                 placeholder: "Enter a full Name"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                                lineNumber: 142,
+                                                lineNumber: 199,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 141,
+                                            lineNumber: 198,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/order/shippingAddress/page.js",
-                                    lineNumber: 139,
+                                    lineNumber: 196,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -460,7 +526,7 @@ function ShippingAddress() {
                                             children: "Phone Number"
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 153,
+                                            lineNumber: 210,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -473,18 +539,18 @@ function ShippingAddress() {
                                                 placeholder: "Enter phone number"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                                lineNumber: 155,
+                                                lineNumber: 212,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 154,
+                                            lineNumber: 211,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/order/shippingAddress/page.js",
-                                    lineNumber: 152,
+                                    lineNumber: 209,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -495,7 +561,7 @@ function ShippingAddress() {
                                             children: "House Number"
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 166,
+                                            lineNumber: 223,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -508,18 +574,18 @@ function ShippingAddress() {
                                                 placeholder: "Enter house number"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                                lineNumber: 168,
+                                                lineNumber: 225,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 167,
+                                            lineNumber: 224,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/order/shippingAddress/page.js",
-                                    lineNumber: 165,
+                                    lineNumber: 222,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -530,7 +596,7 @@ function ShippingAddress() {
                                             children: "Land Mark"
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 179,
+                                            lineNumber: 236,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -544,18 +610,18 @@ function ShippingAddress() {
                                                 placeholder: "Enter a  land mark"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                                lineNumber: 181,
+                                                lineNumber: 238,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 180,
+                                            lineNumber: 237,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/order/shippingAddress/page.js",
-                                    lineNumber: 178,
+                                    lineNumber: 235,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -566,7 +632,7 @@ function ShippingAddress() {
                                             children: "Province"
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 193,
+                                            lineNumber: 250,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -583,7 +649,7 @@ function ShippingAddress() {
                                                         children: "Select a province"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/order/shippingAddress/page.js",
-                                                        lineNumber: 202,
+                                                        lineNumber: 259,
                                                         columnNumber: 19
                                                     }, this),
                                                     province && province.length > 0 && province.map((province, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -591,24 +657,24 @@ function ShippingAddress() {
                                                             children: province.englishName
                                                         }, index, false, {
                                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                                            lineNumber: 206,
+                                                            lineNumber: 263,
                                                             columnNumber: 23
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                                lineNumber: 195,
+                                                lineNumber: 252,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 194,
+                                            lineNumber: 251,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/order/shippingAddress/page.js",
-                                    lineNumber: 192,
+                                    lineNumber: 249,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -618,7 +684,7 @@ function ShippingAddress() {
                                             children: "District"
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 215,
+                                            lineNumber: 272,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -636,7 +702,7 @@ function ShippingAddress() {
                                                         children: "Select a district"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/order/shippingAddress/page.js",
-                                                        lineNumber: 225,
+                                                        lineNumber: 282,
                                                         columnNumber: 19
                                                     }, this),
                                                     district && district.length > 0 && district.map((district, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -644,24 +710,24 @@ function ShippingAddress() {
                                                             children: district.englishName
                                                         }, index, false, {
                                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                                            lineNumber: 229,
+                                                            lineNumber: 286,
                                                             columnNumber: 23
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                                lineNumber: 217,
+                                                lineNumber: 274,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 216,
+                                            lineNumber: 273,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/order/shippingAddress/page.js",
-                                    lineNumber: 214,
+                                    lineNumber: 271,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -672,7 +738,7 @@ function ShippingAddress() {
                                             children: "Municipality"
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 238,
+                                            lineNumber: 295,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -690,7 +756,7 @@ function ShippingAddress() {
                                                         children: "Select a municipality"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/order/shippingAddress/page.js",
-                                                        lineNumber: 248,
+                                                        lineNumber: 305,
                                                         columnNumber: 19
                                                     }, this),
                                                     municipality && municipality.length > 0 && municipality.map((municipality, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -698,24 +764,24 @@ function ShippingAddress() {
                                                             children: municipality.englishName
                                                         }, index, false, {
                                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                                            lineNumber: 252,
+                                                            lineNumber: 309,
                                                             columnNumber: 23
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                                lineNumber: 240,
+                                                lineNumber: 297,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 239,
+                                            lineNumber: 296,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/order/shippingAddress/page.js",
-                                    lineNumber: 237,
+                                    lineNumber: 294,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -726,7 +792,7 @@ function ShippingAddress() {
                                             children: "Ward number"
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 261,
+                                            lineNumber: 318,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -744,7 +810,7 @@ function ShippingAddress() {
                                                         children: "Select a wardNumber"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/order/shippingAddress/page.js",
-                                                        lineNumber: 271,
+                                                        lineNumber: 328,
                                                         columnNumber: 19
                                                     }, this),
                                                     wards && wards.length > 0 && wards.map((ward, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -752,30 +818,30 @@ function ShippingAddress() {
                                                             children: ward
                                                         }, index, false, {
                                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                                            lineNumber: 275,
+                                                            lineNumber: 332,
                                                             columnNumber: 23
                                                         }, this))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                                lineNumber: 263,
+                                                lineNumber: 320,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/order/shippingAddress/page.js",
-                                            lineNumber: 262,
+                                            lineNumber: 319,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/order/shippingAddress/page.js",
-                                    lineNumber: 260,
+                                    lineNumber: 317,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/order/shippingAddress/page.js",
-                            lineNumber: 138,
+                            lineNumber: 195,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -789,7 +855,7 @@ function ShippingAddress() {
                                         children: "Cancel"
                                     }, void 0, false, {
                                         fileName: "[project]/app/order/shippingAddress/page.js",
-                                        lineNumber: 285,
+                                        lineNumber: 342,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -799,39 +865,39 @@ function ShippingAddress() {
                                         children: "Submit"
                                     }, void 0, false, {
                                         fileName: "[project]/app/order/shippingAddress/page.js",
-                                        lineNumber: 292,
+                                        lineNumber: 349,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/order/shippingAddress/page.js",
-                                lineNumber: 284,
+                                lineNumber: 341,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/order/shippingAddress/page.js",
-                            lineNumber: 283,
+                            lineNumber: 340,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/order/shippingAddress/page.js",
-                    lineNumber: 137,
+                    lineNumber: 194,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/order/shippingAddress/page.js",
-                lineNumber: 136,
+                lineNumber: 193,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/order/shippingAddress/page.js",
-        lineNumber: 131,
+        lineNumber: 188,
         columnNumber: 5
     }, this);
 }
-_s(ShippingAddress, "vbn2gB85CMGEMuOGXq5l95GnYeE=", false, function() {
+_s(ShippingAddress, "V35SNC2/hQOI9ZHHhg7gGWi7G1Y=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"],
