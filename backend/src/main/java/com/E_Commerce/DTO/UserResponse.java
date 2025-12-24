@@ -1,9 +1,7 @@
 package com.E_Commerce.DTO;
 
 import com.E_Commerce.Entity.Role;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,24 +15,19 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDTO {
+@JsonIgnoreProperties("password")
+public class UserResponse {
     private Integer userId;
-    @NotNull(message = "username is required")
-    @NotBlank(message = "username is required.")
+
     private String username;
-    @Email
-    @NotNull(message = "email is required.")
-    @NotBlank(message = "email is required")
+
     private String email;
-    @NotNull(message = "password is required.")
-    @NotBlank(message = "password is required")
     private String password;
     private String fullName;
     private String phoneNumber;
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role.RoleName> roles = new HashSet<>();
     private String profileImageUrl;
     private List<Integer> addressIds;
     private Integer cartId;
     private boolean hasCustomImage;
-
 }

@@ -57,7 +57,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
 
 
-        updateInventoryAndConvertReservations(dtos, productMap, user.getUserId());
+        updateReservationStausToOrder(dtos,user);
 
         List<OrderItem> orderItems = dtos.stream()
                 .map(orderItemDTO -> createOrderItem(orderItemDTO, order, productMap))
@@ -207,7 +207,22 @@ public class OrderItemServiceImpl implements OrderItemService {
         }
     }
 
-
+private void updateReservationStausToOrder(List<OrderItemDTO> orderItems,User user){
+        List<Reservation> reservations = new ArrayList<>();
+        for (OrderItemDTO orderItem : orderItems){
+            Reservation reservation = this.reservationRepository
+                    .findActiveReservationByUserAndProduct(
+                            user.getUserId(),orderItem.getProductId(),LocalDateTime.now()
+                    );
+            if (reservation == null){
+                throw new ResourceNotFoundException(
+                        String.format("Active reservation not found for product: %s",orderItem.getProductId())
+                );
+            }
+            reservation.setStatus(ReservationStatus.CONVERTED_TO_ORDER);
+        }
+        this.reservationRepository.saveAll(reservations);
+}
     private void removeOrderItemsAndChangeReservation(List<OrderItem> orderItems,User user){
         List<Reservation> reservations = new ArrayList<>();
         for (OrderItem orderItem : orderItems){
@@ -217,12 +232,19 @@ public class OrderItemServiceImpl implements OrderItemService {
                             orderItem.getProduct().getProductId(),
                             LocalDateTime.now()
                     );
+            if(reservation == null){
+                throw new ResourceNotFoundException(String.format(
+                        "Reservation for order not found for user '%s' and product '%s'"
+                        , user.getUsername(), orderItem.getProduct().getProductName()
+                ));
+            }
             reservation.setStatus(ReservationStatus.ACTIVE);
             reservations.add(reservation);
         }
         this.reservationRepository.saveAll(reservations);
         this.orderItemRepository.deleteAll(orderItems);
     }
+
     private Order getOrder(int orderId){
         return this.orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));

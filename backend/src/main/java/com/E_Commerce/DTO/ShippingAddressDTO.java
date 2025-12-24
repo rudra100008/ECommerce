@@ -28,8 +28,8 @@ public class ShippingAddressDTO {
     private String shippingLandmark;
     @Size(max = 150, message = "Area cannot exceed 150 characters")
     private String shippingArea;
-    @Pattern(regexp = "^[A-Za-z0-9\\s\\-/\\.#,]+$",
-            message = "House number can contain letters, numbers, spaces, hyphens, slashes, dots, commas, and hash")
+//    @Pattern(regexp = "^[A-Za-z0-9\\s\\-/\\.#,]+$",
+//            message = "House number can contain letters, numbers, spaces, hyphens, slashes, dots, commas, and hash")
     private String houseNumber;
     @NotNull(message = "Address type is required")
     private AddressType addressType;

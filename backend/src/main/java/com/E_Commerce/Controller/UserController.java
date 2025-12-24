@@ -1,13 +1,21 @@
 package com.E_Commerce.Controller;
 
+import com.E_Commerce.DTO.CartDTO;
 import com.E_Commerce.DTO.UserDTO;
+import com.E_Commerce.DTO.UserResponse;
+import com.E_Commerce.Entity.Address;
+import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
+import com.E_Commerce.Repository.CartRepository;
 import com.E_Commerce.Repository.UserRepository;
+import com.E_Commerce.Securty.AuthUtils;
+import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,18 +30,24 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final ImageService imageService;
-    Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final AuthUtils authUtils;
+    private final CartService cartService;
+
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
@@ -57,28 +71,37 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("userId", user.getUserId());
-        responseBody.put("email", user.getEmail());
-        responseBody.put("username", user.getUsername());
+        com.E_Commerce.DTO.UserResponse userResponse = UserResponse
+                .builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .phoneNumber(user.getPhoneNumber())
+                .addressIds(getAddressIds(user.getAddresses()))
+                .hasCustomImage(user.getHasCustomImage())
+                .roles(getRoles(user))
+                .build();
+
 
         if (Boolean.TRUE.equals(user.getHasCustomImage())) {
-            responseBody.put("profileImageUrl", getUserImageUrl(user.getUserId()));
+//
+            userResponse.setProfileImageUrl(getUserImageUrl(user.getUserId()));
         } else {
-            responseBody.put("profileImageUrl", user.getProfileImageUrl());
+//
+            userResponse.setProfileImageUrl(user.getProfileImageUrl());
         }
 
-        responseBody.put("fullName", user.getFullName());
-        responseBody.put("hasCustomImage", user.getHasCustomImage());
-        responseBody.put("roles", getRoles(user));
+
 
         if (user.getCart() != null) {
-            responseBody.put("cartId", user.getCart().getId());
+            userResponse.setCartId(user.getCart().getId());
         } else {
-            responseBody.put("cartId", null); // or create a cart here if needed
+            CartDTO cartDTO = createCart(user);
+            userResponse.setCartId(cartDTO.getCartId());
         }
 
-        return ResponseEntity.ok(responseBody);
+        return ResponseEntity.ok(userResponse);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -139,7 +162,19 @@ public class UserController {
         return "/api/user/" + userId + "/fetchUserImage";
     }
 
-    private List<Role.RoleName> getRoles(User user){
-        return user.getRoles().stream().map(Role::getRoleName).toList();
+    private Set<Role.RoleName> getRoles(User user){
+        return user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toSet());
+    }
+    private List<Integer> getAddressIds(List<Address> addresses){
+        return addresses.stream().map(Address::getAddressId).toList();
+    }
+    private CartDTO createCart(User user){
+        CartDTO cartDTO = CartDTO.
+                builder()
+                .userId(user.getUserId())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        return this.cartService.createCart(cartDTO);
     }
 }

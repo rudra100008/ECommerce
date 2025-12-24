@@ -8,6 +8,7 @@ import com.E_Commerce.Entity.*;
 import com.E_Commerce.Enum.OrderStatus;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.OrderMapper;
+import com.E_Commerce.Mapper.ShippingAddressMapper;
 import com.E_Commerce.Repository.*;
 import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.OrderItemService;
@@ -31,6 +32,7 @@ public class OrderServiceImpl implements OrderServices {
     private final AuthUtils authUtils;
     private final ReservationRepository reservationRepository;
     private final InventoryRepository inventoryRepository;
+    private final ShippingAddressMapper shippingAddressMapper;
 
 
     @Override
@@ -107,6 +109,19 @@ public class OrderServiceImpl implements OrderServices {
         order.setPhoneNumber(orderDTO.getPhoneNumber());
         Order savedOrder = this.orderRepository.save(order);
         return this.orderMapper.toOrderDTO(savedOrder);
+    }
+
+    @Override
+    public OrderDTO getOrderDetails(Integer orderId, int userId) {
+        User user = validateUser(userId);
+        Order order = this.orderRepository.findPendingOrderByOrderIdAndUserId(orderId,user.getUserId());
+        if(order == null){
+            throw new ResourceNotFoundException("Order not found for user: "+ user.getUsername());
+        }
+        ShippingAddressDTO shippingAddressDTO = this.shippingAddressMapper.toShippingAddressDTO(order.getShippingAddress());
+        OrderDTO orderDTO = this.orderMapper.toOrderDTO(order);
+        orderDTO.setShippingAddressDTO(shippingAddressDTO);
+        return orderDTO;
     }
 
     //helper method

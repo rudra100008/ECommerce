@@ -37,6 +37,16 @@ public class OrderController {
         ));
     }
 
+    @GetMapping("/{orderId}/user/{userId}")
+    public ResponseEntity<?> getOrderDetails(
+            @PathVariable("orderId") Integer orderId,
+            @PathVariable("userId")Integer userId
+    ){
+        OrderDTO orderDTO = this.orderServices.getOrderDetails(orderId,userId);
+
+        return ResponseEntity.ok(orderDTO);
+    }
+
 
 
     @DeleteMapping("/{orderId}")
@@ -65,6 +75,7 @@ public class OrderController {
         OrderDTO savedOrderDTO = this.orderServices.saveFullNameAndPhoneNumberInOrder(orderDTO);
         return ResponseEntity.status(HttpStatus.OK).body(savedOrderDTO);
     }
+
 
 
 

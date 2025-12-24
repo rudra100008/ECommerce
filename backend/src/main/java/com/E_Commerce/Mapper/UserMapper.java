@@ -3,7 +3,9 @@ package com.E_Commerce.Mapper;
 import com.E_Commerce.DTO.AddressDTO;
 import com.E_Commerce.DTO.UserDTO;
 import com.E_Commerce.Entity.Address;
+import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
+import jdk.jfr.Name;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -11,6 +13,7 @@ import org.mapstruct.Named;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -20,6 +23,7 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true) // Security
     @Mapping(target = "addressIds", source = "addresses",qualifiedByName = "mapAddressesToIds") // Handle in service
     @Mapping(source = "cart.id", target = "cartId")
+
     UserDTO toUserDTO(User user);
 
     @Mapping(target = "addresses", ignore = true)
@@ -45,5 +49,6 @@ public interface UserMapper {
                 .map(Address::getAddressId)
                 .collect(Collectors.toList());
     }
+
 }
 
