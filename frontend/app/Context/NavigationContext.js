@@ -24,6 +24,7 @@ export function NavigationProvider({ children }) {
         try {
             const data = await fetchCurrentUser(success,error,router);
            setUserData(data);
+           localStorage.setItem("userId",data.userId)
         } catch (error) {
             console.error('Error loading user:', error);
         }finally{

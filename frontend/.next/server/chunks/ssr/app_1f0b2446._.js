@@ -519,7 +519,6 @@ function Products({ products, setProducts }) {
     const [favoriteProduct, setFavoriteProduct] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [cartItem, setCartItem] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     console.log("CartProvider - userData:", userData);
-    console.log("CartProvider - cartItems:", cartItems);
     const getCategories = async ()=>{
         try {
             const response = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$CategoryService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fetchAllCategories"])({
@@ -590,12 +589,12 @@ function Products({ products, setProducts }) {
                                     icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$solid$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faHeart"]
                                 }, void 0, false, {
                                     fileName: "[project]/app/Component/Products.js",
-                                    lineNumber: 89,
+                                    lineNumber: 88,
                                     columnNumber: 45
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/Component/Products.js",
-                                lineNumber: 88,
+                                lineNumber: 87,
                                 columnNumber: 41
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 onClick: ()=>handleFavoriteIcon(product),
@@ -604,17 +603,17 @@ function Products({ products, setProducts }) {
                                     icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$fortawesome$2f$free$2d$regular$2d$svg$2d$icons$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["faHeart"]
                                 }, void 0, false, {
                                     fileName: "[project]/app/Component/Products.js",
-                                    lineNumber: 93,
+                                    lineNumber: 92,
                                     columnNumber: 45
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/Component/Products.js",
-                                lineNumber: 92,
+                                lineNumber: 91,
                                 columnNumber: 41
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/Component/Products.js",
-                            lineNumber: 85,
+                            lineNumber: 84,
                             columnNumber: 29
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -625,18 +624,18 @@ function Products({ products, setProducts }) {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$userSide$2f$products$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].productImage
                             }, void 0, false, {
                                 fileName: "[project]/app/Component/Products.js",
-                                lineNumber: 101,
+                                lineNumber: 100,
                                 columnNumber: 41
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: "No Image"
                             }, void 0, false, {
                                 fileName: "[project]/app/Component/Products.js",
-                                lineNumber: 107,
+                                lineNumber: 106,
                                 columnNumber: 41
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/Component/Products.js",
-                            lineNumber: 98,
+                            lineNumber: 97,
                             columnNumber: 29
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -644,7 +643,7 @@ function Products({ products, setProducts }) {
                             children: getCategory(product)
                         }, void 0, false, {
                             fileName: "[project]/app/Component/Products.js",
-                            lineNumber: 112,
+                            lineNumber: 111,
                             columnNumber: 29
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -652,7 +651,7 @@ function Products({ products, setProducts }) {
                             children: product.productName
                         }, void 0, false, {
                             fileName: "[project]/app/Component/Products.js",
-                            lineNumber: 115,
+                            lineNumber: 114,
                             columnNumber: 29
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -660,7 +659,7 @@ function Products({ products, setProducts }) {
                             children: product.description
                         }, void 0, false, {
                             fileName: "[project]/app/Component/Products.js",
-                            lineNumber: 118,
+                            lineNumber: 117,
                             columnNumber: 29
                         }, this),
                         product.discount > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -674,7 +673,7 @@ function Products({ products, setProducts }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/Component/Products.js",
-                                    lineNumber: 125,
+                                    lineNumber: 124,
                                     columnNumber: 41
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -685,13 +684,13 @@ function Products({ products, setProducts }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/Component/Products.js",
-                                    lineNumber: 128,
+                                    lineNumber: 127,
                                     columnNumber: 41
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/Component/Products.js",
-                            lineNumber: 124,
+                            lineNumber: 123,
                             columnNumber: 37
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$CSS$2f$userSide$2f$products$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].priceView,
@@ -703,12 +702,12 @@ function Products({ products, setProducts }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/Component/Products.js",
-                                lineNumber: 134,
+                                lineNumber: 133,
                                 columnNumber: 41
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/Component/Products.js",
-                            lineNumber: 133,
+                            lineNumber: 132,
                             columnNumber: 37
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -721,7 +720,7 @@ function Products({ products, setProducts }) {
                                     children: "Add to Cart"
                                 }, void 0, false, {
                                     fileName: "[project]/app/Component/Products.js",
-                                    lineNumber: 142,
+                                    lineNumber: 141,
                                     columnNumber: 33
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -730,29 +729,29 @@ function Products({ products, setProducts }) {
                                     children: "Details"
                                 }, void 0, false, {
                                     fileName: "[project]/app/Component/Products.js",
-                                    lineNumber: 145,
+                                    lineNumber: 144,
                                     columnNumber: 33
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/Component/Products.js",
-                            lineNumber: 141,
+                            lineNumber: 140,
                             columnNumber: 29
                         }, this)
                     ]
                 }, index, true, {
                     fileName: "[project]/app/Component/Products.js",
-                    lineNumber: 84,
+                    lineNumber: 83,
                     columnNumber: 25
                 }, this))
         }, void 0, false, {
             fileName: "[project]/app/Component/Products.js",
-            lineNumber: 80,
+            lineNumber: 79,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/Component/Products.js",
-        lineNumber: 79,
+        lineNumber: 78,
         columnNumber: 9
     }, this);
 }

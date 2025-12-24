@@ -10,7 +10,7 @@ import NotificationBar from "./NotificationBar";
 import { NavigationProvider } from "./Context/NavigationContext";
 import { CartProvider } from "./Context/CartContext";
 import { OrderFlowGuard } from "./Component/OrderFlowGuard";
-
+import { OrderProvider } from './Context/OrderContext';
 interface RootLayoutProps {
   children: ReactNode;
 }
@@ -27,9 +27,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <NavigationProvider>
               <CartProvider>
                 <OrderFlowGuard>
+                  <OrderProvider>
                   <AppInitializer />
                   <NotificationBar />
                   {children}
+                  </OrderProvider>
                 </OrderFlowGuard>
               </CartProvider>
             </NavigationProvider>

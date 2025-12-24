@@ -12,6 +12,16 @@ export const createOrder = async(orderRequest) => {
     }
 }
 
+export const getOrderDetails = async(orderId,userId)=>{
+    try{
+        const response = await api.get(`/api/order/${orderId}/user/${userId}`);
+        console.log("Response in OrderService:",response);
+        return response.data;
+    }catch(err){
+        console.log("Error in OrderService: ",err.response.data);
+        throw err;
+    }
+}
 export const cancelOrder = async(orderId)=>{
     try{
         console.log("Cancelling a order")
@@ -30,5 +40,6 @@ export const saveShippingAddress = async (orderId,userId,order) => {
         return response.data;
     }catch(err){
         console.log("Error in OrderService: ",err.response?.data)
+        throw err;
     }
 }

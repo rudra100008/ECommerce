@@ -21,7 +21,6 @@ export default function Products({ products, setProducts }) {
 
 
     console.log("CartProvider - userData:", userData);
-    console.log("CartProvider - cartItems:", cartItems);
 
     const getCategories = async () => {
         try {

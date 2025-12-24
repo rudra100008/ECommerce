@@ -1841,6 +1841,66 @@ function OrderFlowGuard({ children }) {
     }, void 0, false);
 }
 }),
+"[project]/app/Context/OrderContext.js [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "OrderProvider",
+    ()=>OrderProvider,
+    "useOrderContext",
+    ()=>useOrderContext
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Context/NavigationContext.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/services/clientServices/OrderService.js [app-ssr] (ecmascript)");
+'use client';
+;
+;
+;
+;
+const OrderContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createContext"])();
+const OrderProvider = ({ children })=>{
+    const [orderData, setOrderData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({});
+    const { userData, loadCurrentUser } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useNavigation"])();
+    const fetchOrderDetails = async ()=>{
+        const orderId = localStorage.getItem("orderId");
+        const userId = localStorage.getItem("userId");
+        try {
+            if (!orderId || !userId) {
+                console.log("OrderId or userId is missing.");
+                return;
+            }
+            const data = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getOrderDetails"])(orderId, userId);
+        } catch (err) {
+            console.error("Error in OrderContext: ", err.response?.data);
+        }
+    };
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        fetchOrderDetails();
+    }, []);
+    const value = {
+        orderData,
+        setOrderData,
+        fetchOrderDetails
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(OrderContext.Provider, {
+        value: value,
+        children: children
+    }, void 0, false, {
+        fileName: "[project]/app/Context/OrderContext.js",
+        lineNumber: 38,
+        columnNumber: 5
+    }, ("TURBOPACK compile-time value", void 0));
+};
+const useOrderContext = ()=>{
+    const context = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useContext"])(OrderContext);
+    if (!context) {
+        throw new Error("useOrderContext must be used within OrderProvider");
+    }
+    return context;
+};
+}),
 ];
 
-//# sourceMappingURL=%5Broot-of-the-server%5D__25f6674c._.js.map
+//# sourceMappingURL=%5Broot-of-the-server%5D__c5f0b9fd._.js.map

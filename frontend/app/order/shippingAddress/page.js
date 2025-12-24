@@ -83,7 +83,7 @@ export default function ShippingAddress() {
         return;
       }
 
-      // Construct the complete OrderDTO
+    
       const orderRequest = {
         orderId: parseInt(orderId, 10),
         userId: userData.userId,
@@ -99,8 +99,7 @@ export default function ShippingAddress() {
       
       const data = await saveShippingAddress(orderId, userData.userId, orderRequest);
       console.log("Data in handleSubmit: ", data);
-      
-      localStorage.removeItem("orderId");
+    
       router.push("/order/review");
       
     } catch (err) {
