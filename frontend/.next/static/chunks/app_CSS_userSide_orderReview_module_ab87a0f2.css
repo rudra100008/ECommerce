@@ -1,4 +1,478 @@
 /* [project]/app/CSS/userSide/orderReview.module.css [app-client] (css) */
+.orderReview-module__r-jaqG__orderReviewContainer {
+  background: linear-gradient(#f8f9fa 0%, #fff 100%);
+  max-width: 1000px;
+  min-height: 100vh;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+}
 
+.orderReview-module__r-jaqG__title {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-top: 1rem;
+}
+
+.orderReview-module__r-jaqG__title h3 {
+  color: #2c3e50;
+  letter-spacing: -1px;
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  display: inline-block;
+  position: relative;
+}
+
+.orderReview-module__r-jaqG__title h3:after {
+  content: "";
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+  width: 60px;
+  height: 4px;
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.orderReview-module__r-jaqG__orderDetailsContainer {
+  background: #fff;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .08);
+}
+
+.orderReview-module__r-jaqG__sectionHeader {
+  color: #2c3e50;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-left: 4px solid #667eea;
+  margin: 0;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.orderReview-module__r-jaqG__orderDetailSection {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 1.75rem 2rem;
+  transition: all .3s;
+  position: relative;
+}
+
+.orderReview-module__r-jaqG__orderDetailSection:before {
+  content: "";
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 3px;
+  height: 0;
+  transition: height .3s;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.orderReview-module__r-jaqG__orderDetailSection:hover:before {
+  height: 100%;
+}
+
+.orderReview-module__r-jaqG__orderDetailSection:hover {
+  background-color: #fafbfc;
+  padding-left: 2.5rem;
+}
+
+.orderReview-module__r-jaqG__orderDetailSection p {
+  color: #6c757d;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.8;
+  display: flex;
+}
+
+.orderReview-module__r-jaqG__orderDetailSection p span {
+  color: #212529;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.orderReview-module__r-jaqG__shippingAddressSection {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  margin-top: .5rem;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.orderReview-module__r-jaqG__shippingAddressSection:before {
+  content: "📍";
+  opacity: .05;
+  font-size: 100px;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+
+.orderReview-module__r-jaqG__shippingAddressSection > div {
+  z-index: 1;
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.orderReview-module__r-jaqG__shippingAddressSection > div:last-child {
+  margin-bottom: 0;
+}
+
+.orderReview-module__r-jaqG__shippingAddressSection p {
+  color: #495057;
+  align-items: center;
+  gap: .5rem;
+  margin: .4rem 0;
+  font-size: .95rem;
+  display: flex;
+}
+
+.orderReview-module__r-jaqG__shippingAddressSection p:first-child {
+  color: #212529;
+  border-bottom: 2px solid #dee2e6;
+  margin-bottom: .75rem;
+  padding-bottom: .5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.orderReview-module__r-jaqG__shippingAddressSection span {
+  color: #212529;
+  font-weight: 600;
+}
+
+.orderReview-module__r-jaqG__orderDetailSection:has(.orderReview-module__r-jaqG__orderItemCard) {
+  background: #f8f9fa;
+  padding: 2rem;
+}
+
+.orderReview-module__r-jaqG__orderItemsGrid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  display: grid;
+}
+
+.orderReview-module__r-jaqG__orderItemCard {
+  background: #fff;
+  border: 2px solid rgba(0, 0, 0, 0);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all .4s cubic-bezier(.175, .885, .32, 1.275);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, .05);
+}
+
+.orderReview-module__r-jaqG__orderItemCard:before {
+  content: "";
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  height: 4px;
+  transition: transform .3s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  transform: scaleX(0);
+}
+
+.orderReview-module__r-jaqG__orderItemCard:hover:before {
+  transform: scaleX(1);
+}
+
+.orderReview-module__r-jaqG__orderItemCard:hover {
+  border-color: #667eea;
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(102, 126, 234, .15);
+}
+
+.orderReview-module__r-jaqG__orderItemCard p {
+  color: #6c757d;
+  justify-content: space-between;
+  margin: .75rem 0;
+  font-size: .95rem;
+  display: flex;
+}
+
+.orderReview-module__r-jaqG__orderItemCard p:first-child {
+  color: #212529;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 1rem;
+  padding-bottom: .75rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.orderReview-module__r-jaqG__orderItemCard p span {
+  color: #212529;
+  font-weight: 600;
+}
+
+.orderReview-module__r-jaqG__statusSection {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-left: 5px solid #2196f3;
+}
+
+.orderReview-module__r-jaqG__statusSection p {
+  color: #1565c0;
+  font-size: 1.1rem;
+}
+
+.orderReview-module__r-jaqG__statusSection p span {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #1565c0;
+  background: #fff;
+  border-radius: 25px;
+  padding: .5rem 1.5rem;
+  font-size: .9rem;
+  font-weight: 700;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, .2);
+}
+
+.orderReview-module__r-jaqG__totalAmountSection {
+  color: #fff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.orderReview-module__r-jaqG__totalAmountSection:before {
+  content: "💰";
+  opacity: .1;
+  font-size: 150px;
+  position: absolute;
+  top: -20px;
+  right: -20px;
+}
+
+.orderReview-module__r-jaqG__totalAmountSection:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+}
+
+.orderReview-module__r-jaqG__totalAmountSection p {
+  color: rgba(255, 255, 255, .95);
+  z-index: 1;
+  font-size: 1.2rem;
+  font-weight: 600;
+  position: relative;
+}
+
+.orderReview-module__r-jaqG__totalAmountSection p span {
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+  font-size: 2.2rem;
+  font-weight: 800;
+  animation: 2s ease-in-out infinite orderReview-module__r-jaqG__pulse;
+  display: inline-block;
+}
+
+@keyframes orderReview-module__r-jaqG__pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.orderReview-module__r-jaqG__actionGroup {
+  background: linear-gradient(#fafbfc 0%, #fff 100%);
+  gap: 1.5rem;
+  padding: 2.5rem;
+  display: flex;
+}
+
+.orderReview-module__r-jaqG__cancelButton, .orderReview-module__r-jaqG__nextButton {
+  flex: 1;
+}
+
+.orderReview-module__r-jaqG__cancelButton button, .orderReview-module__r-jaqG__nextButton button {
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  border-radius: 12px;
+  width: 100%;
+  padding: 1.25rem 2.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.orderReview-module__r-jaqG__cancelButton button:before, .orderReview-module__r-jaqG__nextButton button:before {
+  content: "";
+  background: rgba(255, 255, 255, .3);
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  transition: width .6s, height .6s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orderReview-module__r-jaqG__cancelButton button:hover:before, .orderReview-module__r-jaqG__nextButton button:hover:before {
+  width: 300px;
+  height: 300px;
+}
+
+.orderReview-module__r-jaqG__cancelButton button {
+  color: #dc3545;
+  background: #fff;
+  border: 3px solid #dc3545;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, .2);
+}
+
+.orderReview-module__r-jaqG__cancelButton button:hover {
+  color: #fff;
+  background: #dc3545;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(220, 53, 69, .4);
+}
+
+.orderReview-module__r-jaqG__nextButton button {
+  color: #fff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, .3);
+}
+
+.orderReview-module__r-jaqG__nextButton button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, .5);
+}
+
+.orderReview-module__r-jaqG__cancelButton button:active, .orderReview-module__r-jaqG__nextButton button:active {
+  transform: translateY(-1px);
+}
+
+.orderReview-module__r-jaqG__cancelButton button:disabled, .orderReview-module__r-jaqG__nextButton button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.orderReview-module__r-jaqG__emptyState {
+  text-align: center;
+  color: #6c757d;
+  padding: 4rem 2rem;
+}
+
+.orderReview-module__r-jaqG__emptyState p {
+  margin: 1rem 0;
+  font-size: 1.2rem;
+}
+
+.orderReview-module__r-jaqG__loadingState {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.orderReview-module__r-jaqG__loadingSpinner {
+  border: 4px solid #f3f3f3;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin: 0 auto;
+  animation: 1s linear infinite orderReview-module__r-jaqG__spin;
+}
+
+@keyframes orderReview-module__r-jaqG__spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .orderReview-module__r-jaqG__orderReviewContainer {
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+
+  .orderReview-module__r-jaqG__title h3 {
+    font-size: 1.75rem;
+  }
+
+  .orderReview-module__r-jaqG__orderDetailSection {
+    padding: 1.5rem;
+  }
+
+  .orderReview-module__r-jaqG__orderDetailSection:hover {
+    padding-left: 2rem;
+  }
+
+  .orderReview-module__r-jaqG__orderDetailSection p {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .5rem;
+  }
+
+  .orderReview-module__r-jaqG__orderDetailSection p span {
+    text-align: left;
+  }
+
+  .orderReview-module__r-jaqG__shippingAddressSection {
+    padding: 1.5rem;
+  }
+
+  .orderReview-module__r-jaqG__orderItemsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .orderReview-module__r-jaqG__actionGroup {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .orderReview-module__r-jaqG__totalAmountSection p span {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .orderReview-module__r-jaqG__orderReviewContainer {
+    margin: .5rem auto;
+  }
+
+  .orderReview-module__r-jaqG__title h3 {
+    font-size: 1.5rem;
+  }
+
+  .orderReview-module__r-jaqG__orderDetailsContainer {
+    border-radius: 16px;
+  }
+
+  .orderReview-module__r-jaqG__cancelButton button, .orderReview-module__r-jaqG__nextButton button {
+    padding: 1rem 1.5rem;
+    font-size: .95rem;
+  }
+
+  .orderReview-module__r-jaqG__totalAmountSection {
+    padding: 2rem 1.5rem;
+  }
+}
 
 /*# sourceMappingURL=app_CSS_userSide_orderReview_module_ab87a0f2.css.map*/

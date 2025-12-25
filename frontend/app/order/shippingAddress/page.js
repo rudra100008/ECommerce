@@ -5,6 +5,7 @@ import { useAddressData } from "../../hooks/useAddressData";
 import { cancelOrder, saveShippingAddress } from "../../services/clientServices/OrderService";
 import { useRouter } from "next/navigation";
 import { useNavigation } from "@/app/Context/NavigationContext";
+import { RouteGuard } from "@/app/Component/RouteGuard";
 
 export default function ShippingAddress() {
   const [isMunicipalitySelected, setIsMunicipalitySelected] = useState(true);
@@ -173,6 +174,7 @@ export default function ShippingAddress() {
   },[])
   console.log("UserData: ",userData)
   return (
+    <RouteGuard requiredRole={'ROLE_CUSTOMER'}>
     <div className={style.FormContainer}>
       <div className={style.title}>
         <h3>Shipping Address</h3>
@@ -387,5 +389,6 @@ export default function ShippingAddress() {
         </form>
       </div>
     </div>
+    </RouteGuard>
   );
 }
