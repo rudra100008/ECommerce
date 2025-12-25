@@ -1,6 +1,7 @@
 package com.E_Commerce.ServicesImpl.AddressDataSet;
 
 import com.E_Commerce.Entity.AddressDataSet.Province;
+import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.AddressDataSet.ProvinceRepository;
 import com.E_Commerce.Services.AddressDataSet.ProvinceService;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,15 @@ public class ProvinceServiceImpl implements ProvinceService {
     @Override
     public List<Province> fetchAllProvince() {
         return this.provinceRepository.findAll();
+    }
+
+    @Override
+    public Province fetchProvinceById(Integer provinceId) {
+        if(provinceId == null){
+            throw new RuntimeException("Province not found.");
+        }
+
+        return this.provinceRepository.findById(provinceId)
+                .orElseThrow(()-> new ResourceNotFoundException("Province not found"));
     }
 }

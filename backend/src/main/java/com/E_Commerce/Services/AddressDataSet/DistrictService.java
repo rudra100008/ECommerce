@@ -9,4 +9,6 @@ import java.util.List;
 public interface DistrictService {
     List<District> fetchAllDistricts();
     List<District> fetchByProvinceId(int provinceId);
+
+    District fetchById(int districtId);
 }

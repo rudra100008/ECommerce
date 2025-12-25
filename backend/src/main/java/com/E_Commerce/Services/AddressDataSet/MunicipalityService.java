@@ -10,4 +10,5 @@ import java.util.List;
 public interface MunicipalityService {
     List<Municipality> fetchAllMunicipality();
     List<Municipality> fetchMunicipalityByDistrictId(int districtId);
+    Municipality fetchById(int municipalityId);
 }

@@ -8,4 +8,5 @@ import java.util.List;
 @Service
 public interface ProvinceService {
     List<Province> fetchAllProvince();
+    Province fetchProvinceById(Integer provinceId);
 }

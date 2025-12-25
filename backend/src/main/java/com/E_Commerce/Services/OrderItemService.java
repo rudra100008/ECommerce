@@ -11,4 +11,5 @@ public interface OrderItemService {
     List<OrderItemDTO> addOrderItemDTOs(List<OrderItemDTO> orderItemDTOList);
     List<OrderItem> addOrderItems(List<OrderItemDTO> orderItemDTOList);
     void removeOrderItems(List<OrderItem> orderItems, User user);
+    List<OrderItemDTO> fetchAllOrderItems(List<Integer> orderItemIds);
 }

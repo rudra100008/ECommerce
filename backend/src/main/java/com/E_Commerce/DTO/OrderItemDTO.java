@@ -21,4 +21,5 @@ public class OrderItemDTO {
 
 
     private Integer productId;
+    private String productName;
 }

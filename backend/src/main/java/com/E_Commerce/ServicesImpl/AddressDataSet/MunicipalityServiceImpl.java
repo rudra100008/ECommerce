@@ -1,6 +1,7 @@
 package com.E_Commerce.ServicesImpl.AddressDataSet;
 
 import com.E_Commerce.Entity.AddressDataSet.Municipality;
+import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.AddressDataSet.MunicipalityRepository;
 import com.E_Commerce.Services.AddressDataSet.MunicipalityService;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +22,11 @@ public class MunicipalityServiceImpl implements MunicipalityService {
     @Override
     public List<Municipality> fetchMunicipalityByDistrictId(int districtId) {
         return this.municipalityRepository.findMunicipalityByDistrict(districtId);
+    }
+
+    @Override
+    public Municipality fetchById(int municipalityId) {
+        return this.municipalityRepository.findById(municipalityId)
+                .orElseThrow(()-> new ResourceNotFoundException("Municipality not found"));
     }
 }

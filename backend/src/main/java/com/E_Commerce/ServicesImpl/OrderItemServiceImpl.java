@@ -47,6 +47,18 @@ public class OrderItemServiceImpl implements OrderItemService {
         removeOrderItemsAndChangeReservation(orderItems,user);
     }
 
+    @Override
+    public List<OrderItemDTO> fetchAllOrderItems(List<Integer> orderItemIds) {
+        List<OrderItemDTO> orderItemDTOS = new LinkedList<>();
+        for (int itemId: orderItemIds){
+            OrderItem orderItem = this.orderItemRepository.findById(itemId)
+                    .orElseThrow(()-> new ResourceNotFoundException("Item not found."));
+            OrderItemDTO orderItemDTO = this.orderItemMapper.toOrderItemDTO(orderItem);
+            orderItemDTOS.add(orderItemDTO);
+        }
+        return orderItemDTOS;
+    }
+
     private List<OrderItem> saveOrderItem(List<OrderItemDTO> dtos){
         Order order = getOrder(dtos.getFirst().getOrderId());
         User user = order.getUser(); // Get user from order

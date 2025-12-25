@@ -19,6 +19,7 @@ public interface OrderItemMapper {
     @Mapping(source = "id",target = "orderItemId")
     @Mapping(source = "order.id",target = "orderId")
     @Mapping(source = "product.productId",target = "productId")
+    @Mapping(source = "product.productName",target = "productName")
     OrderItemDTO toOrderItemDTO(OrderItem orderItem);
 
     List<OrderItemDTO> toOrderItemDTOs(List<OrderItem> orderItems);

@@ -5,12 +5,19 @@ import com.E_Commerce.DTO.OrderDTO;
 import com.E_Commerce.DTO.OrderItemDTO;
 import com.E_Commerce.DTO.ShippingAddressDTO;
 import com.E_Commerce.Entity.*;
+import com.E_Commerce.Entity.AddressDataSet.District;
+import com.E_Commerce.Entity.AddressDataSet.Municipality;
+import com.E_Commerce.Entity.AddressDataSet.Province;
 import com.E_Commerce.Enum.OrderStatus;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.OrderMapper;
 import com.E_Commerce.Mapper.ShippingAddressMapper;
 import com.E_Commerce.Repository.*;
+import com.E_Commerce.Repository.AddressDataSet.ProvinceRepository;
 import com.E_Commerce.Securty.AuthUtils;
+import com.E_Commerce.Services.AddressDataSet.DistrictService;
+import com.E_Commerce.Services.AddressDataSet.MunicipalityService;
+import com.E_Commerce.Services.AddressDataSet.ProvinceService;
 import com.E_Commerce.Services.OrderItemService;
 import com.E_Commerce.Services.OrderServices;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +40,9 @@ public class OrderServiceImpl implements OrderServices {
     private final ReservationRepository reservationRepository;
     private final InventoryRepository inventoryRepository;
     private final ShippingAddressMapper shippingAddressMapper;
+    private final ProvinceService provinceService;
+    private final DistrictService districtService;
+    private final MunicipalityService municipalityService;
 
 
     @Override
@@ -114,12 +124,18 @@ public class OrderServiceImpl implements OrderServices {
     @Override
     public OrderDTO getOrderDetails(Integer orderId, int userId) {
         User user = validateUser(userId);
+
         Order order = this.orderRepository.findPendingOrderByOrderIdAndUserId(orderId,user.getUserId());
+
         if(order == null){
             throw new ResourceNotFoundException("Order not found for user: "+ user.getUsername());
         }
+
         ShippingAddressDTO shippingAddressDTO = this.shippingAddressMapper.toShippingAddressDTO(order.getShippingAddress());
         OrderDTO orderDTO = this.orderMapper.toOrderDTO(order);
+
+        modifyShippingAddressName(shippingAddressDTO);
+
         orderDTO.setShippingAddressDTO(shippingAddressDTO);
         return orderDTO;
     }
@@ -204,5 +220,17 @@ public class OrderServiceImpl implements OrderServices {
                 .shippingProvince(shippingAddressDTO.getShippingProvince())
                 .shippingWardNumber(shippingAddressDTO.getShippingWardNumber())
                 .build();
+    }
+
+    private void modifyShippingAddressName(ShippingAddressDTO shippingAddressDTO){
+        int provinceId = Integer.parseInt(shippingAddressDTO.getShippingProvince());
+        int districtId = Integer.parseInt(shippingAddressDTO.getShippingDistrict());
+        int municipalityId = Integer.parseInt(shippingAddressDTO.getShippingMunicipality());
+        Province province = this.provinceService.fetchProvinceById(provinceId);
+        District district = this.districtService.fetchById(districtId);
+        Municipality municipality = this.municipalityService.fetchById(municipalityId);
+        shippingAddressDTO.setShippingProvince(province.getEnglishName());
+        shippingAddressDTO.setShippingMunicipality(municipality.getEnglishName());
+        shippingAddressDTO.setShippingDistrict(district.getEnglishName());
     }
 }
