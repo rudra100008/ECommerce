@@ -17,6 +17,7 @@ import com.E_Commerce.Repository.ProductImageRepository;
 import com.E_Commerce.Repository.ProductRepository;
 import com.E_Commerce.Services.CategoryService;
 import com.E_Commerce.Services.ImageService;
+import com.E_Commerce.Services.ProductImageService;
 import com.E_Commerce.Services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -31,6 +32,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +46,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageRepository productImageRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
+    private final ProductImageService productImageService;
     private final ProductMapper productMapper;
     private final static List<String> ALLOWED_SORT_FIELDS = List.of("createdAt", "updatedAt", "productName", "price", "productId");
 
@@ -95,7 +99,23 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toProductDTO(savedProduct);
     }
 
-
+    @Override
+    public List<ProductDTO> findProductsByIds(List<Integer> productIds) {
+        if (productIds ==  null  || productIds.isEmpty()){
+            return Collections.emptyList();
+        }
+        List<Product> products = this.productRepository.findAllById(productIds);
+        if (products.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return products.stream()
+                .map(product -> {
+                    ProductDTO productDTO = this.productMapper.toProductDTO(product);
+                    productDTO.setImageUrls(getImageUrls(productDTO));
+                    return productDTO;
+                })
+                .toList();
+    }
 
 
     @Override
@@ -103,7 +123,8 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO findByProductId(Integer productId) {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(()-> new RuntimeException("product not found in server"));
-        return productMapper.toProductDTO(product);
+        ProductDTO productDTO = productMapper.toProductDTO(product);
+        return productDTO;
     }
 
     @Override
@@ -285,5 +306,17 @@ public class ProductServiceImpl implements ProductService {
         if(this.productRepository.existsByProductName(productName)){
             throw new AlreadyExitsException(productName + " already exits");
         }
+    }
+
+    private List<String> getImageUrls(ProductDTO productDTO){
+        List<ProductImage> productImages = this.productImageService.getProductImageByProductId(productDTO.getProductId());
+        List<String> imageUrls = new ArrayList<>();
+        if(!productImages.isEmpty()){
+            for(ProductImage productImage : productImages){
+                String imageUrl = "/api/product/" + productDTO.getProductId() + "/image/" + productImage.getId();
+                imageUrls.add(imageUrl);
+            }
+        }
+        return imageUrls;
     }
 }

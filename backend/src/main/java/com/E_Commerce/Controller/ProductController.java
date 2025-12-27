@@ -9,6 +9,7 @@ import com.E_Commerce.Services.ProductImageService;
 import com.E_Commerce.Services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,12 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/product")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController {
     private final ProductService productService;
     private final ImageService imageService;
@@ -99,6 +98,19 @@ public class ProductController {
         productDTOPageInfo.getData()
                 .forEach(productDTO ->setFirstImageUrl(productDTO) );
         return ResponseEntity.status(HttpStatus.OK).body(productDTOPageInfo);
+    }
+
+    @PostMapping("/fetchAllProductsByIds")
+    public ResponseEntity<?> findProductsByIds(
+            @RequestBody()List<Integer> productIds
+    ){
+        if (productIds == null || productIds.isEmpty()) {
+            log.info("Empty product IDs list received");
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+        List<ProductDTO> productDTOS = this.productService.findProductsByIds(productIds);
+        log.info("Successfully fetched {} products", productDTOS.size());
+        return ResponseEntity.status(HttpStatus.OK).body(productDTOS);
     }
 
     @GetMapping("/{productId}")

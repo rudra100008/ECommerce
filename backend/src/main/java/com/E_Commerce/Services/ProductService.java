@@ -14,6 +14,7 @@ import java.util.List;
 public interface ProductService {
     ProductDTO createProductWithImages(ProductDTO productDTO, CategoryRequest categoryRequest, List<MultipartFile> imageFiles);
     ProductDTO createProduct(ProductDTO productDTO);
+    List<ProductDTO> findProductsByIds(List<Integer> productIds);
     ProductDTO findByProductId(Integer productId);
     ProductDTO updateProductImages(List<String> imageUrls,Integer productId);
     PageInfo<ProductDTO> findProducts(Integer pageNumber,Integer pageSize,String sortBy,String sortDir);

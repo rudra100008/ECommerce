@@ -2,7 +2,6 @@ package com.E_Commerce.Services;
 
 import com.E_Commerce.DTO.CartDTO;
 import com.E_Commerce.DTO.CartItemDTO;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 
 @Service
