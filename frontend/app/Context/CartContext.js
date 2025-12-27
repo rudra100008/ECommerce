@@ -15,15 +15,18 @@ import {
   deleteCartItemFromCart,
   updateQuantityOfItem,
 } from "../services/clientServices/CartService";
-import { findProductById } from "../services/clientServices/ProductService";
+import {
+  findProductById,
+  findProductsByIds,
+} from "../services/clientServices/ProductService";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const { userData } = useNavigation();
-  const { success, error: showError,clear } = useNotification();
+  const { success, error: showError, clear } = useNotification();
   const [cartItems, setCartItems] = useState([]);
-  const [checkedCartItems,setCheckedCartItems] = useState([]);
+  const [checkedCartItems, setCheckedCartItems] = useState([]);
   const [cart, setCart] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -42,28 +45,49 @@ export function CartProvider({ children }) {
       setCart(Cart);
 
       if (Cart.cartItem && Cart.cartItem.length > 0) {
-        const productPromises = Cart.cartItem.map(async (cartItem) => {
-          try {
-            const product = await findProductById(cartItem.productId);
-            return {
-              ...cartItem,
-              product: product,
-            };
-          } catch (err) {
-            console.log(`Error fetching product ${cartItem.productId}:`, err);
-            return {
-              ...cartItem,
-              product: null,
-            };
-          }
+        // const productPromises = Cart.cartItem.map(async (cartItem) => {
+        //   try {
+        //     const product = await findProductById(cartItem.productId);
+        //     return {
+        //       ...cartItem,
+        //       product: product,
+        //     };
+        //   } catch (err) {
+        //     console.log(`Error fetching product ${cartItem.productId}:`, err);
+        //     return {
+        //       ...cartItem,
+        //       product: null,
+        //     };
+        //   }
+        // });
+        //  const productWithDetails = await Promise.all(productPromises);
+
+        const productIds = Cart.cartItem.map((item) => item.productId);
+        if (productIds.length === 0) {
+          console.log("ProductIds is empty");
+          setCartItems([]);
+          return;
+        }
+        console.log("ProductIDs: ", productIds);
+        const products = await findProductsByIds(productIds);
+
+        const productWithDetails = Cart.cartItem.map((cartItem) => {
+          const product = products?.find(
+            (p) => p.productId === cartItem.productId
+          );
+          return {
+            ...cartItem,
+            product: product || null,
+          };
         });
-        const productWithDetails = await Promise.all(productPromises);
         setCartItems(productWithDetails);
       } else {
         setCartItems([]);
       }
     } catch (err) {
-      console.log("error in CartItem: ", err.response?.data);
+      console.log("Error in CartItem:", err);
+      console.log("Error message:", err.message);
+      console.log("Error stack:", err.stack);
       showError("Failed to load cart items");
       setCartItems([]);
     } finally {
@@ -86,10 +110,10 @@ export function CartProvider({ children }) {
       try {
         const data = await addToCart(userData.cartId, cartItem);
         await fetchCartItems();
-        success(data.message)
-        setTimeout(()=>{
-          clear()
-        },4000)
+        success(data.message);
+        setTimeout(() => {
+          clear();
+        }, 4000);
         return true;
       } catch (err) {
         console.log("Error adding to cart:", err.response?.data);
@@ -111,7 +135,6 @@ export function CartProvider({ children }) {
     },
     [fetchCartItems]
   );
-
 
   const updateItemQuantity = async (cartItemId, quantity) => {
     if (quantity < 1) {
@@ -137,24 +160,25 @@ export function CartProvider({ children }) {
     if (userData?.cartId) {
       fetchCartItems();
     } else {
-   
       setCartItems([]);
     }
   }, [userData?.cartId]);
 
-   const handleCheckBox = (cartItem)=>{
-        setCheckedCartItems(prev =>{
-            const exists = prev.some(item => item.cartItemId === cartItem.cartItemId);
-            if(exists){
-                return prev.filter(item => item.cartItemId !== cartItem.cartItemId)
-            }else{
-                return [...prev,cartItem];
-            }
-        });
-    }
-    const clearCheckedCart = () => {
-        setCheckedCartItems([]);
-    };
+  const handleCheckBox = (cartItem) => {
+    setCheckedCartItems((prev) => {
+      const exists = prev.some(
+        (item) => item.cartItemId === cartItem.cartItemId
+      );
+      if (exists) {
+        return prev.filter((item) => item.cartItemId !== cartItem.cartItemId);
+      } else {
+        return [...prev, cartItem];
+      }
+    });
+  };
+  const clearCheckedCart = () => {
+    setCheckedCartItems([]);
+  };
 
   const value = useMemo(
     () => ({

@@ -49,6 +49,8 @@ __turbopack_context__.n(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$C
 "[project]/app/CSS/mainContent.module.css [app-rsc] (css module)", ((__turbopack_context__) => {
 
 __turbopack_context__.v({
+  "Loading": "mainContent-module__iKJb5W__Loading",
+  "firstSection": "mainContent-module__iKJb5W__firstSection",
   "pageContainer": "mainContent-module__iKJb5W__pageContainer",
   "pageWrapper": "mainContent-module__iKJb5W__pageWrapper",
 });

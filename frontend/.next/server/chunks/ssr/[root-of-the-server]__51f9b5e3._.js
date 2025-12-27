@@ -592,13 +592,15 @@ __turbopack_context__.s([
     "fetchRandomProduct",
     ()=>fetchRandomProduct,
     "findProductById",
-    ()=>findProductById
+    ()=>findProductById,
+    "findProductsByIds",
+    ()=>findProductsByIds
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-ssr] (ecmascript)");
 ;
 const fetchRandomProduct = async ({ pageNumber = 0, pageSize = 9 })=>{
     try {
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get('/api/product/fetchProducts', {
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get("/api/product/fetchProducts", {
             params: {
                 pageNumber: pageNumber,
                 pageSize: pageSize
@@ -620,6 +622,18 @@ const findProductById = async (productId)=>{
     } catch (error) {
         console.log("Error in ProductService: ", error.response?.data);
         throw error;
+    }
+};
+const findProductsByIds = async (productIds = [])=>{
+    if (!productIds || productIds.length === 0) {
+        return [];
+    }
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/api/product/fetchAllProductsByIds`, productIds);
+        return response.data;
+    } catch (err) {
+        console.log("Error in ProductService:", err.response.data);
+        throw err;
     }
 };
 }),
@@ -666,28 +680,45 @@ function CartProvider({ children }) {
             const { Cart } = response;
             setCart(Cart);
             if (Cart.cartItem && Cart.cartItem.length > 0) {
-                const productPromises = Cart.cartItem.map(async (cartItem)=>{
-                    try {
-                        const product = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$ProductService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["findProductById"])(cartItem.productId);
-                        return {
-                            ...cartItem,
-                            product: product
-                        };
-                    } catch (err) {
-                        console.log(`Error fetching product ${cartItem.productId}:`, err);
-                        return {
-                            ...cartItem,
-                            product: null
-                        };
-                    }
+                // const productPromises = Cart.cartItem.map(async (cartItem) => {
+                //   try {
+                //     const product = await findProductById(cartItem.productId);
+                //     return {
+                //       ...cartItem,
+                //       product: product,
+                //     };
+                //   } catch (err) {
+                //     console.log(`Error fetching product ${cartItem.productId}:`, err);
+                //     return {
+                //       ...cartItem,
+                //       product: null,
+                //     };
+                //   }
+                // });
+                //  const productWithDetails = await Promise.all(productPromises);
+                const productIds = Cart.cartItem.map((item)=>item.productId);
+                if (productIds.length === 0) {
+                    console.log("ProductIds is empty");
+                    setCartItems([]);
+                    return;
+                }
+                console.log("ProductIDs: ", productIds);
+                const products = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$ProductService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["findProductsByIds"])(productIds);
+                const productWithDetails = Cart.cartItem.map((cartItem)=>{
+                    const product = products?.find((p)=>p.productId === cartItem.productId);
+                    return {
+                        ...cartItem,
+                        product: product || null
+                    };
                 });
-                const productWithDetails = await Promise.all(productPromises);
                 setCartItems(productWithDetails);
             } else {
                 setCartItems([]);
             }
         } catch (err) {
-            console.log("error in CartItem: ", err.response?.data);
+            console.log("Error in CartItem:", err);
+            console.log("Error message:", err.message);
+            console.log("Error stack:", err.stack);
             showError("Failed to load cart items");
             setCartItems([]);
         } finally{
@@ -801,7 +832,7 @@ function CartProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/app/Context/CartContext.js",
-        lineNumber: 185,
+        lineNumber: 209,
         columnNumber: 10
     }, this);
 }

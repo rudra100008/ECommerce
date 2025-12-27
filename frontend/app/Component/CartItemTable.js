@@ -20,7 +20,7 @@ export default function CartItemTable() {
     handleCheckBox,
   } = useCart();
 
-  const [cart, setCart] = useState({});
+
   const [updatingItems, setUpdatingItems] = useState(new Set());
 
   const handleShowImage = (productId) => {};

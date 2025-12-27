@@ -593,14 +593,16 @@ __turbopack_context__.s([
     "fetchRandomProduct",
     ()=>fetchRandomProduct,
     "findProductById",
-    ()=>findProductById
+    ()=>findProductById,
+    "findProductsByIds",
+    ()=>findProductsByIds
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/app/Component/axiosInterceptor.js [app-client] (ecmascript)");
 ;
 const fetchRandomProduct = async (param)=>{
     let { pageNumber = 0, pageSize = 9 } = param;
     try {
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get('/api/product/fetchProducts', {
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/api/product/fetchProducts", {
             params: {
                 pageNumber: pageNumber,
                 pageSize: pageSize
@@ -624,6 +626,19 @@ const findProductById = async (productId)=>{
         var _error_response;
         console.log("Error in ProductService: ", (_error_response = error.response) === null || _error_response === void 0 ? void 0 : _error_response.data);
         throw error;
+    }
+};
+const findProductsByIds = async function() {
+    let productIds = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : [];
+    if (!productIds || productIds.length === 0) {
+        return [];
+    }
+    try {
+        const response = await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/product/fetchAllProductsByIds", productIds);
+        return response.data;
+    } catch (err) {
+        console.log("Error in ProductService:", err.response.data);
+        throw err;
     }
 };
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
@@ -677,31 +692,51 @@ function CartProvider(param) {
                 const { Cart } = response;
                 setCart(Cart);
                 if (Cart.cartItem && Cart.cartItem.length > 0) {
-                    const productPromises = Cart.cartItem.map({
-                        "CartProvider.useCallback[fetchCartItems].productPromises": async (cartItem)=>{
-                            try {
-                                const product = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$ProductService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["findProductById"])(cartItem.productId);
-                                return {
-                                    ...cartItem,
-                                    product: product
-                                };
-                            } catch (err) {
-                                console.log("Error fetching product ".concat(cartItem.productId, ":"), err);
-                                return {
-                                    ...cartItem,
-                                    product: null
-                                };
-                            }
+                    // const productPromises = Cart.cartItem.map(async (cartItem) => {
+                    //   try {
+                    //     const product = await findProductById(cartItem.productId);
+                    //     return {
+                    //       ...cartItem,
+                    //       product: product,
+                    //     };
+                    //   } catch (err) {
+                    //     console.log(`Error fetching product ${cartItem.productId}:`, err);
+                    //     return {
+                    //       ...cartItem,
+                    //       product: null,
+                    //     };
+                    //   }
+                    // });
+                    //  const productWithDetails = await Promise.all(productPromises);
+                    const productIds = Cart.cartItem.map({
+                        "CartProvider.useCallback[fetchCartItems].productIds": (item)=>item.productId
+                    }["CartProvider.useCallback[fetchCartItems].productIds"]);
+                    if (productIds.length === 0) {
+                        console.log("ProductIds is empty");
+                        setCartItems([]);
+                        return;
+                    }
+                    console.log("ProductIDs: ", productIds);
+                    const products = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$ProductService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["findProductsByIds"])(productIds);
+                    const productWithDetails = Cart.cartItem.map({
+                        "CartProvider.useCallback[fetchCartItems].productWithDetails": (cartItem)=>{
+                            const product = products === null || products === void 0 ? void 0 : products.find({
+                                "CartProvider.useCallback[fetchCartItems].productWithDetails": (p)=>p.productId === cartItem.productId
+                            }["CartProvider.useCallback[fetchCartItems].productWithDetails"]);
+                            return {
+                                ...cartItem,
+                                product: product || null
+                            };
                         }
-                    }["CartProvider.useCallback[fetchCartItems].productPromises"]);
-                    const productWithDetails = await Promise.all(productPromises);
+                    }["CartProvider.useCallback[fetchCartItems].productWithDetails"]);
                     setCartItems(productWithDetails);
                 } else {
                     setCartItems([]);
                 }
             } catch (err) {
-                var _err_response;
-                console.log("error in CartItem: ", (_err_response = err.response) === null || _err_response === void 0 ? void 0 : _err_response.data);
+                console.log("Error in CartItem:", err);
+                console.log("Error message:", err.message);
+                console.log("Error stack:", err.stack);
                 showError("Failed to load cart items");
                 setCartItems([]);
             } finally{
@@ -829,11 +864,11 @@ function CartProvider(param) {
         children: children
     }, void 0, false, {
         fileName: "[project]/app/Context/CartContext.js",
-        lineNumber: 185,
+        lineNumber: 209,
         columnNumber: 10
     }, this);
 }
-_s(CartProvider, "LpHPqWHTW1EOYlvH64b5d6QrWmA=", false, function() {
+_s(CartProvider, "ZQfWDi/bsVPCyDcaIf6AeEVEvYU=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNavigation"],
         __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NotificationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNotification"]
