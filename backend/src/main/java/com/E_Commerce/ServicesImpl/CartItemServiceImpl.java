@@ -124,7 +124,7 @@ public class CartItemServiceImpl implements CartItemService {
             );
         } catch (ResourceNotFoundException e) {
             // If reservation doesn't exist, create a new one
-            createReservationForCartItem(cartItem, user);
+            reservationService.createReservation(user.getUserId(),cartItem.getProduct().getProductId(),newQuantity);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update reservation: " + e.getMessage(), e);
         }

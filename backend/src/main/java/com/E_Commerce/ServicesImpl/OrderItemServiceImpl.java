@@ -10,6 +10,7 @@ import com.E_Commerce.Repository.*;
 import com.E_Commerce.Services.OrderItemService;
 import com.E_Commerce.Services.ReservationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderItemServiceImpl implements OrderItemService {
@@ -43,20 +45,20 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
+    @Transactional
     public void removeOrderItems(List<OrderItem> orderItems,User user) {
         removeOrderItemsAndChangeReservation(orderItems,user);
     }
 
     @Override
     public List<OrderItemDTO> fetchAllOrderItems(List<Integer> orderItemIds) {
-        List<OrderItemDTO> orderItemDTOS = new LinkedList<>();
-        for (int itemId: orderItemIds){
-            OrderItem orderItem = this.orderItemRepository.findById(itemId)
-                    .orElseThrow(()-> new ResourceNotFoundException("Item not found."));
-            OrderItemDTO orderItemDTO = this.orderItemMapper.toOrderItemDTO(orderItem);
-            orderItemDTOS.add(orderItemDTO);
+        List<OrderItem> orderItems = this.orderItemRepository.findAllById(orderItemIds);
+        if(orderItems.size() != orderItemIds.size()){
+            log.info("Number of orderItemIds to fetch:{}",orderItemIds.size());
+            log.info("Number of orderItem fetched:{}",orderItems.size());
+            throw  new ResourceNotFoundException("One or more items not found");
         }
-        return orderItemDTOS;
+        return this.orderItemMapper.toOrderItemDTOs(orderItems);
     }
 
     private List<OrderItem> saveOrderItem(List<OrderItemDTO> dtos){
@@ -165,19 +167,23 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     private void checkUserReservations(List<OrderItemDTO> dtos, Integer userId) {
-        for (OrderItemDTO dto : dtos) {
-            Reservation reservation = this.reservationRepository.findActiveReservationByUserAndProduct(
-                    userId, dto.getProductId(), LocalDateTime.now());
+        List<Integer> productIds = dtos.stream().map(dto-> dto.getProductId()).toList();
+        Map<Integer,Reservation> reservationMap = this.reservationRepository.findActiveReservations(userId,productIds,LocalDateTime.now()).stream()
+                .collect(Collectors.toMap(r-> r.getInventory().getProduct().getProductId(),r-> r));
 
+        for (OrderItemDTO dto : dtos) {
+            Reservation reservation = reservationMap.get(dto.getProductId());
             if (reservation == null) {
                 throw new IllegalArgumentException("No active reservation found for product: " + dto.getProductId());
             }
 
             if (!reservation.getReservedQuantity().equals(dto.getQuantity())) {
                 throw new IllegalArgumentException(
-                        "Reservation quantity mismatch for product " + dto.getProductId() +
+                        String.format("Reservation quantity mismatch for product " + dto.getProductId() +
                                 ". Reserved: " + reservation.getReservedQuantity() +
-                                ", Ordered: " + dto.getQuantity());
+                                ", Ordered: " + dto.getQuantity()
+                        )
+                );
             }
         }
     }
@@ -232,6 +238,7 @@ private void updateReservationStausToOrder(List<OrderItemDTO> orderItems,User us
                 );
             }
             reservation.setStatus(ReservationStatus.CONVERTED_TO_ORDER);
+            reservations.add(reservation);
         }
         this.reservationRepository.saveAll(reservations);
 }

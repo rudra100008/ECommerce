@@ -13,5 +13,9 @@ import java.util.Optional;
 @Repository
 public interface ProductImageRepository extends JpaRepository<ProductImage,Integer> {
     @Query("Select i from ProductImage i where i.product.productId =:productId")
-    Optional<List<ProductImage>> findProductImageByProductId(@Param("productId") Integer productId);
+    List<ProductImage> findProductImageByProductId(@Param("productId") Integer productId);
+
+    @Query("Select i from ProductImage i where i.product.productId IN :productIds")
+    List<ProductImage> findProductImageByProductIds(@Param("productIds") List<Integer> productIds);
+
 }

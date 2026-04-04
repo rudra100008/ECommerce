@@ -3,6 +3,7 @@ package com.E_Commerce.Controller;
 import com.E_Commerce.Config.PageConstant;
 import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.DTO.ProductDTO;
+import com.E_Commerce.DTO.UpdateProductRequest;
 import com.E_Commerce.Entity.ProductImage;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.ProductImageService;
@@ -79,9 +80,17 @@ public class ProductController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/updateProduct")
     public ResponseEntity<?> handleProductUpdate(
-            @RequestBody ProductDTO productDTO
-    ){
-        ProductDTO updatedProduct = this.productService.updateProduct(productDTO);
+            @Valid @RequestBody UpdateProductRequest productRequest,
+            BindingResult result
+            ){
+        if(result.hasErrors()){
+            Map<String,Object>  errRes = new HashMap<>();
+            result.getFieldErrors()
+                    .stream()
+                    .forEach(f -> errRes.put(f.getField(),f.getDefaultMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errRes);
+        }
+        ProductDTO updatedProduct = this.productService.updateProduct(productRequest);
         Map<String,Object> response = new HashMap<>();
         response.put("message","Product successfully updated.");
         response.put("product",updatedProduct);

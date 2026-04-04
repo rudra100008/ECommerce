@@ -46,8 +46,11 @@ public class OrderServiceImpl implements OrderServices {
 
 
     @Override
+    @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO, List<OrderItemDTO> orderItemDTOS) {
         User user = validateUser(orderDTO.getUserId());
+
+        checkDraftOrderByUserId(user.getUserId());
 
         Order order = createAndSaveOrder(orderDTO,user);
 
@@ -140,14 +143,20 @@ public class OrderServiceImpl implements OrderServices {
         return orderDTO;
     }
 
+    @Override
+    public OrderDTO getDraftOrdersOfUser(int userId,int orderId) {
+        User user =validateUser(userId);
+        Order order = this.orderRepository.findDraftOrderByOrderIdAndUserId(user.getUserId(),orderId);
+        return this.orderMapper.toOrderDTO(order);
+    }
+
     //helper method
     private User validateUser(Integer userId){
         User loggedInUser = this.authUtils.getLoggedInUser();
         if (!loggedInUser.getUserId().equals(userId)){
             throw new SecurityException("You can place order for your account.");
         }
-        return this.userRepository.findById(userId)
-                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
+        return loggedInUser;
     }
     private void validateFullNameAndPhoneNumber(OrderDTO orderDTO){
         if (orderDTO.getFullName() == null || orderDTO.getFullName().trim().isEmpty()){
@@ -161,7 +170,7 @@ public class OrderServiceImpl implements OrderServices {
         Order order = orderMapper.toOrder(orderDTO);
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(OrderStatus.DRAFT);
         if(orderDTO.getShippingAddressDTO() != null){
             ShippingAddress shippingAddress = toShippingAddress(orderDTO.getShippingAddressDTO());
             order.setShippingAddress(shippingAddress);
@@ -189,6 +198,7 @@ public class OrderServiceImpl implements OrderServices {
         return this.orderItemService.addOrderItems(updatedDTOs);
     }
 
+    // this helper methods add orderItems in order class orderItems
     private void updateOrderWithOrderItem(List<OrderItem> orderItems ,Order order){
         order.getOrderItems().clear();
 
@@ -226,11 +236,20 @@ public class OrderServiceImpl implements OrderServices {
         int provinceId = Integer.parseInt(shippingAddressDTO.getShippingProvince());
         int districtId = Integer.parseInt(shippingAddressDTO.getShippingDistrict());
         int municipalityId = Integer.parseInt(shippingAddressDTO.getShippingMunicipality());
+
         Province province = this.provinceService.fetchProvinceById(provinceId);
         District district = this.districtService.fetchById(districtId);
         Municipality municipality = this.municipalityService.fetchById(municipalityId);
+
         shippingAddressDTO.setShippingProvince(province.getEnglishName());
         shippingAddressDTO.setShippingMunicipality(municipality.getEnglishName());
         shippingAddressDTO.setShippingDistrict(district.getEnglishName());
+    }
+
+    private void checkDraftOrderByUserId(int userId){
+        Order order = this.orderRepository.findDRAFTOrderByUser(userId);
+        if(order != null){
+            throw new IllegalArgumentException("Draft order found for user "+ order.getUser().getUsername());
+        }
     }
 }

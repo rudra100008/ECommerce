@@ -30,9 +30,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public Reservation createReservation(Integer userId,Integer productId,int reservedQuantity) {
-        validateUser(userId);
-
-        User user = getUser(userId);
+        User user = validateUser(userId);
         Inventory inventory = getInventory(productId);
 
         validateStockAvailability(reservedQuantity,inventory);
@@ -90,19 +88,27 @@ public class ReservationServiceImpl implements ReservationService {
         validateUser(userId);
         Inventory inventory = getInventory(productId);
         Reservation reservation = this.reservationRepository.findByUserIdAndInventoryId(userId,inventory.getId());
+        if(reservation == null){
+            throw new ResourceNotFoundException(
+                    String.format("Reservation not found or  of product: %s  for userId:%d",
+                            inventory.getProduct().getProductName(),
+                            userId
+                    )
+            );
 
+        }
         this.reservationRepository.delete(reservation);
     }
 
 
     //helper method
     private Reservation updatingExistingReservation(Reservation reservation,int newQuantity,Inventory inventory){
-        validateStockAvailability(newQuantity-reservation.getReservedQuantity(),inventory);
         reservation.setReservedQuantity(newQuantity);
         reservation.setReservedAt(LocalDateTime.now());
         reservation.setExpiresAt(LocalDateTime.now().plusWeeks(1));
         return reservationRepository.save(reservation);
     }
+
     private Inventory getInventory(int productId){
         return this.inventoryRepository.findByProductId(productId)
                 .orElseThrow(()->  new ResourceNotFoundException("Inventory not found."));
@@ -111,11 +117,12 @@ public class ReservationServiceImpl implements ReservationService {
         return  this.userRepository.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
     }
-    private void validateUser(int userId){
+    private User validateUser(int userId){
         User loggedInUser = authUtils.getLoggedInUser();
         if(!loggedInUser.getUserId().equals(userId)){
             throw new AccessDeniedException("You are not allowed to access reservation service.");
         }
+        return loggedInUser;
     }
     private void validateStockAvailability(int reservedQuantity,Inventory inventory){
         if(inventory.getAvailableQuantity() < reservedQuantity){

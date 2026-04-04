@@ -26,16 +26,29 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     @Query("SELECT p FROM Product p where p.category.categoryId = :categoryId")
     Page<Product> findProductByCategoryId(@Param("categoryId") Integer categoryId, Pageable pageable);
 
-    @Query(value = "SELECT * FROM products ORDER BY RAND()",nativeQuery = true)
+    @Query(
+            value = """
+        SELECT p.* FROM products p
+        JOIN (
+            SELECT FLOOR(RAND() * (SELECT MAX(product_id) FROM products)) AS rand_id
+        ) AS r ON p.product_id >= r.rand_id
+        ORDER BY RAND()
+        """,
+            countQuery = "SELECT COUNT(*) FROM products",  // ← simple, separate count
+            nativeQuery = true
+    )
     Page<Product>  findProductInRandom(Pageable pageable);
 
     @Query(value = "SELECT * FROM products WHERE category_id = :categoryId ORDER BY RAND()",nativeQuery = true)
     Page<Product> findProductInRandomByCategoryId(@Param("categoryId")Integer categoryId,Pageable pageable);
     // Get limited random products
-    @Query(value = "SELECT * FROM products ORDER BY RAND() LIMIT :limit", nativeQuery = true)
-    List<Product> findRandomProducts(@Param("limit") int limit);
+    @Query(value = "SELECT * FROM products ORDER BY RAND() ", nativeQuery = true)
+    Page<Product> findRandomProducts(Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.createdAt IS NULL")
     List<Product> findByCreatedAtIsNull();
+
+    @Query("SELECT p FROM Product p WHERE p.sku LIKE :prefix%")
+    List<String> findSkuStartingWith(@Param("prefix")String prefix);
 
 }

@@ -55,6 +55,9 @@ public class Order {
     public boolean isPending(){
         return  this.status == OrderStatus.PENDING;
     }
+    public boolean isDraft(){
+        return this.status == OrderStatus.DRAFT;
+    }
 
     public boolean isDelivered(){
         return this.status == OrderStatus.DELIVERED;

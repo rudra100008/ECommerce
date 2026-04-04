@@ -3,8 +3,7 @@ package com.E_Commerce.Services;
 import com.E_Commerce.DTO.CategoryRequest;
 import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.DTO.ProductDTO;
-import com.E_Commerce.Entity.Product;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import com.E_Commerce.DTO.UpdateProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +18,7 @@ public interface ProductService {
     ProductDTO updateProductImages(List<String> imageUrls,Integer productId);
     PageInfo<ProductDTO> findProducts(Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
     PageInfo<ProductDTO> findProductsByCategoryId(Integer pageNumber, Integer pageSize, Integer categoryId);
-    ProductDTO updateProduct(ProductDTO productDTO);
+    ProductDTO updateProduct(UpdateProductRequest productDTO);
 
     PageInfo<ProductDTO> findRandomProduct(Integer pageNumber,Integer pageSize);
     PageInfo<ProductDTO> findRandomProductByCategoryId(Integer pageNumber,Integer pageSize,Integer categoryId);

@@ -8,5 +8,6 @@ import java.util.List;
 @Service
 public interface ProductImageService {
     List<ProductImage> getProductImageByProductId(Integer productId);
+    List<ProductImage> fetchProductImagesByProductIds(List<Integer> productIds);
     ProductImage getProductImageById(Integer productImageId);
 }

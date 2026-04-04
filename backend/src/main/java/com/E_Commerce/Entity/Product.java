@@ -25,11 +25,14 @@ public class Product {
 
     @Column(nullable = false)
     private String productName;
+    @Column(length = 1000)
     private String description;
 
     @Column(nullable = false)
     private Double price;
     private Double discount;
+
+    @Column(unique = true,nullable = false,length = 60)
     private String sku;
     private Boolean isActive = true;
 

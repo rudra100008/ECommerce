@@ -14,4 +14,6 @@ public interface OrderServices {
     OrderDTO saveShippingAddress(ShippingAddressDTO shippingAddressDTO,Integer orderId,Integer userId);
     OrderDTO saveFullNameAndPhoneNumberInOrder(OrderDTO orderDTO);
     OrderDTO getOrderDetails(Integer orderId,int userId);
+
+    OrderDTO getDraftOrdersOfUser(int userId,int orderId);
 }

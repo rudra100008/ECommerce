@@ -15,4 +15,10 @@ public interface OrderRepository extends JpaRepository<Order,Integer> {
 
     @Query("SELECT o FROM Order o WHERE o.id =:orderId AND o.user.userId =:userId AND o.status = 'PENDING' ")
     Order findPendingOrderByOrderIdAndUserId(@Param("orderId")Integer orderId,@Param("userId")Integer userId);
+
+    @Query("SELECT o FROM Order o WHERE o.id =:orderId AND o.user.userId =:userId AND o.status = 'DRAFT' ")
+    Order findDraftOrderByOrderIdAndUserId(@Param("userId")Integer userId,@Param("orderId")Integer orderId);
+
+    @Query("SELECT o FROM Order o WHERE o.user.userId =:userId AND o.status = 'DRAFT' ")
+    Order findDRAFTOrderByUser(@Param("userId")int userId);
 }

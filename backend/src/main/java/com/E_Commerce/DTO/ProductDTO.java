@@ -32,7 +32,7 @@ public class ProductDTO {
     private Double price;
 
     @PositiveOrZero(message = "Discount cannot be negative.")
-    @DecimalMax(value = "1000", message = "Discount to high.")
+    @DecimalMax(value = "2000", message = "Discount to high.")
     private Double discount;
 
     private String sku;

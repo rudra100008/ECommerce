@@ -199,8 +199,8 @@ public class CartServiceImpl implements CartService {
                 .findFirst()
                 .ifPresent(existingItem -> {
                     int newTotalQuantity = existingItem.getQuantity() + cartItemDTO.getQuantity();
-                    System.out.println("NewTotalQuantity: "+ newTotalQuantity);
-                    validateStockAvailability(cartItemDTO.getProductId(), newTotalQuantity);
+                    log.info("NewTotalQuantity: {}",newTotalQuantity);
+                    validateStockAvailability(cartItemDTO.getProductId(), cartItemDTO.getQuantity());
                     updateReservationForCartItem(existingItem, user, newTotalQuantity);
 
                     existingItem.setQuantity(newTotalQuantity);
@@ -275,6 +275,7 @@ public class CartServiceImpl implements CartService {
                     cartItem.getProduct().getProductId(), newQuantity, user.getUserId());
         } catch (ResourceNotFoundException e) {
             // If reservation doesn't exist, create a new one
+            cartItem.setQuantity(newQuantity);
             createReservationForCartItem(cartItem, user);
         } catch (Exception e) {
             log.error("Failed to update reservation for cart item: {}", e.getMessage());

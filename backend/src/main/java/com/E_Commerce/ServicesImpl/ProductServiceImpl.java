@@ -4,6 +4,7 @@ import com.E_Commerce.Config.PageConstant;
 import com.E_Commerce.DTO.CategoryRequest;
 import com.E_Commerce.DTO.PageInfo;
 import com.E_Commerce.DTO.ProductDTO;
+import com.E_Commerce.DTO.UpdateProductRequest;
 import com.E_Commerce.Entity.Category;
 import com.E_Commerce.Entity.Product;
 import com.E_Commerce.Entity.ProductImage;
@@ -20,6 +21,7 @@ import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.ProductImageService;
 import com.E_Commerce.Services.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -31,15 +33,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Slf4j
 public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
     private final ProductRepository productRepository;
@@ -50,7 +49,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final static List<String> ALLOWED_SORT_FIELDS = List.of("createdAt", "updatedAt", "productName", "price", "productId");
 
-    Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
     @Transactional
@@ -87,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO createProduct(ProductDTO productDTO) {
 //        validateProductName(productDTO.getProductName());
         Category category = this.categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(()-> new RuntimeException("Category not found with id: "+ productDTO.getCategoryId()));
+                .orElseThrow(()-> new ResourceNotFoundException("Category not found with id: "+ productDTO.getCategoryId()));
 
         String sku = generateSku(productDTO,category);
         productDTO.setSku(sku);
@@ -100,6 +98,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProductDTO> findProductsByIds(List<Integer> productIds) {
         if (productIds ==  null  || productIds.isEmpty()){
             return Collections.emptyList();
@@ -108,10 +107,11 @@ public class ProductServiceImpl implements ProductService {
         if (products.isEmpty()) {
             return Collections.emptyList();
         }
+        Map<Integer,List<String>> imageUrlMap = getImageUrls(productIds);
         return products.stream()
                 .map(product -> {
                     ProductDTO productDTO = this.productMapper.toProductDTO(product);
-                    productDTO.setImageUrls(getImageUrls(productDTO));
+                    productDTO.setImageUrls(imageUrlMap.getOrDefault(product.getProductId(), Collections.emptyList()));
                     return productDTO;
                 })
                 .toList();
@@ -119,12 +119,11 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ProductDTO findByProductId(Integer productId) {
         Product product = this.productRepository.findById(productId)
-                .orElseThrow(()-> new RuntimeException("product not found in server"));
-        ProductDTO productDTO = productMapper.toProductDTO(product);
-        return productDTO;
+                .orElseThrow(()-> new ResourceNotFoundException("product not found in server"));
+        return productMapper.toProductDTO(product);
     }
 
     @Override
@@ -148,6 +147,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageInfo<ProductDTO> findProducts(Integer pageNumber, Integer pageSize,String sortBy,String sortDir) {
         String validateSortBy = ALLOWED_SORT_FIELDS.contains(sortBy)? sortBy :PageConstant.SORT_BY;
         Sort sort = sortDir.equalsIgnoreCase("desc") ?
@@ -156,7 +156,7 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productPage = this.productRepository.findAll(productPageable);
         List<Product> productList = productPage.getContent();
         List<ProductDTO> productDTOList = productList.stream()
-                .map(product -> this.productMapper.toProductDTO(product)).toList();
+                .map(this.productMapper::toProductDTO).toList();
         return new PageInfo<>(
                 productDTOList,
                 pageNumber,
@@ -176,14 +176,14 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Product> productPage = this.productRepository.findProductByCategoryId(categoryId, pageable);
         List<Product> fetchProduct = productPage.getContent();
-        fetchProduct.forEach(product -> {
-            if(product.getProductImages() == null || product.getProductImages().isEmpty()){
-                productRepository.delete(product);
-            }
-        });
+//        fetchProduct.forEach(product -> {
+//            if(product.getProductImages() == null || product.getProductImages().isEmpty()){
+//                productRepository.delete(product);
+//            }
+//        });
         List<ProductDTO> productDTOS = fetchProduct.stream()
-                .map(product -> this.productMapper.toProductDTO(product))
-                .collect(Collectors.toList());
+                .map(this.productMapper::toProductDTO)
+                .toList();
 
         return new PageInfo<>(
                 productDTOS,
@@ -197,32 +197,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDTO updateProduct(ProductDTO productDTO) {
-        Category category = this.categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(()-> new ResourceNotFoundException("Category not found in server."));
-        Product product =this.productRepository.findById(productDTO.getProductId())
-                .orElseThrow(()-> new ResourceNotFoundException("Product no found."));
-        if(!category.getCategoryId().equals(product.getCategory().getCategoryId())){
-            throw new IllegalArgumentException("Product and category is not matching.");
-        }
-        if(productDTO.getPrice() != null )
-            product.setPrice(productDTO.getPrice());
-        if(productDTO.getDiscount() != null)
-            product.setPrice(productDTO.getPrice());
-        product.setDiscount(productDTO.getDiscount());
-        if(productDTO.getDescription() != null || !productDTO.getDescription().isEmpty())
-            product.setDescription(productDTO.getDescription());
-        if(productDTO.getProductName() != null || !productDTO.getProductName().isEmpty())
-            product.setProductName(productDTO.getProductName());
-        if(productDTO.getStockQuantity() != null)
-            product.getInventory().setStockQuantity(productDTO.getStockQuantity());
+    public ProductDTO updateProduct(UpdateProductRequest request) {
 
-        product.setCategory(category);
-        Product  updatedProduct = this.productRepository.save(product);
-        return this.productMapper.toProductDTO(updatedProduct);
+        Product product = this.productRepository.findById(request.productId())
+                .orElseThrow(()-> new ResourceNotFoundException("Product not found"));
+
+        if (!request.categoryId().equals(product.getCategory().getCategoryId())) {
+            Category newCategory = this.categoryRepository.findById(request.categoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found."));
+            product.setCategory(newCategory);
+        }
+
+        applyUpdate(product,request);
+        return this.productMapper.toProductDTO(this.productRepository.save(product));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageInfo<ProductDTO> findRandomProduct(Integer pageNumber,Integer pageSize) {
         Pageable productPageable = PageRequest.of(pageNumber,pageSize);
         Page<Product> productPage = this.productRepository.findProductInRandom(productPageable);
@@ -240,7 +231,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public PageInfo<ProductDTO> findRandomProductByCategoryId(Integer pageNumber, Integer pageSize, Integer categoryId) {
         this.categoryRepository.findById(categoryId)
                 .orElseThrow(()-> new ResourceNotFoundException("CategoryId not found in server."));
@@ -264,13 +255,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProductsWithoutImages(List<ProductDTO> productDTOS) {
-        List<Product> products = productDTOS.stream().map(productDTO ->
-                productMapper.toProduct(productDTO)
-        ).filter(product -> product.getProductImages() == null || product.getProductImages().isEmpty())
+        List<Product> products = productDTOS.stream().map(this.productMapper::toProduct)
+        .filter(product -> product.getProductImages() == null || product.getProductImages().isEmpty())
                 .toList();
         if(!products.isEmpty()){
             this.productRepository.deleteAll(products);
-            logger.info("Deleted {} products without images",products.size());
+            log.info("Deleted {} products without images",products.size());
         }
     }
 
@@ -278,28 +268,51 @@ public class ProductServiceImpl implements ProductService {
     //helper method
     private String generateSku(ProductDTO productDTO, Category category){
         if(productDTO.getSku() != null && !productDTO.getSku().isEmpty()) {
-            if (productRepository.existsBySku(productDTO.getSku())) {
-                throw new BusinessValidationException("SKU already exits: " + productDTO.getSku());
+            String manualSKU = productDTO.getSku().trim().toUpperCase();
+            if (productRepository.existsBySku(manualSKU)) {
+                throw new BusinessValidationException("SKU already exits: " + manualSKU);
             }
-            return productDTO.getSku().trim().toUpperCase();
+            return manualSKU;
         }
-        String baseSku = generateBasSku(productDTO,category);
-        int counter  = 1;
-        while(productRepository.existsBySku(baseSku)){
-            baseSku = baseSku + "_" + counter;
-            counter++;
+        String baseSku = generateBaseSku(productDTO,category);
+
+        Set<String> existingSkus = new HashSet<>(this.productRepository.findSkuStartingWith(baseSku));
+
+        if(!existingSkus.contains(baseSku)){
+            return baseSku;
         }
 
-        return baseSku;
+
+        int counter  = 1;
+        String candidate;
+        do{
+            candidate = baseSku + "_" + counter;
+            counter++;
+        }while (existingSkus.contains(candidate));
+
+        return candidate;
     }
 
-    private String generateBasSku(ProductDTO productDTO ,Category category){
-        String categoryName = category.getName().toUpperCase();
-        String productName = productDTO.getProductName().toUpperCase();
-        if (productName.length() > 20){
-            productName = productName.substring(0,20);
+    private String generateBaseSku(ProductDTO productDTO ,Category category){
+        if (productDTO.getProductName() == null || category.getName() == null) {
+            throw new BusinessValidationException("Invalid data for SKU generation");
         }
-        return categoryName + "_" + productName ;
+        String categoryPart = normalize(category.getName());
+        String productPart = normalize(productDTO.getProductName());
+        if (categoryPart.length() > 20) {
+            categoryPart = categoryPart.substring(0, 20);
+        }
+        if (productPart.length() > 30) {
+            productPart = productPart.substring(0, 30);
+        }
+        return categoryPart + "_" + productPart ;
+    }
+    private String normalize(String input){
+        return  input
+                .trim()
+                .toUpperCase()
+                .replaceAll("[^A-Z0-9]+", "_") // this means anything that is NOT[^] : A-Z uppercase letter, 0-9 digits
+                .replaceAll("^_|_$", ""); // this means replace leading/trailing underscore(_) with nothing("")
     }
 
     private void validateProductName(String productName){
@@ -308,15 +321,43 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private List<String> getImageUrls(ProductDTO productDTO){
-        List<ProductImage> productImages = this.productImageService.getProductImageByProductId(productDTO.getProductId());
-        List<String> imageUrls = new ArrayList<>();
-        if(!productImages.isEmpty()){
-            for(ProductImage productImage : productImages){
-                String imageUrl = "/api/product/" + productDTO.getProductId() + "/image/" + productImage.getId();
-                imageUrls.add(imageUrl);
-            }
+
+    private Map<Integer,List<String>> getImageUrls(List<Integer> productIds){
+        List<ProductImage> allImages = this.productImageService.fetchProductImagesByProductIds(productIds);
+
+        return allImages.stream()
+                .collect(Collectors.groupingBy(
+                                img -> img.getProduct().getProductId(),
+                                Collectors.mapping(
+                                        img -> "/api/product/" + img.getProduct().getProductId() + "/image/" + img.getId(),
+                                        Collectors.toList()
+                                )
+                        )
+                );
+    }
+
+
+    private void applyUpdate(Product product,UpdateProductRequest request){
+        if (request.productName() != null && !request.productName().isBlank()) {
+            product.setProductName(request.productName().trim());
         }
-        return imageUrls;
+        if (request.description() != null && !request.description().isBlank()) {
+            product.setDescription(request.description().trim());
+        }
+        if (request.price() != null) {
+            product.setPrice(request.price());
+        }
+        if (request.discount() != null) {
+            product.setDiscount(request.discount());
+        }
+        if (request.isActive() != null) {
+            product.setIsActive(request.isActive());
+        }
+        if (request.stockQuantity() != null) {
+            if (product.getInventory() == null) {
+                throw new ResourceNotFoundException("Inventory not found for product: " + product.getProductName());
+            }
+            product.getInventory().setStockQuantity(request.stockQuantity());
+        }
     }
 }

@@ -15,11 +15,20 @@ public class ProductImageServiceImpl implements ProductImageService {
     private final ProductImageRepository productImageRepository;
     @Override
     public List<ProductImage> getProductImageByProductId(Integer productId) {
-        if(productId == null ){
-            throw new IllegalArgumentException("ProductId is empty");
+       List<ProductImage> images = this.productImageRepository.findProductImageByProductId(productId);
+       if(images.isEmpty()){
+           throw new ResourceNotFoundException("Product image not found for productId: " + productId.toString());
+       }
+       return images;
+    }
+
+    @Override
+    public List<ProductImage> fetchProductImagesByProductIds(List<Integer> productIds) {
+        List<ProductImage> images = this.productImageRepository.findProductImageByProductIds(productIds);
+        if (images.isEmpty()) {
+            throw new ResourceNotFoundException("Product image not found for productId: " + productIds.toString());
         }
-        return this.productImageRepository.findProductImageByProductId(productId)
-                .orElseThrow(()-> new ResourceNotFoundException("Product image not found of productID: "+productId));
+        return images;
     }
 
     @Override
