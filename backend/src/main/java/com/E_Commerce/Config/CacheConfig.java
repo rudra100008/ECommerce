@@ -20,23 +20,56 @@ public class CacheConfig implements CachingConfigurer {
     @Bean
     public CacheManager cacheManager(){
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-        cacheManager.setCacheNames(Arrays.asList(
-                "users",
-                "products",
-                "categories",
-                "orders"
-        ));
-        cacheManager.setCaffeine(caffeineCacheBuilder());
+
+        cacheManager.registerCustomCache("products",
+                Caffeine.newBuilder()
+                        .maximumSize(500)
+                        .expireAfterAccess(1,TimeUnit.HOURS)
+                        .recordStats()
+                        .build());
+
+        cacheManager.registerCustomCache("categories",
+                Caffeine.newBuilder()
+                        .maximumSize(200)
+                        .expireAfterAccess(1,TimeUnit.HOURS)
+                        .recordStats()
+                        .build());
+
+        cacheManager.registerCustomCache("users",
+                Caffeine.newBuilder()
+                        .maximumSize(200)
+                        .expireAfterWrite(30,TimeUnit.MINUTES)
+                        .recordStats()
+                        .build());
+
+        cacheManager.registerCustomCache("orders",
+                Caffeine.newBuilder()
+                        .maximumSize(200)
+                        .expireAfterWrite(10,TimeUnit.MINUTES)
+                        .recordStats()
+                        .build());
+        cacheManager.registerCustomCache("provinces",
+                Caffeine.newBuilder()
+                        .maximumSize(200)
+                        .expireAfterAccess(1,TimeUnit.HOURS)
+                        .recordStats()
+                        .build());
+
+        cacheManager.registerCustomCache("municipalities",
+                Caffeine.newBuilder()
+                        .maximumSize(200)
+                        .expireAfterAccess(1,TimeUnit.HOURS)
+                        .recordStats()
+                        .build());
+        cacheManager.registerCustomCache("districts",
+                Caffeine.newBuilder()
+                        .maximumSize(200)
+                        .expireAfterAccess(1,TimeUnit.HOURS)
+                        .recordStats()
+                        .build());
         return  cacheManager;
     }
 
-    Caffeine<Object,Object> caffeineCacheBuilder(){
-        return Caffeine.newBuilder()
-                .initialCapacity(100)
-                .maximumSize(600)
-                .expireAfterAccess(2, TimeUnit.HOURS)
-                .recordStats();
-    }
 
     @Bean
     public CacheErrorHandler cacheErrorHandler(){

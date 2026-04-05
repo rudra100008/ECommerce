@@ -5,6 +5,7 @@ import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.AddressDataSet.DistrictRepository;
 import com.E_Commerce.Services.AddressDataSet.DistrictService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,18 +18,23 @@ public class DistrictServiceImpl implements DistrictService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
+    @Cacheable(value = "districts", key = "'all'")
     public List<District> fetchAllDistricts() {
         return this.districtRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "districts",key = "'province_' + #provinceId")
     public List<District> fetchByProvinceId(int provinceId) {
 
         return this.districtRepository.findDistrictByProvinceId(provinceId);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "districts",key = "'district_' + #districtId")
     public District fetchById(int districtId) {
         return this.districtRepository.findById(districtId)
                 .orElseThrow(()-> new ResourceNotFoundException("District not found"));

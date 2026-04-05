@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -77,11 +79,12 @@ public class ProductServiceImpl implements ProductService {
        Product product = this.productMapper.toProduct(productDTO);
        product.setCategory(category);
        Product savedProduct = this.productRepository.save(product);
-        return productMapper.toProductDTO(savedProduct);
+       return productMapper.toProductDTO(savedProduct);
     }
 
     @Override
     @Transactional
+    @CachePut(value = "products",key = "#result.productId")
     public ProductDTO createProduct(ProductDTO productDTO) {
 //        validateProductName(productDTO.getProductName());
         Category category = this.categoryRepository.findById(productDTO.getCategoryId())

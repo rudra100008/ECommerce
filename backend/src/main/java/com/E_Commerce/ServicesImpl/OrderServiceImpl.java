@@ -13,7 +13,6 @@ import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.OrderMapper;
 import com.E_Commerce.Mapper.ShippingAddressMapper;
 import com.E_Commerce.Repository.*;
-import com.E_Commerce.Repository.AddressDataSet.ProvinceRepository;
 import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.AddressDataSet.DistrictService;
 import com.E_Commerce.Services.AddressDataSet.MunicipalityService;
@@ -21,6 +20,9 @@ import com.E_Commerce.Services.AddressDataSet.ProvinceService;
 import com.E_Commerce.Services.OrderItemService;
 import com.E_Commerce.Services.OrderServices;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderServices {
@@ -47,6 +50,7 @@ public class OrderServiceImpl implements OrderServices {
 
     @Override
     @Transactional
+    @CacheEvict(value = "orders",allEntries = true)
     public OrderDTO createOrder(OrderDTO orderDTO, List<OrderItemDTO> orderItemDTOS) {
         User user = validateUser(orderDTO.getUserId());
 
@@ -63,7 +67,7 @@ public class OrderServiceImpl implements OrderServices {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Double getSubTotal(List<CartItemDTO> cartItemDTOs) {
         List<Integer> productIds = cartItemDTOs.stream()
                 .map(CartItemDTO::getProductId).toList();
@@ -74,22 +78,16 @@ public class OrderServiceImpl implements OrderServices {
                 ));
 
         List<Product> products = this.productRepository.findAllProductByIds(productIds);
-        Map<Product,Integer> productQuantityMap = new HashMap<>();
-
-        double subTotal = 0.0;
-
-        for (Product product : products){
-           Integer quantity = itemMap.get(product.getProductId());
-            if (quantity != null && product.getTotalPrice() != null) {
-                subTotal += quantity * product.getTotalPrice();
-            }
-        }
-        System.out.println("SubTotal: "+subTotal);
-        return subTotal;
+        return  products.stream()
+                .filter(product -> itemMap.containsKey(product.getProductId()) && product.getTotalPrice() != null)
+                .mapToDouble(product -> itemMap.get(product.getProductId()) * product.getTotalPrice() )
+                .sum();
     }
 
 
     @Override
+    @Transactional
+    @CacheEvict(value = "orders",allEntries = true)
     public void cancelOrder(Integer orderId) {
         Order order = this.orderRepository.findById(orderId)
                 .orElseThrow(()-> new ResourceNotFoundException("Failed to cancel order:Order not found."));
@@ -100,13 +98,15 @@ public class OrderServiceImpl implements OrderServices {
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "orders",allEntries = true)
     public OrderDTO saveShippingAddress(ShippingAddressDTO shippingAddressDTO,Integer orderId,Integer userId) {
         User user = validateUser(userId);
         Order order = this.orderRepository.findPendingOrderByOrderIdAndUserId(
                 orderId,
                 user.getUserId()
         );
-        ShippingAddress shippingAddress = toShippingAddress(shippingAddressDTO);
+        ShippingAddress shippingAddress = this.shippingAddressMapper.toShippingAddress(shippingAddressDTO);
         order.setShippingAddress(shippingAddress);
         order.setOrderDate(LocalDateTime.now().plusWeeks(2));
         Order savedOrder =this.orderRepository.save(order);
@@ -114,6 +114,8 @@ public class OrderServiceImpl implements OrderServices {
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "orders",allEntries = true)
     public OrderDTO saveFullNameAndPhoneNumberInOrder(OrderDTO orderDTO) {
         validateUser(orderDTO.getUserId());
         validateFullNameAndPhoneNumber(orderDTO);
@@ -125,6 +127,8 @@ public class OrderServiceImpl implements OrderServices {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "orders",key = "'order_' + #orderId + '_user_' + #userId ")
     public OrderDTO getOrderDetails(Integer orderId, int userId) {
         User user = validateUser(userId);
 
@@ -144,6 +148,8 @@ public class OrderServiceImpl implements OrderServices {
     }
 
     @Override
+    @Transactional
+    @Cacheable(value = "orders",key = "'draft_' + #orderId + '_user_' + #userId ")
     public OrderDTO getDraftOrdersOfUser(int userId,int orderId) {
         User user =validateUser(userId);
         Order order = this.orderRepository.findDraftOrderByOrderIdAndUserId(user.getUserId(),orderId);
@@ -172,7 +178,7 @@ public class OrderServiceImpl implements OrderServices {
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.DRAFT);
         if(orderDTO.getShippingAddressDTO() != null){
-            ShippingAddress shippingAddress = toShippingAddress(orderDTO.getShippingAddressDTO());
+            ShippingAddress shippingAddress = this.shippingAddressMapper.toShippingAddress(orderDTO.getShippingAddressDTO());
             order.setShippingAddress(shippingAddress);
         }
 
@@ -215,21 +221,6 @@ public class OrderServiceImpl implements OrderServices {
               .filter(Objects::nonNull)
               .mapToDouble(Double::doubleValue)
               .sum();
-    }
-
-    private ShippingAddress toShippingAddress(ShippingAddressDTO shippingAddressDTO){
-        return  ShippingAddress.
-                builder()
-                .addressType(shippingAddressDTO.getAddressType())
-                .shippingArea(shippingAddressDTO.getShippingArea())
-                .shippingDistrict(shippingAddressDTO.getShippingDistrict())
-                .shippingLandmark(shippingAddressDTO.getShippingLandmark())
-                .houseNumber(shippingAddressDTO.getHouseNumber())
-                .shippingDistrict(shippingAddressDTO.getShippingDistrict())
-                .shippingMunicipality(shippingAddressDTO.getShippingMunicipality())
-                .shippingProvince(shippingAddressDTO.getShippingProvince())
-                .shippingWardNumber(shippingAddressDTO.getShippingWardNumber())
-                .build();
     }
 
     private void modifyShippingAddressName(ShippingAddressDTO shippingAddressDTO){
