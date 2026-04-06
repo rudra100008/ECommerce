@@ -22,8 +22,10 @@ import com.E_Commerce.Services.ProductImageService;
 import com.E_Commerce.Services.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -84,7 +86,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    @CachePut(value = "products",key = "#result.productId")
     public ProductDTO createProduct(ProductDTO productDTO) {
 //        validateProductName(productDTO.getProductName());
         Category category = this.categoryRepository.findById(productDTO.getCategoryId())
@@ -123,6 +124,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "products",key = "#productId")
     public ProductDTO findByProductId(Integer productId) {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(()-> new ResourceNotFoundException("product not found in server"));
@@ -131,6 +133,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "products",key = "#productId")
     public ProductDTO updateProductImages(List<String> imageUrls,Integer productId) {
        Product existingProduct = this.productRepository.findById(productId)
                .orElseThrow(()-> new ResourceNotFoundException("Product not found."));
@@ -151,6 +154,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "products",key = " 'page_' +#pageNumber + '_' + #pageSize + '_' + #sortBy + '_' + #sortDir ")
     public PageInfo<ProductDTO> findProducts(Integer pageNumber, Integer pageSize,String sortBy,String sortDir) {
         String validateSortBy = ALLOWED_SORT_FIELDS.contains(sortBy)? sortBy :PageConstant.SORT_BY;
         Sort sort = sortDir.equalsIgnoreCase("desc") ?
@@ -172,6 +176,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "products" ,key = " 'page_' + #pageNumber + '_' + #pageSize + '_categoryId_' + #categoryId ")
     public PageInfo<ProductDTO>  findProductsByCategoryId(Integer pageNumber, Integer pageSize, Integer categoryId) {
         if (categoryId == null || categoryId <= 0) {
             throw new IllegalArgumentException("Category ID must be positive");
@@ -200,6 +205,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CachePut(value = "products",key = "#result.productId")
     public ProductDTO updateProduct(UpdateProductRequest request) {
 
         Product product = this.productRepository.findById(request.productId())

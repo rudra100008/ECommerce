@@ -1,7 +1,9 @@
 package com.E_Commerce.DTO;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.*;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record UpdateProductRequest(
         @NotNull(message = "Product Id is required")
         Integer productId,

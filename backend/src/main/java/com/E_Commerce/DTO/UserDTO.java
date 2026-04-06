@@ -1,6 +1,7 @@
 package com.E_Commerce.DTO;
 
 import com.E_Commerce.Entity.Role;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDTO {
     private Integer userId;
     @NotNull(message = "username is required")

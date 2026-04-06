@@ -75,7 +75,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         List<OrderItem> orderItems = dtos.stream()
                 .map(orderItemDTO -> createOrderItem(orderItemDTO, order, productMap))
-                .collect(Collectors.toList());
+                .toList();
 
         return this.orderItemRepository.saveAll(orderItems);
     }
@@ -158,10 +158,10 @@ public class OrderItemServiceImpl implements OrderItemService {
                     .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for product: " + product.getProductName()));
 
             if(inventory.getAvailableQuantity() < orderItemDTO.getQuantity()){
-                throw new InsufficientStockException(
-                        "Insufficient stock for " + product.getProductName() +
-                                ". Available: " + inventory.getAvailableQuantity() +
-                                ", Requested: " + orderItemDTO.getQuantity());
+                throw new InsufficientStockException(String.format(
+                        "Insufficient stock for : %s \n, Available : %d \n, Requested : %d"
+                        ,product.getProductName(),inventory.getAvailableQuantity(), orderItemDTO.getQuantity()
+                ));
             }
         }
     }
@@ -226,20 +226,18 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
 private void updateReservationStausToOrder(List<OrderItemDTO> orderItems,User user){
-        List<Reservation> reservations = new ArrayList<>();
-        for (OrderItemDTO orderItem : orderItems){
-            Reservation reservation = this.reservationRepository
-                    .findActiveReservationByUserAndProduct(
-                            user.getUserId(),orderItem.getProductId(),LocalDateTime.now()
-                    );
-            if (reservation == null){
-                throw new ResourceNotFoundException(
-                        String.format("Active reservation not found for product: %s",orderItem.getProductId())
-                );
-            }
-            reservation.setStatus(ReservationStatus.CONVERTED_TO_ORDER);
-            reservations.add(reservation);
+        List<Integer> productIds =  orderItems.stream()
+                .map(OrderItemDTO::getProductId)
+                .toList();
+
+        List<Reservation> reservations = this.reservationRepository
+                .findActiveReservations(user.getUserId(),productIds,LocalDateTime.now());
+
+        if(reservations.size() != productIds.size()){
+            log.info("Failed to fetch all reservation of products");
         }
+
+        reservations.forEach(reservation -> reservation.setStatus(ReservationStatus.CONVERTED_TO_ORDER));
         this.reservationRepository.saveAll(reservations);
 }
     private void removeOrderItemsAndChangeReservation(List<OrderItem> orderItems,User user){
