@@ -56,7 +56,7 @@ public class ProductController {
                 .body(response);
     }
 
-    @GetMapping(value = "/{productId}/image/{productImageId}",produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE})
+    @GetMapping(value = "/{productId}/image/{productImageId}",produces = {MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE,MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> getProductImage(
             @PathVariable("productId")Integer productId,
             @PathVariable("productImageId")Integer productImageId

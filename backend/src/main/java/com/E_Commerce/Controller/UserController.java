@@ -4,11 +4,9 @@ import com.E_Commerce.DTO.CartDTO;
 import com.E_Commerce.DTO.UserDTO;
 import com.E_Commerce.DTO.UserResponse;
 import com.E_Commerce.Entity.Address;
-import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
-import com.E_Commerce.Repository.CartRepository;
 import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.CartService;
@@ -16,8 +14,6 @@ import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -57,50 +50,47 @@ public class UserController {
         }
 
         Object principal = authentication.getPrincipal();
-        User user = null;
+        UserDTO user;
 
-        if (principal instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) principal;
-            user = this.userRepository.findByEmail(userDetails.getUsername())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        } else if (principal instanceof DefaultOAuth2User) {
-            DefaultOAuth2User oAuth2User = (DefaultOAuth2User) principal;
-            user = this.userRepository.findByEmail(oAuth2User.getAttribute("email"))
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        switch (principal) {
+            case UserDetails userDetails ->
+                    user = this.userService.findByEmail(userDetails.getUsername());
+            case DefaultOAuth2User defaultOAuth2User ->
+                    user = this.userService.findByEmail(defaultOAuth2User.getAttribute("email"));
+            default -> {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
         }
 
-        com.E_Commerce.DTO.UserResponse userResponse = UserResponse
+        Set<Role.RoleName> roleName = user.getRoles().stream()
+                .map(Role::getRoleName)
+                .collect(Collectors.toSet());
+
+        UserResponse userResponse = UserResponse
                 .builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .username(user.getUsername())
                 .fullName(user.getFullName())
                 .phoneNumber(user.getPhoneNumber())
-                .addressIds(getAddressIds(user.getAddresses()))
-                .hasCustomImage(user.getHasCustomImage())
-                .roles(getRoles(user))
+                .addressIds(user.getAddressIds())
+                .hasCustomImage(user.isHasCustomImage())
+                .roles(roleName)
                 .build();
 
 
-        if (Boolean.TRUE.equals(user.getHasCustomImage())) {
-//
+        if (user.isHasCustomImage()) {
             userResponse.setProfileImageUrl(getUserImageUrl(user.getUserId()));
         } else {
-//
             userResponse.setProfileImageUrl(user.getProfileImageUrl());
         }
 
-
-
-        if (user.getCart() != null) {
-            userResponse.setCartId(user.getCart().getId());
+        if (user.getCartId() != null) {
+            userResponse.setCartId(user.getCartId());
         } else {
             CartDTO cartDTO = createCart(user);
             userResponse.setCartId(cartDTO.getCartId());
         }
-
         return ResponseEntity.ok(userResponse);
     }
 
@@ -168,7 +158,7 @@ public class UserController {
     private List<Integer> getAddressIds(List<Address> addresses){
         return addresses.stream().map(Address::getAddressId).toList();
     }
-    private CartDTO createCart(User user){
+    private CartDTO createCart(UserDTO user){
         CartDTO cartDTO = CartDTO.
                 builder()
                 .userId(user.getUserId())

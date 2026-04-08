@@ -1,6 +1,10 @@
 package com.E_Commerce.Config;
 
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
@@ -36,6 +40,15 @@ public class CacheConfig implements CachingConfigurer {
         // Redis stores bytes, not Java objects
         // So we need to tell Spring HOW to convert Java → bytes → Java
 
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.activateDefaultTyping(
+                objectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+        );
         return defaultCacheConfig()
                 .serializeKeysWith(
                         // Keys stored as plain strings
@@ -45,7 +58,7 @@ public class CacheConfig implements CachingConfigurer {
                 .serializeValuesWith(
                         // Values stored as JSON
                         RedisSerializationContext.SerializationPair
-                                .fromSerializer(new GenericJackson2JsonRedisSerializer())
+                                .fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper))
                 )
                 .disableCachingNullValues(); //don't cache null results
     }
@@ -55,34 +68,23 @@ public class CacheConfig implements CachingConfigurer {
     // Step 2 — Build CacheManager with per-cache TTL
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory){
-        Map<String,RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+        // Base config with JSON serializer + TTL
+        RedisCacheConfiguration baseConfig = redisCacheConfiguration(); // ← use your config
 
+        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
 
-        cacheConfigurations.put("products",
-                defaultCacheConfig().entryTtl(Duration.ofHours(1)));
-        cacheConfigurations.put("orders",
-                defaultCacheConfig().entryTtl(Duration.ofMinutes(10)));
-        cacheConfigurations.put("users",
-                defaultCacheConfig().entryTtl(Duration.ofMinutes(30)));
-        cacheConfigurations.put("categories",
-                defaultCacheConfig().entryTtl(Duration.ofHours(6)));
-
-
-        cacheConfigurations.put("provinces",
-                defaultCacheConfig().entryTtl(Duration.ofHours(24)));
-
-        cacheConfigurations.put("districts",
-                defaultCacheConfig().entryTtl(Duration.ofHours(24)));
-
-        cacheConfigurations.put("municipalities",
-                defaultCacheConfig().entryTtl(Duration.ofHours(24)));
-
+        cacheConfigurations.put("products",   baseConfig.entryTtl(Duration.ofHours(1)));
+        cacheConfigurations.put("orders",     baseConfig.entryTtl(Duration.ofMinutes(10)));
+        cacheConfigurations.put("users",      baseConfig.entryTtl(Duration.ofMinutes(30)));
+        cacheConfigurations.put("categories", baseConfig.entryTtl(Duration.ofHours(6)));
+        cacheConfigurations.put("provinces",  baseConfig.entryTtl(Duration.ofHours(24)));
+        cacheConfigurations.put("districts",  baseConfig.entryTtl(Duration.ofHours(24)));
+        cacheConfigurations.put("municipalities", baseConfig.entryTtl(Duration.ofHours(24)));
 
         return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(defaultCacheConfig().entryTtl(Duration.ofMinutes(30)))
+                .cacheDefaults(baseConfig.entryTtl(Duration.ofMinutes(30))) // ← and here
                 .withInitialCacheConfigurations(cacheConfigurations)
                 .build();
-
     }
     // Step 3 — Configure RedisTemplate for direct Redis operations (optional)
     // Not needed for basic @Cacheable but useful for custom Redis operations

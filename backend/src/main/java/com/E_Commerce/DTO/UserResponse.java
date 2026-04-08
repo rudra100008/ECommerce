@@ -15,14 +15,12 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonIgnoreProperties("password")
 public class UserResponse {
     private Integer userId;
 
     private String username;
 
     private String email;
-    private String password;
     private String fullName;
     private String phoneNumber;
     private Set<Role.RoleName> roles = new HashSet<>();
