@@ -3,6 +3,7 @@ package com.E_Commerce.Securty;
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Repository.UserRepository;
+import com.E_Commerce.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,12 +18,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(()-> new UsernameNotFoundException("Email not found: "+ username));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userService.findUserEntityByEmail(email);
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),

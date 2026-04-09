@@ -1,24 +1,28 @@
 package com.E_Commerce.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "carts")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {
+        "cartItem",
+        "user"
+})
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

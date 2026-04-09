@@ -1,21 +1,25 @@
 package com.E_Commerce.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "cartItems")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {
+        "product",
+        "cart"
+})
 public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     private Integer quantity;

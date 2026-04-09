@@ -1,20 +1,18 @@
 package com.E_Commerce.Securty;
 
-import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
-import com.E_Commerce.Repository.CartRepository;
 import com.E_Commerce.Repository.RoleRepository;
 import com.E_Commerce.Repository.UserRepository;
+import com.E_Commerce.Services.CartService;
+import com.E_Commerce.Services.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.CacheManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,25 +25,21 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
-    private final CacheManager cacheManager;
     @Lazy
     private final PasswordEncoder passwordEncoder;
-    private final CartRepository cartRepository;
+    private final CartService cartService;
 
-    Logger logger = LoggerFactory.getLogger(OAuth2AuthenticationHandler.class);
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-        logger.info(oAuth2User.getName());
-        oAuth2User.getAttributes().forEach((key,value)->{
-            logger.info("{}=>{}",key,value);
-        });
+        log.info(oAuth2User.getName());
 
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
@@ -54,25 +48,28 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
 
 
         User user = saveUser(name,email,googleImageUrl,googleId);
-        if(user.getCart() == null) {
-            createCartForUser(user);
-        }
+        this.cartService.createCartForUser(user);
+
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(user.getEmail());
+
         final String token = jwtUtil.generateToken(userDetails);
 
-        setJwtCookies(response,token);
+        setJwtCookies(response, token);
         response.sendRedirect("http://localhost:3000");
-
     }
 
-//    private User saveUser(String name,String email,String picture){
-//
-//    }
     private User saveUser(String name,String email,String picture,String googleId){
         try{
-           return this.userRepository.findByEmail(email).map(
-                    existingUser-> updateExistingUser(existingUser,name,picture,googleId)
-            ).orElseGet(()->createNewUser(name,email,picture,googleId));
+           Optional<User>  existingUser = this.userRepository.findByEmail(email);
+
+           if(existingUser.isPresent()){
+               return updateExistingUser(existingUser.get(),name,picture,googleId);
+           }else {
+               User newUser =createNewUser(name,email,picture,googleId);
+               this.cartService.createCartForUser(newUser);
+               return newUser;
+           }
+
         }catch (Exception e){
             throw new RuntimeException("Failed to process OAuth2 user",e);
         }
@@ -131,17 +128,10 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
                 .payments(new ArrayList<>())
                 .roles(Set.of(role))
                 .build();
-        this.userRepository.save(newUser);
-        return newUser;
+        return  this.userRepository.save(newUser);
     }
     private String generateRandomPassword(){
-        return UUID.randomUUID().toString()+ "_"+System.currentTimeMillis();
+        return UUID.randomUUID()+ "_"+System.currentTimeMillis();
     }
-    private void createCartForUser(User user){
-        Cart cart = Cart.builder()
-                .user(user)
-                .cartItem(new ArrayList<>())
-                .build();
-        this.cartRepository.save(cart);
-    }
+
 }

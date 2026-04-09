@@ -55,4 +55,18 @@ public interface ReservationRepository  extends JpaRepository<Reservation,Intege
             @Param("productId")Integer productId,
             @Param("now")LocalDateTime now
     );
+
+    @Query("SELECT COALESCE(SUM(r.reservedQuantity),0) FROM Reservation r " +
+            "WHERE  r.inventory.product.productId = :productId " +
+            "AND r.status = com.E_Commerce.Enum.ReservationStatus.ACTIVE " +
+            "AND r.expiresAt >:now")
+    int getReservedQuantityByProductId(@Param("productId")Integer productId,@Param("now")LocalDateTime now);
+    @Query("SELECT COALESCE(SUM(r.reservedQuantity),0) FROM Reservation r " +
+            "WHERE  r.inventory.id = :inventoryId " +
+            "AND r.status = com.E_Commerce.Enum.ReservationStatus.ACTIVE " +
+            "AND r.expiresAt >:now")
+    int getReservedQuantityByInventoryId(@Param("inventoryId")Integer inventoryId,@Param("now")LocalDateTime now);
+    // ReservationRepository
+    @Query("SELECT r FROM Reservation r WHERE r.status = 'ACTIVE' AND r.expiresAt < :now")
+    List<Reservation> findExpiredActiveReservations(@Param("now") LocalDateTime now);
 }

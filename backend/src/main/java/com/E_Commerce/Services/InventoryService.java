@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service;
 public interface InventoryService {
     Inventory getProductDataInInventory(Integer productId);
     Inventory updateStockQuantity(Integer productId,Integer stockQuantity);
+
+    Inventory fetchInventoryWithLock(Integer productId);
 }

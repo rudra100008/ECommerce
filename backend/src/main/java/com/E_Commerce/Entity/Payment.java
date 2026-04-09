@@ -3,20 +3,23 @@ package com.E_Commerce.Entity;
 import com.E_Commerce.Enum.PaymentMethod;
 import com.E_Commerce.Enum.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {
+        "order",
+        "user"
+})
 public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

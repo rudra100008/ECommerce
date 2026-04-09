@@ -52,7 +52,7 @@ public class OrderServiceImpl implements OrderServices {
     @Transactional
     @CacheEvict(value = "orders",allEntries = true)
     public OrderDTO createOrder(OrderDTO orderDTO, List<OrderItemDTO> orderItemDTOS) {
-        User user = validateUser(orderDTO.getUserId());
+        User user = validateUser(orderDTO.userId());
 
         checkDraftOrderByUserId(user.getUserId());
 
@@ -66,23 +66,7 @@ public class OrderServiceImpl implements OrderServices {
         return this.orderMapper.toOrderDTO(savedOrder);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Double getSubTotal(List<CartItemDTO> cartItemDTOs) {
-        List<Integer> productIds = cartItemDTOs.stream()
-                .map(CartItemDTO::getProductId).toList();
-        Map<Integer,Integer> itemMap = cartItemDTOs.stream()
-                .collect(Collectors.toMap(
-                        CartItemDTO::getProductId,
-                        CartItemDTO::getQuantity
-                ));
 
-        List<Product> products = this.productRepository.findAllProductByIds(productIds);
-        return  products.stream()
-                .filter(product -> itemMap.containsKey(product.getProductId()) && product.getTotalPrice() != null)
-                .mapToDouble(product -> itemMap.get(product.getProductId()) * product.getTotalPrice() )
-                .sum();
-    }
 
 
     @Override
@@ -117,11 +101,11 @@ public class OrderServiceImpl implements OrderServices {
     @Transactional
     @CacheEvict(value = "orders",allEntries = true)
     public OrderDTO saveFullNameAndPhoneNumberInOrder(OrderDTO orderDTO) {
-        validateUser(orderDTO.getUserId());
+        validateUser(orderDTO.userId());
         validateFullNameAndPhoneNumber(orderDTO);
-        Order order = this.orderRepository.findPendingOrderByOrderIdAndUserId(orderDTO.getOrderId(), orderDTO.getUserId());
-        order.setFullName(orderDTO.getFullName());
-        order.setPhoneNumber(orderDTO.getPhoneNumber());
+        Order order = this.orderRepository.findPendingOrderByOrderIdAndUserId(orderDTO.orderId(), orderDTO.userId());
+        order.setFullName(orderDTO.fullName());
+        order.setPhoneNumber(orderDTO.phoneNumber());
         Order savedOrder = this.orderRepository.save(order);
         return this.orderMapper.toOrderDTO(savedOrder);
     }
@@ -139,11 +123,25 @@ public class OrderServiceImpl implements OrderServices {
         }
 
         ShippingAddressDTO shippingAddressDTO = this.shippingAddressMapper.toShippingAddressDTO(order.getShippingAddress());
+
+        ShippingAddressDTO updatedDTO = modifyShippingAddressName(shippingAddressDTO);
+
         OrderDTO orderDTO = this.orderMapper.toOrderDTO(order);
 
-        modifyShippingAddressName(shippingAddressDTO);
-
-        orderDTO.setShippingAddressDTO(shippingAddressDTO);
+        orderDTO = new OrderDTO(
+                orderDTO.orderId(),
+                orderDTO.orderDate(),
+                orderDTO.status(),
+                orderDTO.totalAmount(),
+                orderDTO.userId(),
+                orderDTO.fullName(),
+                orderDTO.phoneNumber(),
+                orderDTO.orderItemIds(),
+                orderDTO.paymentId(),
+                orderDTO.createdAt(),
+                orderDTO.updatedAt(),
+                updatedDTO
+        );
         return orderDTO;
     }
 
@@ -165,10 +163,10 @@ public class OrderServiceImpl implements OrderServices {
         return loggedInUser;
     }
     private void validateFullNameAndPhoneNumber(OrderDTO orderDTO){
-        if (orderDTO.getFullName() == null || orderDTO.getFullName().trim().isEmpty()){
+        if (orderDTO.fullName() == null || orderDTO.fullName().trim().isEmpty()){
             throw new RuntimeException("Full Name is required");
         }
-        if(orderDTO.getPhoneNumber() == null || orderDTO.getPhoneNumber().trim().isEmpty()){
+        if(orderDTO.phoneNumber() == null || orderDTO.phoneNumber().trim().isEmpty()){
             throw new RuntimeException("Phone number is required");
         }
     }
@@ -177,8 +175,8 @@ public class OrderServiceImpl implements OrderServices {
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.DRAFT);
-        if(orderDTO.getShippingAddressDTO() != null){
-            ShippingAddress shippingAddress = this.shippingAddressMapper.toShippingAddress(orderDTO.getShippingAddressDTO());
+        if(orderDTO.shippingAddressDTO() != null){
+            ShippingAddress shippingAddress = this.shippingAddressMapper.toShippingAddress(orderDTO.shippingAddressDTO());
             order.setShippingAddress(shippingAddress);
         }
 
@@ -223,18 +221,38 @@ public class OrderServiceImpl implements OrderServices {
               .sum();
     }
 
-    private void modifyShippingAddressName(ShippingAddressDTO shippingAddressDTO){
-        int provinceId = Integer.parseInt(shippingAddressDTO.getShippingProvince());
-        int districtId = Integer.parseInt(shippingAddressDTO.getShippingDistrict());
-        int municipalityId = Integer.parseInt(shippingAddressDTO.getShippingMunicipality());
+    private ShippingAddressDTO modifyShippingAddressName(ShippingAddressDTO dto){
+        if(dto == null || dto.shippingProvince() == null
+                || dto.shippingDistrict() == null
+                || dto.shippingMunicipality() == null){
+            return dto;
+        }
 
-        Province province = this.provinceService.fetchProvinceById(provinceId);
-        District district = this.districtService.fetchById(districtId);
-        Municipality municipality = this.municipalityService.fetchById(municipalityId);
+        try{
+            int provinceId = Integer.parseInt(dto.shippingProvince());
+            int districtId = Integer.parseInt(dto.shippingDistrict());
+            int municipalityId = Integer.parseInt(dto.shippingMunicipality());
 
-        shippingAddressDTO.setShippingProvince(province.getEnglishName());
-        shippingAddressDTO.setShippingMunicipality(municipality.getEnglishName());
-        shippingAddressDTO.setShippingDistrict(district.getEnglishName());
+            Province province = this.provinceService.fetchProvinceById(provinceId);
+            District district = this.districtService.fetchById(districtId);
+            Municipality municipality = this.municipalityService.fetchById(municipalityId);
+
+            return new ShippingAddressDTO(
+                    dto.orderId(),
+                    district.getEnglishName(),
+                    province.getEnglishName(),
+                    municipality.getEnglishName(),
+                    dto.shippingWardNumber(),
+                    dto.shippingLandmark(),
+                    dto.shippingArea(),
+                    dto.houseNumber(),
+                    dto.addressType()
+            );
+
+        }catch (NumberFormatException e){
+            log.warn("Shipping address already contains names, skipping conversion");
+            return dto;
+        }
     }
 
     private void checkDraftOrderByUserId(int userId){

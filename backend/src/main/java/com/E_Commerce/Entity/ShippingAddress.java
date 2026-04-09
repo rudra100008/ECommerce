@@ -2,16 +2,15 @@ package com.E_Commerce.Entity;
 
 import com.E_Commerce.Enum.AddressType;
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Embeddable
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ShippingAddress {
     private String shippingDistrict;
     private String shippingProvince;

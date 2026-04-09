@@ -54,7 +54,7 @@ public class OrderController {
             @PathVariable("orderId")Integer orderId
     ){
         this.orderServices.cancelOrder(orderId);
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Order cancelled successfully"));
     }
 
     @PostMapping("/{orderId}/shippingAddress/user/{userId}")
@@ -71,7 +71,7 @@ public class OrderController {
                     .forEach(error -> errorRes.put(error.getField(),error.getDefaultMessage()));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorRes);
         }
-         this.orderServices.saveShippingAddress(orderDTO.getShippingAddressDTO(),orderId,userId);
+         this.orderServices.saveShippingAddress(orderDTO.shippingAddressDTO(),orderId,userId);
         OrderDTO savedOrderDTO = this.orderServices.saveFullNameAndPhoneNumberInOrder(orderDTO);
         return ResponseEntity.status(HttpStatus.OK).body(savedOrderDTO);
     }

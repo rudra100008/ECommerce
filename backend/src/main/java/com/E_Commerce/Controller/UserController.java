@@ -99,7 +99,7 @@ public class UserController {
     public ResponseEntity<?> fetchUser(
             @PathVariable("userId")Integer userId
     ){
-        UserDTO  userDTO = this.userService.fetchUser(userId);
+        UserDTO  userDTO = this.userService.fetchById(userId);
 
         return ResponseEntity.ok(userDTO);
     }

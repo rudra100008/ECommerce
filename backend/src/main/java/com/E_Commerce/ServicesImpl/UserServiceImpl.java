@@ -2,15 +2,14 @@ package com.E_Commerce.ServicesImpl;
 
 import com.E_Commerce.DTO.UserDTO;
 import com.E_Commerce.Entity.Address;
-import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.AlreadyExitsException;
 import com.E_Commerce.Exception.ImageInvalidException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.UserMapper;
-import com.E_Commerce.Repository.CartRepository;
 import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Securty.AuthUtils;
+import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final CartRepository cartRepository;
+    private final CartService cartService;
     private final ImageService imageService;
     private final AuthUtils authUtils;
 
@@ -83,21 +82,25 @@ public class UserServiceImpl implements UserService {
         User user = this.userMapper.toUser(userDTO);
         if(user.getAddresses() == null){
             user.setAddresses(new ArrayList<>());
-        }else{
-            user.setAddresses(user.getAddresses());
         }
         user.setHasCustomImage(true);
         User savedUser = this.userRepository.save(user);
-        createCartForUser(savedUser);
+        this.cartService.createCartForUser(user);
         return userMapper.toUserDTO(savedUser);
     }
 
     @Override
-    @Transactional
-    public UserDTO fetchUser(Integer userId) {
+    @Transactional(readOnly = true)
+    public User fetchUserEntityById(Integer userId) {
+        return this.userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User not found."));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDTO fetchById(Integer userId) {
         User user = this.userRepository.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User not found."));
-
         return userMapper.toUserDTO(user);
     }
 
@@ -136,6 +139,15 @@ public class UserServiceImpl implements UserService {
 
          return userDTO;
 
+    }
+
+    @Override
+    public User findUserEntityByEmail(String email) {
+        if(email == null || email.isEmpty()){
+            throw new IllegalArgumentException("Email given is null or empty");
+        }
+        return this.userRepository.findByEmail(email)
+                .orElseThrow(()-> new ResourceNotFoundException("Email not found"));
     }
 
     @Override
@@ -243,13 +255,7 @@ public class UserServiceImpl implements UserService {
 
 
     // helper method
-    private void createCartForUser(User user){
-        Cart cart = Cart.builder()
-                .user(user)
-                .cartItem(new ArrayList<>())
-                .build();
-        this.cartRepository.save(cart);
-    }
+
     private User getUser(Integer userId){
         return userRepository.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("user not found"));

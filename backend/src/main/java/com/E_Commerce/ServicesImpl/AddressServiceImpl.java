@@ -7,21 +7,26 @@ import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.AddressMapper;
 import com.E_Commerce.Repository.AddressRepository;
 import com.E_Commerce.Repository.UserRepository;
+import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.AddressService;
+import com.E_Commerce.Services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final AddressMapper addressMapper;
     private final AddressRepository addressRepository;
+    private final AuthUtils authUtils;
 
 
     @Override
@@ -36,18 +41,18 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AddressDTO> fetchAddressList(Integer userId) {
         List<Address>  addressList = addressRepository.fetchAllByUserId(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("address not found for userId: "+ userId));
-        List<AddressDTO> addressDTOList = new ArrayList<>();
-        for (Address address : addressList){
-            addressDTOList.add(addressMapper.toAddressDTO(address));
-        }
-        return addressDTOList;
+
+        return addressList.stream()
+                .map(addressMapper::toAddressDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public AddressDTO updateAddress(AddressDTO addressDTO) {
         Address existingAddress = this.addressRepository.findById(addressDTO.getAddressId())
                 .orElseThrow(()-> new ResourceNotFoundException("address not found."));
@@ -73,8 +78,11 @@ public class AddressServiceImpl implements AddressService {
     }
 
     private User getUser(Integer userId){
-        return  this.userRepository.findById(userId)
-                .orElseThrow(()-> new ResourceNotFoundException("User not found."));
+        User loggedInUser = this.authUtils.getLoggedInUser();
+        if(loggedInUser.getUserId().equals(userId)){
+            return loggedInUser;
+        }
+        throw new AccessDeniedException("User is not allowed to access this resource");
     }
 
     private void updateExistingAddress(Address existingAddress,AddressDTO addressDTO){

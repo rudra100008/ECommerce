@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface ProductRepository extends JpaRepository<Product,Integer> {
 
     Optional<Product> findBySku(String sku);
@@ -48,7 +47,7 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     @Query("SELECT p FROM Product p WHERE p.createdAt IS NULL")
     List<Product> findByCreatedAtIsNull();
 
-    @Query("SELECT p FROM Product p WHERE p.sku LIKE :prefix%")
+    @Query("SELECT p.sku FROM Product p WHERE p.sku LIKE :prefix%")
     List<String> findSkuStartingWith(@Param("prefix")String prefix);
 
 }

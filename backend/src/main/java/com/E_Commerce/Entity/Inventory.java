@@ -3,24 +3,28 @@ package com.E_Commerce.Entity;
 import com.E_Commerce.Enum.ReservationStatus;
 import com.E_Commerce.Exception.InsufficientStockException;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "inventory")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {
+        "reservations",
+        "product"
+})
 public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
 
     private Integer stockQuantity; // number of products in stock
@@ -40,12 +44,12 @@ public class Inventory {
                 .mapToInt(Reservation::getReservedQuantity)
                 .sum();
     }
-    public Integer getAvailableQuantity(){
-        return this.stockQuantity - getReservedQuantity();
+    public Integer getAvailableQuantity(int reservedQuantity){
+        return this.stockQuantity - reservedQuantity;
     }
 
-    public Boolean isInStock(){
-        return getAvailableQuantity() > 0;
+    public Boolean isInStock(int reservedQuantity){
+        return getAvailableQuantity(reservedQuantity) > 0;
     }
 
     public void addReservation(Reservation reservation){

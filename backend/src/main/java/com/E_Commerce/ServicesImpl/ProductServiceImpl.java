@@ -132,6 +132,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Product findProductEntityById(Integer productId) {
+        return this.productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Product not found with ID: %d", productId))
+                );
+    }
+
+
+    @Override
     @Transactional
     @CacheEvict(value = "products",key = "#productId")
     public ProductDTO updateProductImages(List<String> imageUrls,Integer productId) {

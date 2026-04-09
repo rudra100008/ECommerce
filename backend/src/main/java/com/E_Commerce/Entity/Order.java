@@ -2,10 +2,7 @@ package com.E_Commerce.Entity;
 
 import com.E_Commerce.Enum.OrderStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,14 +11,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "orders")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {
+        "orderItems",
+        "payment",
+        "user"
+})
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
     private LocalDateTime orderDate;
     @Enumerated(EnumType.STRING)

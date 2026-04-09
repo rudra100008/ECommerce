@@ -1,19 +1,23 @@
 package com.E_Commerce.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {
+        "order",
+        "product"
+})
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer id;
     private Integer quantity;
     private Double priceAtPurchase;
@@ -31,7 +35,10 @@ public class OrderItem {
 
 
     //helper method
-    public Double getSubTotal(){
-        return (priceAtPurchase - discountAtPurchase)* quantity;
+    public Double getSubTotal() {
+        double price = priceAtPurchase != null ? priceAtPurchase : 0.0;
+        double disc  = discountAtPurchase != null ? discountAtPurchase : 0.0;
+        int qty      = quantity != null ? quantity : 0;
+        return (price - disc) * qty;
     }
 }

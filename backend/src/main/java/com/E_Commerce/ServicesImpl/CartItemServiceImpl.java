@@ -11,6 +11,7 @@ import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.CartItemService;
 import com.E_Commerce.Services.ReservationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartItemServiceImpl implements CartItemService {
     private final CartItemRepository cartItemRepository;
     private final CartItemMapper cartItemMapper;
@@ -80,29 +82,21 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Double getSubTotal(List<CartItemDTO> cartItemDTOs) {
         List<Integer> productIds = cartItemDTOs.stream()
-                .map(CartItemDTO::getProductId)
-                .collect(Collectors.toList());
-
-        Map<Integer, Integer> itemMap = cartItemDTOs.stream()
+                .map(CartItemDTO::getProductId).toList();
+        Map<Integer,Integer> itemMap = cartItemDTOs.stream()
                 .collect(Collectors.toMap(
                         CartItemDTO::getProductId,
                         CartItemDTO::getQuantity
                 ));
 
         List<Product> products = this.productRepository.findAllProductByIds(productIds);
-
-        double subTotal = 0.0;
-        for (Product product : products) {
-            Integer quantity = itemMap.get(product.getProductId());
-            if (quantity != null && product.getTotalPrice() != null) {
-                subTotal += quantity * product.getTotalPrice();
-            }
-        }
-
-        System.out.println("SubTotal: " + subTotal);
-        return subTotal;
+        return  products.stream()
+                .filter(product -> itemMap.containsKey(product.getProductId()) && product.getTotalPrice() != null)
+                .mapToDouble(product -> itemMap.get(product.getProductId()) * product.getTotalPrice() )
+                .sum();
     }
 
     // ========== HELPER METHODS ==========
@@ -150,7 +144,7 @@ public class CartItemServiceImpl implements CartItemService {
             );
         } catch (Exception e) {
             // Log but don't throw to allow deletion to proceed
-            System.err.println("Failed to release reservation for cart item: " + e.getMessage());
+            log.error("Failed to release reservation for cart item: {}", e.getMessage());
         }
     }
 }

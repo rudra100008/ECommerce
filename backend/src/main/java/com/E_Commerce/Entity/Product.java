@@ -1,10 +1,7 @@
 package com.E_Commerce.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,14 +10,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "products")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {
+        "category",
+        "productImages",
+        "orderItems",
+        "inventory",
+        "cartItems"
+})
 public class Product {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer productId;
 
     @Column(nullable = false)

@@ -16,23 +16,12 @@ public interface ProductMapper {
     @Mapping(source = "productImages", target = "imageUrls", qualifiedByName = "mapImagesToUrl")
     @Mapping(source = "inventory.stockQuantity", target = "stockQuantity")
     @Mapping(source = "inventory.reservedQuantity", target = "reservedQuantity")
-    @Mapping(target = "availableQuantity",expression = "java(getAvailableQuantity(product))")
-    @Mapping(target = "isInStock",expression = "java(isProductInStock(product))")
+    @Mapping(target = "availableQuantity",ignore = true)
+    @Mapping(target = "isInStock",ignore = true)
     @Mapping(target = "createdAt",source = "createdAt")
     @Mapping(target = "updatedAt",source = "updatedAt")
     ProductDTO toProductDTO(Product product);
 
-
-    default boolean isProductInStock(Product product){
-        if(product.getInventory() == null){
-            return  false;
-        }
-
-        return product.getInventory().isInStock();
-    }
-    default Integer getAvailableQuantity(Product product){
-        return product.getInventory().getAvailableQuantity();
-    }
 
    default Product toProduct(ProductDTO productDTO){
         if(productDTO == null){
@@ -57,8 +46,6 @@ public interface ProductMapper {
        }
 
        Integer stockQuantity = productDTO.getStockQuantity();
-       Integer reservedQuantity = productDTO.getReservedQuantity() != null ?
-               productDTO.getReservedQuantity() : 0;
        if (productDTO.getStockQuantity() != null) {
 
            Inventory inventory = Inventory.builder()

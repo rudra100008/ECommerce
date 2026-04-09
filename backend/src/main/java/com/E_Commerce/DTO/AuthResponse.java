@@ -9,20 +9,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 
-public class AuthResponse {
-    @NotNull(message = "username is required.")
-    @NotBlank(message = "username is required")
-    private  String username;
-    @NotNull(message = "email is required.")
-    @NotBlank(message = "email is required")
-    @Email(message = "Invalid email format")
-    private String email;
-    @NotNull(message = "password is required")
-    @NotBlank(message = "password is required")
-    private String password;
+public record AuthResponse(
+        @NotNull
+        @NotBlank
+        String username,
+
+        @NotNull
+        @NotBlank
+        @Email
+        String email,
+
+        @NotNull
+        @NotBlank
+        String password
+) {
+
 }

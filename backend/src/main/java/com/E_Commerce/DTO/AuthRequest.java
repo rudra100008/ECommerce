@@ -8,17 +8,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class AuthRequest {
-    @Email
-    @NotNull(message = "email is required.")
-    @NotBlank(message = "email is required")
-    private String email;
-    @NotNull(message = "password is required")
-    @NotBlank(message = "password is required")
-    private String password;
+
+public record AuthRequest(
+        @Email(message = "email is in wrong format")
+        @NotNull(message = "email is required.")
+        @NotBlank(message = "email is required")
+        String email,
+        @NotNull(message = "password is required")
+        @NotBlank(message = "password is required")
+        String password
+) {
 
 }

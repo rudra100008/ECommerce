@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface CategoryRepository extends JpaRepository<Category,Integer> {
     Optional<Category> findByName(String name);
     boolean existsByName(String name);

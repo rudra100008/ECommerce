@@ -3,16 +3,14 @@ package com.E_Commerce.Controller;
 import com.E_Commerce.DTO.UserDTO;
 import com.E_Commerce.DTO.AuthRequest;
 import com.E_Commerce.DTO.AuthResponse;
-import com.E_Commerce.Entity.Cart;
 import com.E_Commerce.Entity.Role;
-import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
-import com.E_Commerce.Repository.CartRepository;
 import com.E_Commerce.Repository.RoleRepository;
 import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Securty.CustomUserDetailsService;
 import com.E_Commerce.Securty.JwtAuthenticationHandler;
 import com.E_Commerce.Securty.JwtUtil;
+import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +44,7 @@ public class AuthenticationController {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final JwtAuthenticationHandler authenticationHandler;
-    private final CartRepository cartRepository;
+    private final CartService cartService;
 
 
     @PostMapping("/login")
@@ -58,7 +53,7 @@ public class AuthenticationController {
             BindingResult result,
             HttpServletResponse servletResponse,
             HttpServletRequest servletRequest
-            )
+    )
     {
         if(result.hasErrors()){
             Map<String,Object> errorResponse = new HashMap<>();
@@ -68,18 +63,18 @@ public class AuthenticationController {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            authRequest.getEmail(),
-                            authRequest.getPassword()
+                            authRequest.email(),
+                            authRequest.password()
                     )
             );
             authenticationHandler.onAuthenticationSuccess(servletRequest,servletResponse,authentication);
-           Object attribute = servletRequest.getAttribute("AUTH_RESPONSE_DATA");
-           Map<String,Object> responseData = null;
-           if(attribute instanceof Map<?,?>){
-               responseData =(Map<String, Object>) attribute;
-           }else{
-               responseData = new HashMap<>();
-           }
+            Object attribute = servletRequest.getAttribute("AUTH_RESPONSE_DATA");
+            Map<String,Object> responseData;
+            if(attribute instanceof Map<?,?>){
+                responseData =(Map<String, Object>) attribute;
+            }else{
+                responseData = new HashMap<>();
+            }
             return ResponseEntity.ok(responseData);
         }catch (Exception e){
             Map<String,String> errorResponse =  new HashMap<>();
@@ -90,8 +85,8 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-           @Valid @RequestBody AuthResponse authResponse,
-           BindingResult result
+            @Valid @RequestBody AuthResponse authResponse,
+            BindingResult result
     )
     {
         if(result.hasErrors()){
@@ -99,7 +94,7 @@ public class AuthenticationController {
             result.getFieldErrors().forEach(f-> errorResponse.put(f.getField(),f.getDefaultMessage()));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
-        if(userService.existsByEmail(authResponse.getEmail())) {
+        if( Boolean.TRUE.equals(userService.existsByEmail(authResponse.email()))) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Email already exits");
             return ResponseEntity.badRequest().body(errorResponse);
@@ -107,9 +102,9 @@ public class AuthenticationController {
         Role role = roleRepository.findByRoleName(Role.RoleName.ROLE_CUSTOMER)
                 .orElseThrow(()-> new ResourceNotFoundException(Role.RoleName.ROLE_CUSTOMER +" not found."));
         UserDTO userDTO = UserDTO.builder()
-                .username(authResponse.getUsername())
-                .email(authResponse.getEmail())
-                .password(passwordEncoder.encode(authResponse.getPassword()))
+                .username(authResponse.username())
+                .email(authResponse.email())
+                .password(passwordEncoder.encode(authResponse.password()))
                 .profileImageUrl("default.jpg")
                 .roles(Set.of(role))
                 .build();
@@ -133,12 +128,4 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(Map.of("message", "Logged out successfully"));
     }
 
-
-    private void createCartForUser(User user){
-        Cart cart = Cart.builder()
-                .user(user)
-                .cartItem(new ArrayList<>())
-                .build();
-        this.cartRepository.save(cart);
-    }
 }

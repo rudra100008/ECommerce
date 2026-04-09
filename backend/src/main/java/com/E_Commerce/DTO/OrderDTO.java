@@ -1,47 +1,46 @@
 package com.E_Commerce.DTO;
 
 
-import com.E_Commerce.Entity.ShippingAddress;
 import com.E_Commerce.Enum.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class OrderDTO {
-    private Integer orderId;
-    private LocalDateTime orderDate;
-    private OrderStatus status;
-    private Double totalAmount;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record OrderDTO(
+        @NotNull
+        Integer orderId,
+        LocalDateTime orderDate,
+        OrderStatus status,
+        Double totalAmount,
+
+        @NotNull(message = "userId is null.")
+        Integer userId,
+
+        @NotNull(message = "full name is required.")
+        @NotBlank(message = "full name is required.")
+        String fullName,
+        @NotBlank(message = "Phone number is required.")
+        @NotNull(message = "Phone number is required.")
+        @Pattern(regexp = "^9\\d{9}$", message = "Phone number must start with 9 and have 10 digits")
+        String phoneNumber,
 
 
-    private Integer userId;
-    @NotBlank(message = "full name is required.")
-    private String fullName;
-    @NotBlank(message = "Phone number is required.")
-    @Pattern(regexp = "^9\\d{9}$", message = "Phone number must start with 9 and have 10 digits")
-    private String phoneNumber;
 
+        List<Integer> orderItemIds,
 
-    @Builder.Default
-    private List<Integer> orderItemIds = new ArrayList<>();
+        Integer paymentId,
 
-    private Integer paymentId;
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+        @Valid ShippingAddressDTO shippingAddressDTO
+        ){
 
-    @Valid
-    private ShippingAddressDTO shippingAddressDTO;
 
 }

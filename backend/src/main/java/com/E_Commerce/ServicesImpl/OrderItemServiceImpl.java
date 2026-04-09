@@ -156,11 +156,11 @@ public class OrderItemServiceImpl implements OrderItemService {
             Product product = productMap.get(orderItemDTO.getProductId());
             Inventory inventory = this.inventoryRepository.findByProduct(product)
                     .orElseThrow(() -> new ResourceNotFoundException("Inventory not found for product: " + product.getProductName()));
-
-            if(inventory.getAvailableQuantity() < orderItemDTO.getQuantity()){
+            int totalReservationQuantity = this.reservationService.getTotalReservationByInventoryId(inventory.getId());
+            if(inventory.getAvailableQuantity(totalReservationQuantity) < orderItemDTO.getQuantity()){
                 throw new InsufficientStockException(String.format(
                         "Insufficient stock for : %s \n, Available : %d \n, Requested : %d"
-                        ,product.getProductName(),inventory.getAvailableQuantity(), orderItemDTO.getQuantity()
+                        ,product.getProductName(),inventory.getAvailableQuantity(totalReservationQuantity), orderItemDTO.getQuantity()
                 ));
             }
         }
