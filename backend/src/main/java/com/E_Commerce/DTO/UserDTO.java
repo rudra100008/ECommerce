@@ -14,28 +14,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class UserDTO {
-    private Integer userId;
+
+public record UserDTO(
+
+    Integer userId,
+
     @NotNull(message = "username is required")
     @NotBlank(message = "username is required.")
-    private String username;
+    String username,
     @Email
     @NotNull(message = "email is required.")
     @NotBlank(message = "email is required")
-    private String email;
+    String email,
     @NotNull(message = "password is required.")
     @NotBlank(message = "password is required")
-    private String password;
-    private String fullName;
-    private String phoneNumber;
-    private Set<Role> roles = new HashSet<>();
-    private String profileImageUrl;
-    private List<Integer> addressIds;
-    private Integer cartId;
-    private boolean hasCustomImage;
+    String password,
+    String fullName,
+    String phoneNumber,
+    Set<Role> roles,
+    String profileImageUrl,
+    List<Integer> addressIds,
+    Integer cartId,
+    boolean hasCustomImage
+)  {
 
 }

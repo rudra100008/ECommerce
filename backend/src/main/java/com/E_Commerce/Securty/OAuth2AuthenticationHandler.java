@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -71,7 +72,7 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
            }
 
         }catch (Exception e){
-            throw new RuntimeException("Failed to process OAuth2 user",e);
+            throw new AccessDeniedException("Failed to process OAuth2 user",e);
         }
     }
     private void setJwtCookies(HttpServletResponse response,String token){

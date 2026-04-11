@@ -1,37 +1,31 @@
 package com.E_Commerce.Mapper;
 
-import com.E_Commerce.DTO.AddressDTO;
 import com.E_Commerce.DTO.UserDTO;
 import com.E_Commerce.Entity.Address;
-import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
-import jdk.jfr.Name;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "password", ignore = true) // Security
-    @Mapping(target = "addressIds", source = "addresses",qualifiedByName = "mapAddressesToIds") // Handle in service
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "addressIds", source = "addresses", qualifiedByName = "mapAddressesToIds")
     @Mapping(source = "cart.id", target = "cartId")
-
+    @Mapping(target = "profileImageUrl", ignore = true)   // Computed in service layer
+    @Mapping(target = "hasCustomImage", source = "hasCustomImage", qualifiedByName = "mapHasCustomImage")
     UserDTO toUserDTO(User user);
 
     @Mapping(target = "addresses", ignore = true)
     @Mapping(target = "cart", ignore = true)
     @Mapping(target = "payments", ignore = true)
-    @Mapping(target = "roles", ignore = true) // Handle separately for security
+    @Mapping(target = "roles", ignore = true)
     User toUser(UserDTO userDTO);
-
 
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "addresses", ignore = true)
@@ -41,14 +35,15 @@ public interface UserMapper {
     void updateUserFromDTO(UserDTO userDTO, @MappingTarget User user);
 
     @Named("mapAddressesToIds")
-    default List<Integer> mapAddressesToIds(List<Address> addresses){
-        if(addresses == null){
-            return null;
-        }
+    default List<Integer> mapAddressesToIds(List<Address> addresses) {
+        if (addresses == null) return null;
         return addresses.stream()
                 .map(Address::getAddressId)
                 .collect(Collectors.toList());
     }
 
+    @Named("mapHasCustomImage")
+    default boolean mapHasCustomImage(Boolean hasCustomImage) {
+        return Boolean.TRUE.equals(hasCustomImage);
+    }
 }
-

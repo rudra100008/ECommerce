@@ -1,6 +1,6 @@
 package com.E_Commerce.ServicesImpl;
 
-import com.E_Commerce.DTO.CartItemDTO;
+
 import com.E_Commerce.DTO.OrderDTO;
 import com.E_Commerce.DTO.OrderItemDTO;
 import com.E_Commerce.DTO.ShippingAddressDTO;
@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -158,7 +159,7 @@ public class OrderServiceImpl implements OrderServices {
     private User validateUser(Integer userId){
         User loggedInUser = this.authUtils.getLoggedInUser();
         if (!loggedInUser.getUserId().equals(userId)){
-            throw new SecurityException("You can place order for your account.");
+            throw new AccessDeniedException("You can place order for your account.");
         }
         return loggedInUser;
     }
@@ -238,7 +239,6 @@ public class OrderServiceImpl implements OrderServices {
             Municipality municipality = this.municipalityService.fetchById(municipalityId);
 
             return new ShippingAddressDTO(
-                    dto.orderId(),
                     district.getEnglishName(),
                     province.getEnglishName(),
                     municipality.getEnglishName(),

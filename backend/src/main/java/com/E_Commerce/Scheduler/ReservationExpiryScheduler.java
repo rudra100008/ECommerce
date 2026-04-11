@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 // New simple component — add this
 @Component
@@ -22,7 +21,7 @@ public class ReservationExpiryScheduler {
     private final ReservationRepository reservationRepository;
 
     // Runs every hour
-    @Scheduled(fixedRate = 60, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 300_000)
     @Transactional
     public void cleanupExpiredReservations() {
         // Find all ACTIVE reservations that have passed their expiry time

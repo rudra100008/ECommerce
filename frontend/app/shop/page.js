@@ -16,6 +16,7 @@ export default function Shop() {
       setIsLoading(true);
       const res = await fetchRandomProduct({ pageNumber, pageSize });
       const { data } = res.data;
+      console.log("Products: ",data)
       const processedProduct = data.map((product) => ({
         ...product,
         imageUrls: createImageUrls(product.imageUrls),

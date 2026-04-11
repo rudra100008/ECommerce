@@ -7,13 +7,10 @@ import com.E_Commerce.Enum.ReservationStatus;
 import com.E_Commerce.Exception.InsufficientStockException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Exception.ServiceUnavailableException;
-import com.E_Commerce.Repository.InventoryRepository;
 import com.E_Commerce.Repository.ReservationRepository;
-import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.InventoryService;
 import com.E_Commerce.Services.ReservationService;
-import com.E_Commerce.Services.UserService;
 import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
@@ -22,32 +19,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final InventoryService inventoryService;
-//    private final UserService userService;
     private final AuthUtils authUtils;
 
     @Override
     @Transactional
     public void createReservation(Integer userId,Integer productId,int newReservedQuantity) {
         User user = validateUser(userId);
-        Inventory inventory = getInventory(productId);
-        int totalReservation = getTotalReservationByInventoryId(inventory.getId());
-        validateStockAvailability(newReservedQuantity,totalReservation,inventory);
         Reservation existingReservation = this.reservationRepository.findActiveReservationByUserAndProduct(
                 user.getUserId(),
                 productId,
                 LocalDateTime.now()
         );
+        Inventory inventory = getInventory(productId);
+        int totalReservation = getTotalReservationByInventoryId(inventory.getId());
+        validateStockAvailability(newReservedQuantity,totalReservation,inventory);
+    
 
         if (existingReservation != null){
             int newTotalReservedQuantity = existingReservation.getReservedQuantity() + newReservedQuantity;
-            updatingExistingReservation(existingReservation,newTotalReservedQuantity,inventory);
+            updatingExistingReservation(existingReservation,newTotalReservedQuantity);
             return ;
         }
         Reservation reservation = Reservation
@@ -121,7 +117,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     //helper method
-    private Reservation updatingExistingReservation(Reservation reservation,int newQuantity,Inventory inventory){
+    private Reservation updatingExistingReservation(Reservation reservation,int newQuantity){
         reservation.setReservedQuantity(newQuantity);
         reservation.setReservedAt(LocalDateTime.now());
         reservation.setExpiresAt(LocalDateTime.now().plusWeeks(1));
@@ -139,9 +135,8 @@ public class ReservationServiceImpl implements ReservationService {
             throw new ServiceUnavailableException("System is busy with this product. Please try again in a few seconds.",e);
         }
     }
-//    private User getUser(int userId){
-//        return  this.userService.fetchUserEntityById(userId);
-//    }
+
+
     private User validateUser(int userId){
         User loggedInUser = authUtils.getLoggedInUser();
         if(!loggedInUser.getUserId().equals(userId)){

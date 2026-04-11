@@ -54,7 +54,7 @@ public class OrderController {
             @PathVariable("orderId")Integer orderId
     ){
         this.orderServices.cancelOrder(orderId);
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Order cancelled successfully"));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Order cancelled."));
     }
 
     @PostMapping("/{orderId}/shippingAddress/user/{userId}")

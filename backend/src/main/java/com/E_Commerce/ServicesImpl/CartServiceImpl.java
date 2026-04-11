@@ -18,7 +18,10 @@ import com.E_Commerce.Services.ReservationService;
 import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +44,9 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartDTO createCart(CartDTO cartDTO) {
-        User loggedInUser = authUtils.getLoggedInUser();
         Cart cart = this.cartMapper.toCart(cartDTO);
+
+        User loggedInUser = validateUser(cart.getUser().getUserId());
         cart.setUser(loggedInUser);
 
         if (cart.getCartItem() != null && !cart.getCartItem().isEmpty()) {
@@ -79,16 +83,15 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public CartDTO addItemToCart(Integer cartId, CartItemDTO cartItemDTO) {
         validateCartItemDTO(cartItemDTO);
-        User loggedInUser = authUtils.getLoggedInUser();
         Product product = getProductById(cartItemDTO.getProductId());
 
         Cart cart = this.cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart " + cartId + " not found"));
+                
+        User loggedInUser = validateUser(cart.getUser().getUserId());
 
-        // Validate user authorization
-        if(!cart.getUser().getUserId().equals(loggedInUser.getUserId())){
-            throw new SecurityException("User not authorized to modify this cart.");
-        }
+        
+       
 
         boolean itemExists = isCartItemAlreadyInCart(cartItemDTO, cart);
 
@@ -110,10 +113,7 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ResourceNotFoundException("Cart ID " + cartId + " not found."));
 
         // Validate user can view this cart
-        User loggedInUser = authUtils.getLoggedInUser();
-        if(!cart.getUser().getUserId().equals(loggedInUser.getUserId())) {
-            throw new SecurityException("User not authorized to view this cart.");
-        }
+        validateUser(cart.getUser().getUserId());
 
         log.info("Cart fetched successfully with ID: {}", cartId);
         return cartMapper.toCartDTO(cart);
@@ -123,13 +123,10 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public void deleteCartById(Integer cartId) {
         Cart cart = this.cartRepository.findById(cartId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart " + cartId + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Cart(%d) not found", cartId)));
 
         // Validate user authorization
-        User loggedInUser = authUtils.getLoggedInUser();
-        if(!cart.getUser().getUserId().equals(loggedInUser.getUserId())) {
-            throw new SecurityException("User not authorized to delete this cart.");
-        }
+        validateUser(cart.getUser().getUserId());
 
         // Release all reservations for cart items
         if(cart.getCartItem() != null) {
@@ -148,11 +145,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional(readOnly = true)
     public CartDTO getCartByUserId(Integer userId) {
-        User loggedInUser = authUtils.getLoggedInUser();
-
-        if(!loggedInUser.getUserId().equals(userId)) {
-            throw new SecurityException("You can only view your own cart.");
-        }
+        validateUser(userId);
 
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user ID: " + userId));
@@ -166,10 +159,7 @@ public class CartServiceImpl implements CartService {
         Cart cart = this.cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart " + cartId + " not found."));
 
-        User loggedInUser = authUtils.getLoggedInUser();
-        if(!cart.getUser().getUserId().equals(loggedInUser.getUserId())) {
-            throw new SecurityException("User not authorized to clear this cart.");
-        }
+        validateUser(cart.getUser().getUserId());
 
         // Release reservations for all items
         if(cart.getCartItem() != null) {
@@ -326,12 +316,12 @@ public class CartServiceImpl implements CartService {
                     cartItem.getProduct().getProductId(), user.getUserId());
 
         } catch (ResourceNotFoundException e) {
-            // ✅ Already released or never existed — not a real error
+            // Already released or never existed — not a real error
             log.debug("Reservation already released for product {}",
                     cartItem.getProduct().getProductId());
 
         } catch (Exception e) {
-            // ✅ Log it clearly but don't block cart deletion
+            // Log it clearly but don't block cart deletion
             // Reservation expires automatically via expiresAt field
             log.error("Failed to release reservation for product {} user {}. " +
                             "Will expire automatically at {}",
@@ -345,5 +335,13 @@ public class CartServiceImpl implements CartService {
 
     private Product getProductById(Integer productId){
         return this.productService.findProductEntityById(productId);
+    }
+
+    private User validateUser(Integer userId){
+        User user = authUtils.getLoggedInUser();
+        if(user.getUserId().equals(userId)){
+            return user;
+        }
+        throw new AccessDeniedException("You are not allowed to access resource.Access Denied");
     }
 }

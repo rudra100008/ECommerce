@@ -27,9 +27,9 @@ public class MyServiceTest {
         OrderDTO orderDTO = orderMapper.toOrderDTO(order);
 
         assertNotNull(orderDTO, "OrderDTO should not be null");
-        assertEquals(1, orderDTO.getOrderId(), "Order ID should match");
-        assertEquals(100.00, orderDTO.getTotalAmount(), "Total amount should match");
-        assertEquals(testDate, orderDTO.getOrderDate(), "Order date should match");
+        assertEquals(1, orderDTO.orderId(), "Order ID should match");
+        assertEquals(100.00, orderDTO.totalAmount(), "Total amount should match");
+        assertEquals(testDate, orderDTO.orderDate(), "Order date should match");
         System.out.println("Order Entity: " + order);
         System.out.println("Mapped OrderDTO: " + orderDTO);
 

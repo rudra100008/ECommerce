@@ -33,6 +33,9 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     @Override
     public ProductImage getProductImageById(Integer productImageId) {
+        if (productImageId == null) {
+            throw new ResourceNotFoundException("Product image not found.");
+        }
         return this.productImageRepository.findById(productImageId)
                 .orElseThrow(()-> new ResourceNotFoundException("Product image not found."));
     }

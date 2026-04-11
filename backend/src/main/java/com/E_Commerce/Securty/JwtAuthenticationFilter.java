@@ -7,6 +7,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtUtil jwtUtil;
@@ -29,10 +31,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = null;
             if (request.getCookies() != null) {
-                System.out.println("=== JWT Filter Debug ===");
-                System.out.println("Cookies found: " + request.getCookies().length);
+                log.info("=== JWT Filter Debug ===");
+                log.info("Cookies found: {}", request.getCookies().length);
                 for (Cookie cookie : request.getCookies()) {
-                    System.out.println("Cookie: " + cookie.getName() + " = " + cookie.getValue());
+                    log.info("Cookie:{} = {} " , cookie.getName(), cookie.getValue());
                     if ("token".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isEmpty()) {
                         jwt = cookie.getValue();
                         break;

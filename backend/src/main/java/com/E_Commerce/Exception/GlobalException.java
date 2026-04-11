@@ -66,6 +66,17 @@ public class GlobalException {
                 request
         );
     }
+
+    @ExceptionHandler(ResourceNullException.class)
+    public ResponseEntity<?> handleResourceNullException(ResourceNullException e, WebRequest request) {
+        return errorResponse(
+                HttpStatus.NOT_FOUND,
+                e.getMessage(),
+                request
+        );
+    }
+
+
     @ExceptionHandler(AlreadyExitsException.class)
     public ResponseEntity<?> handleAlreadyExistsException(AlreadyExitsException e, WebRequest request) {
         return errorResponse(

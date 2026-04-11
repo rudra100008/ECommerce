@@ -96,7 +96,7 @@ public class ImageServiceImpl implements ImageService {
             throw  new ImageInvalidException("Image is required.");
         }
         String contentType = imageFile.getContentType();
-        if(contentType == null || contentType.startsWith("image/")){
+        if(contentType == null || !contentType.startsWith("image/")){
             throw new ImageInvalidException("Invalid file type: "+imageFile.getOriginalFilename());
         }
 

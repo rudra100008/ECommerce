@@ -62,31 +62,31 @@ public class UserController {
             }
         }
 
-        Set<Role.RoleName> roleName = user.getRoles().stream()
+        Set<Role.RoleName> roleName = user.roles().stream()
                 .map(Role::getRoleName)
                 .collect(Collectors.toSet());
 
         UserResponse userResponse = UserResponse
                 .builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .fullName(user.getFullName())
-                .phoneNumber(user.getPhoneNumber())
-                .addressIds(user.getAddressIds())
-                .hasCustomImage(user.isHasCustomImage())
+                .userId(user.userId())
+                .email(user.email())
+                .username(user.username())
+                .fullName(user.fullName())
+                .phoneNumber(user.phoneNumber())
+                .addressIds(user.addressIds())
+                .hasCustomImage(user.hasCustomImage())
                 .roles(roleName)
                 .build();
 
 
-        if (user.isHasCustomImage()) {
-            userResponse.setProfileImageUrl(getUserImageUrl(user.getUserId()));
+        if (user.hasCustomImage()) {
+            userResponse.setProfileImageUrl(getUserImageUrl(user.userId()));
         } else {
-            userResponse.setProfileImageUrl(user.getProfileImageUrl());
+            userResponse.setProfileImageUrl(user.profileImageUrl());
         }
 
-        if (user.getCartId() != null) {
-            userResponse.setCartId(user.getCartId());
+        if (user.cartId() != null) {
+            userResponse.setCartId(user.cartId());
         } else {
             CartDTO cartDTO = createCart(user);
             userResponse.setCartId(cartDTO.getCartId());
@@ -114,8 +114,8 @@ public class UserController {
         UserDTO userDTO =  this.userService.uploadUserImageAndFullName(imageFile,userId,fullName);
         Map<String,Object> response = new HashMap<>();
         response.put("message","Image uploaded and fullName is updated successful");
-        response.put("userImageUrl",getUserImageUrl(userDTO.getUserId()));
-        response.put("fullName",userDTO.getFullName());
+        response.put("userImageUrl",getUserImageUrl(userDTO.userId()));
+        response.put("fullName",userDTO.fullName());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -161,7 +161,7 @@ public class UserController {
     private CartDTO createCart(UserDTO user){
         CartDTO cartDTO = CartDTO.
                 builder()
-                .userId(user.getUserId())
+                .userId(user.userId())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

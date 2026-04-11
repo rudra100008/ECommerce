@@ -43,7 +43,7 @@ public class AdminController {
         if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        UserDTO userDTO = new UserDTO();
+        UserDTO userDTO = null;
         Object principal = authentication.getPrincipal();
         if(principal instanceof UserDetails userDetails){
             userDTO = this.userService.findByEmail(userDetails.getUsername());
@@ -114,13 +114,8 @@ public class AdminController {
             @PathVariable(name = "categoryId")Integer categoryId
     ){
         Category category = this.categoryService.findById(categoryId);
-        PageInfo<ProductDTO> productDTOPageInfo = this.productService. findProductsByCategoryId(pageNumber,pageSize,categoryId);
-
-        this.productService.deleteProductsWithoutImages(productDTOPageInfo.getData());
-
-        for (ProductDTO productDTO : productDTOPageInfo.getData()) {
-            productDTO.setImageUrls(getImageUrls(productDTO));
-        }
+        PageInfo<ProductDTO> productDTOPageInfo = this.productService.findProductsByCategoryId(pageNumber,pageSize,categoryId);
+    
         Map<String,Object> response = new HashMap<>();
         response.put("message","Products of category: "+ category.getName());
         response.put("product",productDTOPageInfo);

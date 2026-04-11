@@ -27,73 +27,68 @@ import java.util.Arrays;
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomUserDetailsService userDetailsService;
-    private final JsonLogoutHandler jsonLogoutHandler;
-    private final OAuth2AuthenticationHandler oAuth2AuthenticationHandler;
-    private final PasswordEncoder passwordEncoder;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    private final CustomAccessHandler customAccessHandler;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final CustomUserDetailsService userDetailsService;
+        private final JsonLogoutHandler jsonLogoutHandler;
+        private final OAuth2AuthenticationHandler oAuth2AuthenticationHandler;
+        private final PasswordEncoder passwordEncoder;
+        private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+        private final CustomAccessHandler customAccessHandler;
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration)throws Exception{
-        return authConfiguration.getAuthenticationManager();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration)
+                        throws Exception {
+                return authConfiguration.getAuthenticationManager();
+        }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(userDetailsService);
-        return provider;
-    }
+        @Bean
+        public AuthenticationProvider authenticationProvider() {
+                DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+                provider.setPasswordEncoder(passwordEncoder);
+                provider.setUserDetailsService(userDetailsService);
+                return provider;
+        }
 
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .cors(Customizer.withDefaults())
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                                                .requestMatchers("/login/oauth2/code/**").permitAll()
+                                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                                .anyRequest().authenticated())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .authenticationProvider(authenticationProvider())
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                                .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                                                .accessDeniedHandler(customAccessHandler)
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
-        http
-        .cors(Customizer.withDefaults())
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(auth->
-                auth.requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/login/oauth2/code/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-        )
-                .sessionManagement(session->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                      .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex-> ex
-                        .authenticationEntryPoint(customAuthenticationEntryPoint)
-                        .accessDeniedHandler(customAccessHandler)
+                                );
 
-                );
+                http.oauth2Login(oauth -> oauth
+                                .successHandler(oAuth2AuthenticationHandler));
 
-        http.oauth2Login(oauth-> oauth
-                .successHandler(oAuth2AuthenticationHandler)
-        );
+                http.logout(logout -> logout.logoutUrl("/api/auth/logout")
+                                .logoutSuccessHandler(jsonLogoutHandler)
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID")
+                                .permitAll());
+                return http.build();
+        }
 
-        http.logout(logout->
-                logout.logoutUrl("/api/auth/logout")
-                        .logoutSuccessHandler(jsonLogoutHandler)
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll());
-        return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true); // This is crucial for cookies
-        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization","X-XSRF-TOKEN")); // Expose cookies
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Arrays.asList("Content-Type","Authorization","X-Requested-With","Accept"));
+                configuration.setAllowCredentials(true); // This is crucial for cookies
+                configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization", "X-XSRF-TOKEN")); // Expose Cookies
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 }

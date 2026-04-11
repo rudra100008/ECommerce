@@ -18,4 +18,5 @@ public interface ProductImageRepository extends JpaRepository<ProductImage,Integ
     @Query("Select i from ProductImage i where i.product.productId IN :productIds")
     List<ProductImage> findProductImageByProductIds(@Param("productIds") List<Integer> productIds);
 
+
 }

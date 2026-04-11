@@ -37,48 +37,39 @@ import java.util.Set;
 @RequestMapping("/api/auth")
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService userDetailsService;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final JwtAuthenticationHandler authenticationHandler;
-    private final CartService cartService;
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody AuthRequest authRequest,
             BindingResult result,
             HttpServletResponse servletResponse,
-            HttpServletRequest servletRequest
-    )
-    {
-        if(result.hasErrors()){
-            Map<String,Object> errorResponse = new HashMap<>();
-            result.getFieldErrors().forEach(f-> errorResponse.put(f.getField(),f.getDefaultMessage()));
+            HttpServletRequest servletRequest) {
+        if (result.hasErrors()) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            result.getFieldErrors().forEach(f -> errorResponse.put(f.getField(), f.getDefaultMessage()));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.email(),
-                            authRequest.password()
-                    )
-            );
-            authenticationHandler.onAuthenticationSuccess(servletRequest,servletResponse,authentication);
+                            authRequest.password()));
+            authenticationHandler.onAuthenticationSuccess(servletRequest, servletResponse, authentication);
             Object attribute = servletRequest.getAttribute("AUTH_RESPONSE_DATA");
-            Map<String,Object> responseData;
-            if(attribute instanceof Map<?,?>){
-                responseData =(Map<String, Object>) attribute;
-            }else{
+            Map<String, Object> responseData;
+            if (attribute instanceof Map<?, ?>) {
+                responseData = (Map<String, Object>) attribute;
+            } else {
                 responseData = new HashMap<>();
             }
             return ResponseEntity.ok(responseData);
-        }catch (Exception e){
-            Map<String,String> errorResponse =  new HashMap<>();
-            errorResponse.put("message","Invalid email or password.");
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid email or password.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
@@ -86,34 +77,37 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
             @Valid @RequestBody AuthResponse authResponse,
-            BindingResult result
-    )
-    {
-        if(result.hasErrors()){
-            Map<String,Object> errorResponse = new HashMap<>();
-            result.getFieldErrors().forEach(f-> errorResponse.put(f.getField(),f.getDefaultMessage()));
+            BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            result.getFieldErrors().forEach(f -> errorResponse.put(f.getField(), f.getDefaultMessage()));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
-        if( Boolean.TRUE.equals(userService.existsByEmail(authResponse.email()))) {
+        if (Boolean.TRUE.equals(userService.existsByEmail(authResponse.email()))) {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Email already exits");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         Role role = roleRepository.findByRoleName(Role.RoleName.ROLE_CUSTOMER)
-                .orElseThrow(()-> new ResourceNotFoundException(Role.RoleName.ROLE_CUSTOMER +" not found."));
-        UserDTO userDTO = UserDTO.builder()
-                .username(authResponse.username())
-                .email(authResponse.email())
-                .password(passwordEncoder.encode(authResponse.password()))
-                .profileImageUrl("default.jpg")
-                .roles(Set.of(role))
-                .build();
+                .orElseThrow(() -> new ResourceNotFoundException(Role.RoleName.ROLE_CUSTOMER + " not found."));
+
+        UserDTO userDTO = new UserDTO(null,
+                authResponse.username(),
+                authResponse.email(),
+                passwordEncoder.encode(authResponse.password()),
+                null,
+                null,
+                Set.of(role),
+                "default.jpg",
+                null,
+                null,
+                false);
 
         userService.saveUser(userDTO);
         Map<String, String> successResponse = new HashMap<>();
         successResponse.put("message", "User registered successfully");
-        successResponse.put("email", userDTO.getEmail());
-        successResponse.put("username", userDTO.getUsername());
+        successResponse.put("email", userDTO.email());
+        successResponse.put("username", userDTO.username());
         return ResponseEntity.ok(successResponse);
     }
 

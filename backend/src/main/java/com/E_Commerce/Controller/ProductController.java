@@ -128,7 +128,6 @@ public class ProductController {
     )
     {
         ProductDTO productDTO = this.productService.findByProductId(productId);
-        productDTO.setImageUrls(getImageUrls(productDTO));
         return  ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
     @GetMapping("/fetchAllProducts")
@@ -144,8 +143,6 @@ public class ProductController {
                 sortBy,
                 sortDir
         );
-        productDTOPageInfo.getData()
-                .forEach(productDTO -> productDTO.setImageUrls(getImageUrls(productDTO)));
         return ResponseEntity.status(HttpStatus.OK).body(productDTOPageInfo);
     }
     @PostMapping("/validate-product")
