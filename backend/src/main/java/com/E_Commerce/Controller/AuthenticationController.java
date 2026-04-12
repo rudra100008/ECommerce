@@ -1,8 +1,9 @@
 package com.E_Commerce.Controller;
 
-import com.E_Commerce.DTO.UserDTO;
 import com.E_Commerce.DTO.AuthRequest;
 import com.E_Commerce.DTO.AuthResponse;
+import com.E_Commerce.DTO.UserDTO.UserRequestDTO;
+import com.E_Commerce.DTO.UserDTO.UserResponseDTO;
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.RoleRepository;
@@ -88,27 +89,19 @@ public class AuthenticationController {
             errorResponse.put("message", "Email already exits");
             return ResponseEntity.badRequest().body(errorResponse);
         }
-        Role role = roleRepository.findByRoleName(Role.RoleName.ROLE_CUSTOMER)
+        Role CUSTOMER_ROLE = roleRepository.findByRoleName(Role.RoleName.ROLE_CUSTOMER)
                 .orElseThrow(() -> new ResourceNotFoundException(Role.RoleName.ROLE_CUSTOMER + " not found."));
 
-        UserDTO userDTO = new UserDTO(null,
+        UserRequestDTO requestDTO= new UserRequestDTO(
                 authResponse.username(),
                 authResponse.email(),
                 passwordEncoder.encode(authResponse.password()),
                 null,
-                null,
-                Set.of(role),
-                "default.jpg",
-                null,
-                null,
-                false);
+                null
+                );
 
-        userService.saveUser(userDTO);
-        Map<String, String> successResponse = new HashMap<>();
-        successResponse.put("message", "User registered successfully");
-        successResponse.put("email", userDTO.email());
-        successResponse.put("username", userDTO.username());
-        return ResponseEntity.ok(successResponse);
+        UserResponseDTO userResponseDTO =  userService.saveUser(requestDTO,Set.of(CUSTOMER_ROLE));
+        return ResponseEntity.ok(userResponseDTO);
     }
 
     @PostMapping("/logout")

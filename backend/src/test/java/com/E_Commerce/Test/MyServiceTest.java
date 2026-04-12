@@ -1,7 +1,6 @@
 package com.E_Commerce.Test;
 
-
-import com.E_Commerce.DTO.OrderDTO;
+import com.E_Commerce.DTO.OrderDTO.OrderResponse;
 import com.E_Commerce.Entity.Order;
 import com.E_Commerce.Mapper.OrderMapper;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ public class MyServiceTest {
                 .build();
 
 
-        OrderDTO orderDTO = orderMapper.toOrderDTO(order);
+        OrderResponse orderDTO = orderMapper.toOrderResponse(order);
 
         assertNotNull(orderDTO, "OrderDTO should not be null");
         assertEquals(1, orderDTO.orderId(), "Order ID should match");

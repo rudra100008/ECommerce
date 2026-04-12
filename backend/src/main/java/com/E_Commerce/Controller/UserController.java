@@ -1,8 +1,7 @@
 package com.E_Commerce.Controller;
 
 import com.E_Commerce.DTO.CartDTO;
-import com.E_Commerce.DTO.UserDTO;
-import com.E_Commerce.DTO.UserResponse;
+import com.E_Commerce.DTO.UserDTO.UserResponseDTO;
 import com.E_Commerce.Entity.Address;
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
@@ -50,48 +49,19 @@ public class UserController {
         }
 
         Object principal = authentication.getPrincipal();
-        UserDTO user;
+        UserResponseDTO responseDTO;
 
         switch (principal) {
             case UserDetails userDetails ->
-                    user = this.userService.findByEmail(userDetails.getUsername());
+                    responseDTO = this.userService.findByEmail(userDetails.getUsername());
             case DefaultOAuth2User defaultOAuth2User ->
-                    user = this.userService.findByEmail(defaultOAuth2User.getAttribute("email"));
+                    responseDTO = this.userService.findByEmail(defaultOAuth2User.getAttribute("email"));
             default -> {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         }
 
-        Set<Role.RoleName> roleName = user.roles().stream()
-                .map(Role::getRoleName)
-                .collect(Collectors.toSet());
-
-        UserResponse userResponse = UserResponse
-                .builder()
-                .userId(user.userId())
-                .email(user.email())
-                .username(user.username())
-                .fullName(user.fullName())
-                .phoneNumber(user.phoneNumber())
-                .addressIds(user.addressIds())
-                .hasCustomImage(user.hasCustomImage())
-                .roles(roleName)
-                .build();
-
-
-        if (user.hasCustomImage()) {
-            userResponse.setProfileImageUrl(getUserImageUrl(user.userId()));
-        } else {
-            userResponse.setProfileImageUrl(user.profileImageUrl());
-        }
-
-        if (user.cartId() != null) {
-            userResponse.setCartId(user.cartId());
-        } else {
-            CartDTO cartDTO = createCart(user);
-            userResponse.setCartId(cartDTO.getCartId());
-        }
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok(responseDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -99,9 +69,9 @@ public class UserController {
     public ResponseEntity<?> fetchUser(
             @PathVariable("userId")Integer userId
     ){
-        UserDTO  userDTO = this.userService.fetchById(userId);
+        UserResponseDTO responseDTO = this.userService.fetchById(userId);
 
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.ok(responseDTO);
     }
 
     @PostMapping(path = "/{userId}/userImageAndFullName",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -111,12 +81,8 @@ public class UserController {
             @RequestParam(name = "fullName",required = false) String fullName
     ){
 
-        UserDTO userDTO =  this.userService.uploadUserImageAndFullName(imageFile,userId,fullName);
-        Map<String,Object> response = new HashMap<>();
-        response.put("message","Image uploaded and fullName is updated successful");
-        response.put("userImageUrl",getUserImageUrl(userDTO.userId()));
-        response.put("fullName",userDTO.fullName());
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        UserResponseDTO responseDTO =  this.userService.uploadUserImageAndFullName(imageFile,userId,fullName);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
     @GetMapping(path = "/{userId}/fetchUserImage",produces = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -124,8 +90,7 @@ public class UserController {
             @PathVariable("userId")Integer userId
     ){
         try{
-            User user = this.userRepository.findById(userId)
-                    .orElseThrow(()-> new ResourceNotFoundException("user not found"));
+            User user = this.userService.fetchUserEntityById(userId);
             if (user.getProfileImageUrl() == null || user.getProfileImageUrl().isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Profile image not found for user");
@@ -147,24 +112,24 @@ public class UserController {
          this.userService.revertToGoogleImage(userId);
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("message","Profile Picture reverted to google Profile Picture."));
     }
-    //helper method
-    private String getUserImageUrl(Integer userId){
-        return "/api/user/" + userId + "/fetchUserImage";
-    }
+    // //helper method
+    // private String getUserImageUrl(Integer userId){
+    //     return "/api/user/" + userId + "/fetchUserImage";
+    // }
 
-    private Set<Role.RoleName> getRoles(User user){
-        return user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toSet());
-    }
-    private List<Integer> getAddressIds(List<Address> addresses){
-        return addresses.stream().map(Address::getAddressId).toList();
-    }
-    private CartDTO createCart(UserDTO user){
-        CartDTO cartDTO = CartDTO.
-                builder()
-                .userId(user.userId())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        return this.cartService.createCart(cartDTO);
-    }
+    // private Set<Role.RoleName> getRoles(User user){
+    //     return user.getRoles().stream().map(Role::getRoleName).collect(Collectors.toSet());
+    // }
+    // private List<Integer> getAddressIds(List<Address> addresses){
+    //     return addresses.stream().map(Address::getAddressId).toList();
+    // }
+    // private CartDTO createCart(UserResponseDTO user){
+    //     CartDTO cartDTO = CartDTO.
+    //             builder()
+    //             .userId(user.userId())
+    //             .createdAt(LocalDateTime.now())
+    //             .updatedAt(LocalDateTime.now())
+    //             .build();
+    //     return this.cartService.createCart(cartDTO);
+    // }
 }

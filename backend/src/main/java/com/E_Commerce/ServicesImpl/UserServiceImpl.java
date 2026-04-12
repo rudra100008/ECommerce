@@ -1,7 +1,9 @@
 package com.E_Commerce.ServicesImpl;
 
-import com.E_Commerce.DTO.UserDTO;
-import com.E_Commerce.Entity.Address;
+import com.E_Commerce.DTO.UserDTO.UserResponseDTO;
+import com.E_Commerce.DTO.UserDTO.UserRequestDTO;
+
+import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.AlreadyExitsException;
 import com.E_Commerce.Exception.ImageInvalidException;
@@ -14,16 +16,13 @@ import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.config.annotation.rsocket.RSocketSecurity.AuthorizePayloadsSpec.Access;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -36,59 +35,63 @@ public class UserServiceImpl implements UserService {
 
     private static final String GOOGLE_USER_CONTENT = "googleusercontent.com";
 
-    private void validateUsernameUniqueness(String username) {
-        if (userRepository.existsByUsername(username)) {
-            throw new AlreadyExitsException(username + " already exists.");
-        }
-    }
+    // private void validateUsernameUniqueness(String username) {
+    //     if (userRepository.existsByUsername(username)) {
+    //         throw new AlreadyExitsException(username + " already exists.");
+    //     }
+    // }
 
-    private void validateUsernameUniqueness(String current, String updated) {
-        if (updated != null &&
-                !updated.equals(current) &&
-                userRepository.existsByUsername(updated)) {
-            throw new AlreadyExitsException(updated + " already exits");
-        }
-    }
+    // private void validateUsernameUniqueness(String current, String updated) {
+    //     if (updated != null &&
+    //             !updated.equals(current) &&
+    //             userRepository.existsByUsername(updated)) {
+    //         throw new AlreadyExitsException(updated + " already exits");
+    //     }
+    // }
 
-    private void validateEmailUniqueness(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new AlreadyExitsException(email + " already exists");
-        }
-    }
+    // private void validateEmailUniqueness(String email) {
+    //     if (userRepository.existsByEmail(email)) {
+    //         throw new AlreadyExitsException(email + " already exists");
+    //     }
+    // }
 
-    private void validateEmailUniqueness(String current, String updated) {
-        if (updated != null &&
-                !updated.equals(current) &&
-                userRepository.existsByEmail(updated)) {
-            throw new AlreadyExitsException(updated + " already exits.");
-        }
-    }
+    // private void validateEmailUniqueness(String current, String updated) {
+    //     if (updated != null &&
+    //             !updated.equals(current) &&
+    //             userRepository.existsByEmail(updated)) {
+    //         throw new AlreadyExitsException(updated + " already exits.");
+    //     }
+    // }
 
-    private void validatePhoneNumberUniqueness(String phoneNumber) {
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new AlreadyExitsException(phoneNumber + " already exits.");
-        }
-    }
+    // private void validatePhoneNumberUniqueness(String phoneNumber) {
+    //     if (userRepository.existsByPhoneNumber(phoneNumber)) {
+    //         throw new AlreadyExitsException(phoneNumber + " already exits.");
+    //     }
+    // }
 
-    private void validatePhoneNumberUniqueness(String current, String updated) {
-        if (updated != null &&
-                !updated.equals(current) &&
-                userRepository.existsByPhoneNumber(updated)) {
-            throw new AlreadyExitsException(updated + " already exits.");
-        }
-    }
+    // private void validatePhoneNumberUniqueness(String current, String updated) {
+    //     if (updated != null &&
+    //             !updated.equals(current) &&
+    //             userRepository.existsByPhoneNumber(updated)) {
+    //         throw new AlreadyExitsException(updated + " already exits.");
+    //     }
+    // }
 
     @Override
     @Transactional
-    public UserDTO saveUser(UserDTO userDTO) {
-        User user = this.userMapper.toUser(userDTO);
+    public UserResponseDTO saveUser(UserRequestDTO requestDTO, Set<Role> roles) {
+        User user = this.userMapper.toUser(requestDTO);
+        if(roles != null){
+            user.setRoles(roles);
+        }
         if (user.getAddresses() == null) {
             user.setAddresses(new ArrayList<>());
         }
-        user.setHasCustomImage(true);
+        user.setHasCustomImage(false);
+    
         User savedUser = this.userRepository.save(user);
-        this.cartService.createCartForUser(user);
-        return userMapper.toUserDTO(savedUser);
+        this.cartService.createCartForUser(savedUser);
+        return userMapper.toUserResponseDTO(savedUser);
     }
 
     @Override
@@ -103,27 +106,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDTO fetchById(Integer userId) {
+    public UserResponseDTO fetchById(Integer userId) {
         if (userId == null) {
             throw new ResourceNullException("userId is null");
         }
         User user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
-        return userMapper.toUserDTO(user);
+        return userMapper.toUserResponseDTO(user);
     }
 
     @Override
-    public UserDTO updateUser(UserDTO userDTO) {
+    public UserResponseDTO updateUser(UserRequestDTO requestDTO) {
         return null;
     }
 
     @Override
+    @Transactional
     public void deleteUser(Integer userId) {
         User user = getUser(userId);
-        if (user != null) {
-            this.userRepository.delete(user);
-        }
-        throw new ResourceNullException("User is null or empty");
+        this.userRepository.delete(user);
     }
 
     @Override
@@ -133,7 +134,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDTO findByEmail(String email) {
+    public UserResponseDTO findByEmail(String email) {
         User user = this.userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException(email + " not found in server."));
 
@@ -147,7 +148,7 @@ public class UserServiceImpl implements UserService {
 
         // Integer cartId = (user.getCart() != null) ? user.getCart().getId() : null;
 
-        return toUserDTOWithImage(user);
+        return userMapper.toUserResponseDTO(user);
     }
 
     @Override
@@ -161,7 +162,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional()
-    public UserDTO uploadUserImage(MultipartFile imageFile, Integer userId) {
+    public UserResponseDTO uploadUserImage(MultipartFile imageFile, Integer userId) {
         User user = validateUser(userId, "You are not allowed to upload user image.Access Denied");
         try {
             String imageDir = "users";
@@ -175,7 +176,7 @@ public class UserServiceImpl implements UserService {
             user.setProfileImageUrl(imagePath);
             user.setHasCustomImage(true);
             User savedUser = userRepository.save(user);
-            return userMapper.toUserDTO(savedUser);
+            return userMapper.toUserResponseDTO(savedUser);
         } catch (IOException e) {
             throw new ImageInvalidException("Image upload failed: " + e.getMessage());
         }
@@ -183,7 +184,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO uploadUserImageAndFullName(MultipartFile imageFile, Integer userId, String fullName) {
+    public UserResponseDTO uploadUserImageAndFullName(MultipartFile imageFile, Integer userId, String fullName) {
         User user = validateUser(userId, "You are not allowed to upload user image or edit fullName");
 
         try {
@@ -207,7 +208,7 @@ public class UserServiceImpl implements UserService {
             }
 
             User savedUser = userRepository.save(user);
-            return userMapper.toUserDTO(savedUser);
+            return userMapper.toUserResponseDTO(savedUser);
 
         } catch (IOException e) {
             throw new ImageInvalidException("Image upload or fullName update failed: " + e.getMessage());
@@ -215,7 +216,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO revertToGoogleImage(Integer userId) {
+    public UserResponseDTO revertToGoogleImage(Integer userId) {
         User user = validateUser(userId, "You are not allowed to revert google image.");
 
         if (!"GOOGLE".equals(user.getProvider())) {
@@ -234,7 +235,7 @@ public class UserServiceImpl implements UserService {
             user.setProfileImageUrl(user.getGoogleProfileImageUrl());
             user.setHasCustomImage(false);
             User savedUser = this.userRepository.save(user);
-            return this.userMapper.toUserDTO(savedUser);
+            return this.userMapper.toUserResponseDTO(savedUser);
         } catch (IOException e) {
             throw new ImageInvalidException("Failed to delete old image: " + e.getMessage());
         }
@@ -271,29 +272,26 @@ public class UserServiceImpl implements UserService {
         return "/api/user/" + userId + "/fetchUserImage";
     }
 
-    private UserDTO toUserDTOWithImage(User user) {
-    UserDTO base = userMapper.toUserDTO(user); // profileImageUrl will be null here
+    private UserResponseDTO toUserDTOWithImage(User user) {
+    UserResponseDTO base = userMapper.toUserResponseDTO(user);
 
     String profileImageUrl;
     if (Boolean.TRUE.equals(user.getHasCustomImage())) {
         profileImageUrl = getUserImageUrl(user.getUserId());
     } else {
-        profileImageUrl = user.getProfileImageUrl(); // Google URL or null
+        profileImageUrl = user.getProfileImageUrl();
     }
 
-    // Reconstruct the record with the resolved image URL
-    return new UserDTO(
+    return new UserResponseDTO(
         base.userId(),
         base.username(),
         base.email(),
-        base.password(),
         base.fullName(),
         base.phoneNumber(),
-        base.roles(),
-        profileImageUrl,        // resolved here
         base.addressIds(),
         base.cartId(),
-        base.hasCustomImage()
+        base.roles(),
+        profileImageUrl
     );
 }
 }

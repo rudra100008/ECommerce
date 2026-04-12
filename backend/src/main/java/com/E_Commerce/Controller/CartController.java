@@ -4,7 +4,6 @@ import com.E_Commerce.DTO.AddToCartRequest;
 import com.E_Commerce.DTO.CartDTO;
 import com.E_Commerce.DTO.CartItemDTO;
 import com.E_Commerce.DTO.ProductDTO;
-import com.E_Commerce.Entity.Inventory;
 import com.E_Commerce.Services.CartItemService;
 import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.InventoryService;
@@ -25,7 +24,6 @@ public class CartController {
     private final CartService cartService;
     private final CartItemService cartItemService;
     private final ProductService productService;
-    private final InventoryService inventoryService;
 
     @PostMapping()
     public ResponseEntity<?> createCart(

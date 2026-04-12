@@ -2,10 +2,9 @@ package com.E_Commerce.Controller;
 
 import com.E_Commerce.Config.PageConstant;
 import com.E_Commerce.DTO.*;
+import com.E_Commerce.DTO.UserDTO.UserResponseDTO;
 import com.E_Commerce.Entity.Category;
 import com.E_Commerce.Entity.ProductImage;
-import com.E_Commerce.Mapper.UserMapper;
-import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Services.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +33,6 @@ public class AdminController {
     private final CategoryService categoryService;
     private final ProductImageService productImageService;
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
 
     @GetMapping("/me")
     public ResponseEntity<?> currentAdmin(){
@@ -43,14 +40,14 @@ public class AdminController {
         if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        UserDTO userDTO = null;
+        UserResponseDTO responseDTO =  null;
         Object principal = authentication.getPrincipal();
         if(principal instanceof UserDetails userDetails){
-            userDTO = this.userService.findByEmail(userDetails.getUsername());
+            responseDTO = this.userService.findByEmail(userDetails.getUsername());
         } else if (principal instanceof DefaultOAuth2User auth2User) {
-            userDTO = this.userService.findByEmail(auth2User.getAttribute("email"));
+            responseDTO = this.userService.findByEmail(auth2User.getAttribute("email"));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
 
@@ -148,8 +145,8 @@ public class AdminController {
     }
 
     // helper method
-    private String getUserImageUrl(Integer userId){
-        return "/api/user/" + userId + "/fetchUserImage";
-    }
+    // private String getUserImageUrl(Integer userId){
+    //     return "/api/user/" + userId + "/fetchUserImage";
+    // }
 
 }

@@ -1,18 +1,12 @@
 package com.E_Commerce.Services;
 
-import com.E_Commerce.DTO.*;
-import com.E_Commerce.Entity.ShippingAddress;
-import org.springframework.stereotype.Service;
+import com.E_Commerce.DTO.OrderDTO.CreateOrderRequest;
+import com.E_Commerce.DTO.OrderDTO.OrderResponse;
+import com.E_Commerce.DTO.OrderDTO.UpdateOrderRequest;
 
-import java.util.List;
-
-@Service
 public interface OrderServices {
-    OrderDTO createOrder(OrderDTO orderDTO, List<OrderItemDTO> orderItemDTOS);
+    OrderResponse createOrder(CreateOrderRequest request);
+    OrderResponse getOrderDetails(Integer orderId, Integer userId);
+    OrderResponse updateOrder(Integer orderId, Integer userId, UpdateOrderRequest request); // ← orderId added
     void cancelOrder(Integer orderId);
-    OrderDTO saveShippingAddress(ShippingAddressDTO shippingAddressDTO,Integer orderId,Integer userId);
-    OrderDTO saveFullNameAndPhoneNumberInOrder(OrderDTO orderDTO);
-    OrderDTO getOrderDetails(Integer orderId,int userId);
-
-    OrderDTO getDraftOrdersOfUser(int userId,int orderId);
 }
