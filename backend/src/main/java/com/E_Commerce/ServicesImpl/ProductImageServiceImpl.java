@@ -15,21 +15,15 @@ public class ProductImageServiceImpl implements ProductImageService {
     private final ProductImageRepository productImageRepository;
     @Override
     public List<ProductImage> getProductImageByProductId(Integer productId) {
-       List<ProductImage> images = this.productImageRepository.findProductImageByProductId(productId);
-       if(images.isEmpty()){
-           throw new ResourceNotFoundException("Product image not found for productId: " + productId.toString());
-       }
-       return images;
+       return this.productImageRepository.findProductImageByProductId(productId);
     }
 
     @Override
     public List<ProductImage> fetchProductImagesByProductIds(List<Integer> productIds) {
-        List<ProductImage> images = this.productImageRepository.findProductImageByProductIds(productIds);
-        if (images.isEmpty()) {
-            throw new ResourceNotFoundException("Product image not found for productId: " + productIds.toString());
-        }
-        return images;
+        return  this.productImageRepository.findProductImageByProductIds(productIds);
     }
+
+    
 
     @Override
     public ProductImage getProductImageById(Integer productImageId) {
@@ -38,5 +32,10 @@ public class ProductImageServiceImpl implements ProductImageService {
         }
         return this.productImageRepository.findById(productImageId)
                 .orElseThrow(()-> new ResourceNotFoundException("Product image not found."));
+    }
+
+    @Override
+    public List<ProductImage> fetchFirstProductImagesByProductIds(List<Integer> productIds) {
+        return  this.productImageRepository.findFirstImagePerProduct(productIds);
     }
 }

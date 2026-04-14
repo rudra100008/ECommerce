@@ -11,10 +11,11 @@ import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Exception.ResourceNullException;
 import com.E_Commerce.Mapper.UserMapper;
 import com.E_Commerce.Repository.UserRepository;
-import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
+import com.E_Commerce.Utils.AuthUtils;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;

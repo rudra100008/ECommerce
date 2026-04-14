@@ -7,10 +7,11 @@ import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.UserRepository;
-import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
+import com.E_Commerce.Utils.AuthUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserController {
     private final UserService userService;
-    private final UserRepository userRepository;
     private final ImageService imageService;
     private final AuthUtils authUtils;
     private final CartService cartService;
@@ -43,23 +43,8 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
 
-        Object principal = authentication.getPrincipal();
-        UserResponseDTO responseDTO;
-
-        switch (principal) {
-            case UserDetails userDetails ->
-                    responseDTO = this.userService.findByEmail(userDetails.getUsername());
-            case DefaultOAuth2User defaultOAuth2User ->
-                    responseDTO = this.userService.findByEmail(defaultOAuth2User.getAttribute("email"));
-            default -> {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-        }
+        UserResponseDTO responseDTO = this.authUtils.resolveCurrentUser();
 
         return ResponseEntity.ok(responseDTO);
     }

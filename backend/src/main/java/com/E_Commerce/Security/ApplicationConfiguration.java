@@ -1,4 +1,4 @@
-package com.E_Commerce.Securty;
+package com.E_Commerce.Security;
 
 import org.springframework.context.annotation.Configuration;
 

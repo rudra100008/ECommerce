@@ -103,9 +103,6 @@ public class ProductController {
             @RequestParam(required = false,defaultValue = PageConstant.PAGE_SIZE,name = "pageSize")Integer pageSize
     ){
         PageInfo<ProductDTO> productDTOPageInfo = this.productService.findRandomProduct(pageNumber,pageSize);
-        this.productService.deleteProductsWithoutImages(productDTOPageInfo.getData());
-        productDTOPageInfo.getData()
-                .forEach(productDTO ->setFirstImageUrl(productDTO) );
         return ResponseEntity.status(HttpStatus.OK).body(productDTOPageInfo);
     }
 

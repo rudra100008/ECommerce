@@ -7,9 +7,10 @@ import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.AddressMapper;
 import com.E_Commerce.Repository.AddressRepository;
 import com.E_Commerce.Repository.UserRepository;
-import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.AddressService;
 import com.E_Commerce.Services.UserService;
+import com.E_Commerce.Utils.AuthUtils;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;

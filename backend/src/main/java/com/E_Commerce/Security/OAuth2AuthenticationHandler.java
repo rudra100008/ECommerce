@@ -1,4 +1,4 @@
-package com.E_Commerce.Securty;
+package com.E_Commerce.Security;
 
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
@@ -6,7 +6,6 @@ import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Repository.RoleRepository;
 import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Services.CartService;
-import com.E_Commerce.Services.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

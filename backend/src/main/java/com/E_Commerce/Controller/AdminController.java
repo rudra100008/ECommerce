@@ -6,6 +6,8 @@ import com.E_Commerce.DTO.UserDTO.UserResponseDTO;
 import com.E_Commerce.Entity.Category;
 import com.E_Commerce.Entity.ProductImage;
 import com.E_Commerce.Services.*;
+import com.E_Commerce.Utils.AuthUtils;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,20 +35,12 @@ public class AdminController {
     private final CategoryService categoryService;
     private final ProductImageService productImageService;
     private final UserService userService;
+    private AuthUtils authUtils;
 
     @GetMapping("/me")
     public ResponseEntity<?> currentAdmin(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        UserResponseDTO responseDTO =  null;
-        Object principal = authentication.getPrincipal();
-        if(principal instanceof UserDetails userDetails){
-            responseDTO = this.userService.findByEmail(userDetails.getUsername());
-        } else if (principal instanceof DefaultOAuth2User auth2User) {
-            responseDTO = this.userService.findByEmail(auth2User.getAttribute("email"));
-        }
+
+        UserResponseDTO responseDTO = this.authUtils.resolveCurrentUser();
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 

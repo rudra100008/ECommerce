@@ -20,16 +20,20 @@ import com.E_Commerce.Services.CategoryService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.ProductImageService;
 import com.E_Commerce.Services.ProductService;
+import com.E_Commerce.Utils.SkuGeneratorUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,43 +48,54 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final CategoryService categoryService;
     private final ProductImageService productImageService;
     private final ProductMapper productMapper;
+    private final SkuGeneratorUtils skuGenerator;
+    private final CategoryService categoryService;
+
     private final static List<String> ALLOWED_SORT_FIELDS = List.of("createdAt", "updatedAt", "productName", "price",
             "productId");
 
-    @Override
-    @Transactional
-    public ProductDTO createProductWithImages(ProductDTO productDTO, CategoryRequest categoryRequest,
-            List<MultipartFile> imageFiles) {
-        List<String> imageNames = new ArrayList<>();
-        try {
-            for (MultipartFile imageFile : imageFiles) {
-                if (imageFile != null && !imageFile.isEmpty()) {
-                    String imageName = this.imageService.uploadImage(productDTO.getProductName().trim(), imageFile);
-                    imageNames.add(imageName.trim());
-                }
-            }
-        } catch (IOException e) {
-            throw new ImageInvalidException("Image not uploaded: " + e.getMessage());
-        }
-        Category category;
-        if (categoryRequest.getCategoryId() != null) {
-            category = this.categoryService.findById(categoryRequest.getCategoryId());
-        } else {
-            category = this.categoryService.createCategory(categoryRequest.getName().trim());
-        }
-        String sku = generateSku(productDTO, category);
-        productDTO.setSku(sku);
-        productDTO.setCategoryId(category.getCategoryId());
-        productDTO.setImageUrls(imageNames);
-        Product product = this.productMapper.toProduct(productDTO);
-        product.setCategory(category);
-        Product savedProduct = this.productRepository.save(product);
-        return productMapper.toProductDTO(savedProduct);
+   @Override
+@Transactional
+public ProductDTO createProductWithImages(
+        ProductDTO productDTO,
+        CategoryRequest categoryRequest,
+        List<MultipartFile> imageFiles) {
+
+    Category category = resolveCategory(categoryRequest);
+    String sku = skuGenerator.generateUniqueSku(productDTO, category);
+    productDTO.setSku(sku);
+    productDTO.setCategoryId(category.getCategoryId());
+    productDTO.setImageUrls(Collections.emptyList());
+
+    Product product = this.productMapper.toProduct(productDTO);
+    product.setCategory(category);
+
+    Product savedProduct;
+    try {
+        savedProduct = this.productRepository.save(product);
+        this.productRepository.flush(); // ✅ Force constraint check NOW, inside this method
+    } catch (DataIntegrityViolationException e) {
+        // Only SKU can conflict here — product name is not unique-constrained
+        throw new BusinessValidationException(
+            "A product with a similar name already exists. Try providing a custom SKU.");
     }
 
+    // Upload images only after confirmed DB save
+    List<String> uploadedPaths = uploadImages(productDTO.getProductName(), imageFiles);
+
+    for (String imagePath : uploadedPaths) {
+        ProductImage pi = ProductImage.builder()
+                .imageUrl(imagePath)
+                .product(savedProduct)
+                .build();
+        savedProduct.getProductImages().add(pi);
+    }
+
+    Product finalProduct = this.productRepository.save(savedProduct);
+    return this.productMapper.toProductDTO(finalProduct);
+}
     @Override
     @Transactional
     public ProductDTO createProduct(ProductDTO productDTO) {
@@ -89,7 +104,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Category not found with id: " + productDTO.getCategoryId()));
 
-        String sku = generateSku(productDTO, category);
+        String sku = skuGenerator.generateUniqueSku(productDTO, category);
         productDTO.setSku(sku);
 
         Product product = productMapper.toProduct(productDTO);
@@ -126,7 +141,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("product not found in server"));
         ProductDTO productDTO = productMapper.toProductDTO(product);
 
-        productDTO.setImageUrls(getImageUrlsForProduct(product.getProductId()));
+        productDTO.setImageUrls(getImageUrlsForProduct(productId));
         return productDTO;
     }
 
@@ -176,11 +191,11 @@ public class ProductServiceImpl implements ProductService {
                 .map(Product::getProductId)
                 .toList();
 
-        Map<Integer, List<String>> imageUrlMap = getImageUrls(ids);
-
-        productDTOList.stream()
-                .forEach(productDTO -> productDTO
-                        .setImageUrls(imageUrlMap.getOrDefault(productDTO.getProductId(), Collections.emptyList())));
+        Map<Integer, String> firstImages = getFirstImageUrlPerProduct(ids);
+        productDTOList.forEach(dto -> {
+            String url = firstImages.get(dto.getProductId());
+            dto.setImageUrls(url != null ? List.of(url) : Collections.emptyList());
+        });
 
         return new PageInfo<>(
                 productDTOList,
@@ -202,19 +217,19 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productPage = this.productRepository.findProductByCategoryId(categoryId, pageable);
         List<Product> fetchProduct = productPage.getContent();
 
-        List<ProductDTO> productDTOS = fetchProduct.stream()
+        List<ProductDTO> productDTOs = fetchProduct.stream()
                 .map(this.productMapper::toProductDTO)
                 .toList();
 
         List<Integer> ids = fetchProduct.stream().map(Product::getProductId).toList();
-        Map<Integer, List<String>> imageUrlsMap = getImageUrls(ids);
-
-        productDTOS.stream()
-                .forEach(dto -> dto
-                        .setImageUrls(imageUrlsMap.getOrDefault(dto.getProductId(), Collections.emptyList())));
+        Map<Integer, String> firstImages = getFirstImageUrlPerProduct(ids);
+        productDTOs.forEach(dto -> {
+            String url = firstImages.get(dto.getProductId());
+            dto.setImageUrls(url != null ? List.of(url) : Collections.emptyList());
+        });
 
         return new PageInfo<>(
-                productDTOS,
+                productDTOs,
                 pageNumber,
                 pageSize,
                 productPage.getTotalPages(),
@@ -245,11 +260,20 @@ public class ProductServiceImpl implements ProductService {
     public PageInfo<ProductDTO> findRandomProduct(Integer pageNumber, Integer pageSize) {
         Pageable productPageable = PageRequest.of(pageNumber, pageSize);
         Page<Product> productPage = this.productRepository.findProductInRandom(productPageable);
-        List<ProductDTO> productDTO = productPage.getContent().stream()
+        List<ProductDTO> productDTOs = productPage.getContent().stream()
                 .map(productMapper::toProductDTO)
                 .toList();
+
+        List<Integer> ids = productPage.getContent().stream().map(Product::getProductId).toList();
+        Map<Integer, String> firstImages = getFirstImageUrlPerProduct(ids);
+
+        productDTOs.forEach(dto -> {
+            String url = firstImages.get(dto.getProductId());
+            dto.setImageUrls(url != null ? List.of(url) : Collections.emptyList());
+        });
+
         return new PageInfo<>(
-                productDTO,
+                productDTOs,
                 pageNumber,
                 pageSize,
                 productPage.getTotalPages(),
@@ -265,19 +289,22 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("CategoryId not found in server."));
         Pageable productPageable = PageRequest.of(pageNumber, pageSize);
         Page<Product> productPage = this.productRepository.findProductByCategoryId(categoryId, productPageable);
-        List<ProductDTO> productDTOS = productPage.getContent().stream()
+        List<ProductDTO> productDTOs = productPage.getContent().stream()
                 .map(productMapper::toProductDTO)
                 .toList();
 
         List<Integer> ids = productPage.getContent().stream().map(Product::getProductId).toList();
-        Map<Integer, List<String>> imageUrlsMap = getImageUrls(ids);
+        Map<Integer, String> firstImages = getFirstImageUrlPerProduct(ids);
 
-        productDTOS.stream()
-                .forEach(dto -> dto
-                        .setImageUrls(imageUrlsMap.getOrDefault(dto.getProductId(), Collections.emptyList())));
+
+
+         productDTOs.forEach(dto -> {
+            String url = firstImages.get(dto.getProductId());
+            dto.setImageUrls(url != null ? List.of(url) : Collections.emptyList());
+        });
 
         return new PageInfo<>(
-                productDTOS,
+                productDTOs,
                 pageNumber,
                 pageSize,
                 productPage.getTotalPages(),
@@ -285,66 +312,45 @@ public class ProductServiceImpl implements ProductService {
                 productPage.isLast());
     }
 
-    @Override
-    @Transactional
-    public void deleteProductsWithoutImages(List<ProductDTO> productDTOS) {
-        List<Product> products = productDTOS.stream().map(this.productMapper::toProduct)
-                .filter(product -> product.getProductImages() == null || product.getProductImages().isEmpty())
-                .toList();
-        if (!products.isEmpty()) {
-            this.productRepository.deleteAll(products);
-            log.info("Deleted {} products without images", products.size());
-        }
-    }
-
     // helper method
-    private String generateSku(ProductDTO productDTO, Category category) {
-        if (productDTO.getSku() != null && !productDTO.getSku().isEmpty()) {
-            String manualSKU = productDTO.getSku().trim().toUpperCase();
-            if (productRepository.existsBySku(manualSKU)) {
-                throw new BusinessValidationException("SKU already exits: " + manualSKU);
+    private List<String> uploadImages(String productName, List<MultipartFile> imageFiles) {
+    List<String> uploadedPaths = new ArrayList<>();
+    try {
+        for (MultipartFile imageFile : imageFiles) {
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String path = this.imageService.uploadImage(productName.trim(), imageFile);
+                uploadedPaths.add(path.trim());
             }
-            return manualSKU;
         }
-        String baseSku = generateBaseSku(productDTO, category);
-
-        Set<String> existingSkus = new HashSet<>(this.productRepository.findSkuStartingWith(baseSku));
-
-        if (!existingSkus.contains(baseSku)) {
-            return baseSku;
-        }
-
-        int counter = 1;
-        String candidate;
-        do {
-            candidate = baseSku + "_" + counter;
-            counter++;
-        } while (existingSkus.contains(candidate));
-
-        return candidate;
+    } catch (IOException e) {
+        cleanupImages(uploadedPaths); // Rollback disk writes
+        throw new ImageInvalidException("Image upload failed: " + e.getMessage());
     }
 
-    private String generateBaseSku(ProductDTO productDTO, Category category) {
-        if (productDTO.getProductName() == null || category.getName() == null) {
-            throw new BusinessValidationException("Invalid data for SKU generation");
-        }
-        String categoryPart = normalize(category.getName());
-        String productPart = normalize(productDTO.getProductName());
-        if (categoryPart.length() > 20) {
-            categoryPart = categoryPart.substring(0, 20);
-        }
-        if (productPart.length() > 30) {
-            productPart = productPart.substring(0, 30);
-        }
-        return categoryPart + "_" + productPart;
+    if (uploadedPaths.isEmpty()) {
+        throw new ImageInvalidException("At least one valid image is required.");
     }
 
-    private String normalize(String input) {
-        return input
-                .trim()
-                .toUpperCase()
-                .replaceAll("[^A-Z0-9]+", "_") // this means anything that is NOT[^] : A-Z uppercase letter, 0-9 digits
-                .replaceAll("^_|_$", ""); // this means replace leading/trailing underscore(_) with nothing("")
+    return uploadedPaths;
+}
+    private Category resolveCategory(CategoryRequest categoryRequest) {
+        if (categoryRequest.getCategoryId() != null) {
+            return this.categoryService.findById(categoryRequest.getCategoryId());
+        }
+        if (categoryRequest.getName() == null || categoryRequest.getName().isBlank()) {
+            throw new BusinessValidationException("Category name or ID is required");
+        }
+        return this.categoryService.createCategory(categoryRequest.getName().trim());
+    }
+
+    private void cleanupImages(List<String> uploadedPaths) {
+        uploadedPaths.forEach(path -> {
+            try {
+                this.imageService.deleteImage(path, "");
+            } catch (Exception ex) {
+                log.warn("Failed to cleanup image at path: {}. Manual cleanup may be needed.", path);
+            }
+        });
     }
 
     private void validateProductName(String productName) {
@@ -370,6 +376,14 @@ public class ProductServiceImpl implements ProductService {
         return productImages.stream()
                 .map(image -> "/api/product/" + image.getProduct().getProductId() + "/image/" + image.getId())
                 .toList();
+    }
+
+    private Map<Integer, String> getFirstImageUrlPerProduct(List<Integer> productIds) {
+        return this.productImageService.fetchFirstProductImagesByProductIds(productIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        img -> img.getProduct().getProductId(),
+                        img -> "/api/product/" + img.getProduct().getProductId() + "/image/" + img.getId()));
     }
 
     private void applyUpdate(Product product, UpdateProductRequest request) {

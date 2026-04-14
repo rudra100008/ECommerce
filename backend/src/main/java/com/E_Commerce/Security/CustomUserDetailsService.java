@@ -1,4 +1,4 @@
-package com.E_Commerce.Securty;
+package com.E_Commerce.Security;
 
 import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;

@@ -8,9 +8,10 @@ import com.E_Commerce.Exception.InsufficientStockException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Exception.ServiceUnavailableException;
 import com.E_Commerce.Repository.ReservationRepository;
-import com.E_Commerce.Securty.AuthUtils;
 import com.E_Commerce.Services.InventoryService;
 import com.E_Commerce.Services.ReservationService;
+import com.E_Commerce.Utils.AuthUtils;
+
 import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;

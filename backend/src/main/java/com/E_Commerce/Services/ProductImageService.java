@@ -9,5 +9,6 @@ import java.util.List;
 public interface ProductImageService {
     List<ProductImage> getProductImageByProductId(Integer productId);
     List<ProductImage> fetchProductImagesByProductIds(List<Integer> productIds);
+    List<ProductImage> fetchFirstProductImagesByProductIds(List<Integer> productIds);
     ProductImage getProductImageById(Integer productImageId);
 }

@@ -24,5 +24,4 @@ public interface ProductService {
 
     PageInfo<ProductDTO> findRandomProduct(Integer pageNumber,Integer pageSize);
     PageInfo<ProductDTO> findRandomProductByCategoryId(Integer pageNumber,Integer pageSize,Integer categoryId);
-    void deleteProductsWithoutImages(List<ProductDTO> productDTOS);
 }
