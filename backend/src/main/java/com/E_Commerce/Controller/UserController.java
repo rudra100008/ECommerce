@@ -1,12 +1,8 @@
 package com.E_Commerce.Controller;
 
-import com.E_Commerce.DTO.CartDTO;
 import com.E_Commerce.DTO.UserDTO.UserResponseDTO;
-import com.E_Commerce.Entity.Address;
-import com.E_Commerce.Entity.Role;
 import com.E_Commerce.Entity.User;
-import com.E_Commerce.Exception.ResourceNotFoundException;
-import com.E_Commerce.Repository.UserRepository;
+import com.E_Commerce.Mapper.UserMapper;
 import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
@@ -18,17 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -38,15 +26,15 @@ public class UserController {
     private final UserService userService;
     private final ImageService imageService;
     private final AuthUtils authUtils;
-    private final CartService cartService;
+    private final UserMapper userMapper;
 
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
 
-        UserResponseDTO responseDTO = this.authUtils.resolveCurrentUser();
+        User user = this.authUtils.resolveCurrentUser();
 
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(userMapper.toUserResponseDTO(user));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

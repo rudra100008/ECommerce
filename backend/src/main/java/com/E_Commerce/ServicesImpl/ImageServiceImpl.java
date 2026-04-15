@@ -30,10 +30,12 @@ public class ImageServiceImpl implements ImageService {
     public String uploadImage(String imageDir, MultipartFile imageFile)throws IOException {
         validateImage(imageFile);
         String originalFileName = imageFile.getOriginalFilename();
+
         if(originalFileName != null){
             originalFileName = Path.of(originalFileName).getFileName().toString();
             originalFileName = originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
         }
+        
         String uniqueName = UUID.randomUUID().toString() + "_" + originalFileName;
         Path basicPath = Path.of(basicDir);
         Path imageFilePath = basicPath.resolve(imageDir);

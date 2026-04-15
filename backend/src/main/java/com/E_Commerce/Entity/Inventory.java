@@ -1,11 +1,7 @@
 package com.E_Commerce.Entity;
 
-import com.E_Commerce.Enum.ReservationStatus;
-import com.E_Commerce.Exception.InsufficientStockException;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +34,6 @@ public class Inventory {
 
     //helper  method
 
-    public Integer getReservedQuantity() {
-        return reservations.stream()
-                .filter(Reservation::isActive)
-                .mapToInt(Reservation::getReservedQuantity)
-                .sum();
-    }
     public Integer getAvailableQuantity(int reservedQuantity){
         return this.stockQuantity - reservedQuantity;
     }

@@ -28,45 +28,66 @@ public class ReservationServiceImpl implements ReservationService {
     private final InventoryService inventoryService;
     private final AuthUtils authUtils;
 
+    // @Override
+    // @Transactional
+    // public void createReservation(Integer userId,Integer productId,int
+    // newReservedQuantity) {
+    // User user = validateUser(userId);
+    // Reservation existingReservation =
+    // this.reservationRepository.findActiveReservationByUserAndProduct(
+    // user.getUserId(),
+    // productId,
+    // LocalDateTime.now()
+    // );
+    // Inventory inventory = getInventory(productId);
+    // int totalReservation = getTotalReservationByInventoryId(inventory.getId());
+    // validateStockAvailability(newReservedQuantity,totalReservation,inventory);
+
+    // if (existingReservation != null){
+    // int newTotalReservedQuantity = existingReservation.getReservedQuantity() +
+    // newReservedQuantity;
+    // updatingExistingReservation(existingReservation,newTotalReservedQuantity);
+    // return ;
+    // }
+    // Reservation reservation = Reservation
+    // .builder()
+    // .inventory(inventory)
+    // .user(user)
+    // .reservedAt(LocalDateTime.now())
+    // .expiresAt(LocalDateTime.now().plusWeeks(1))
+    // .reservedQuantity(newReservedQuantity)
+    // .status(ReservationStatus.ACTIVE)
+    // .build();
+
+    // user.addReservation(reservation);
+    // inventory.addReservation(reservation);
+    // this.reservationRepository.save(reservation);
+    // }
+
     @Override
     @Transactional
-    public void createReservation(Integer userId,Integer productId,int newReservedQuantity) {
+    public void createReservation(Integer userId, Integer productId, int newReservedQuantity) {
+
         User user = validateUser(userId);
-        Reservation existingReservation = this.reservationRepository.findActiveReservationByUserAndProduct(
-                user.getUserId(),
-                productId,
-                LocalDateTime.now()
-        );
         Inventory inventory = getInventory(productId);
+
         int totalReservation = getTotalReservationByInventoryId(inventory.getId());
-        validateStockAvailability(newReservedQuantity,totalReservation,inventory);
-    
 
-        if (existingReservation != null){
-            int newTotalReservedQuantity = existingReservation.getReservedQuantity() + newReservedQuantity;
-            updatingExistingReservation(existingReservation,newTotalReservedQuantity);
-            return ;
-        }
-        Reservation reservation = Reservation
-                .builder()
-                .inventory(inventory)
-                .user(user)
-                .reservedAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusWeeks(1))
-                .reservedQuantity(newReservedQuantity)
-                .status(ReservationStatus.ACTIVE)
-                .build();
+        validateStockAvailability(newReservedQuantity, totalReservation, inventory);
 
-        user.addReservation(reservation);
-        inventory.addReservation(reservation);
-        this.reservationRepository.save(reservation);
+        reservationRepository.upsertReservation(
+                user.getUserId(),
+                inventory.getId(),
+                newReservedQuantity,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusWeeks(1));
     }
 
     @Override
     @Transactional
-    public Reservation updateReservation(Integer userId,Integer productId,Integer reservedQuantity) {
+    public Reservation updateReservation(Integer userId, Integer productId, Integer reservedQuantity) {
         validateUser(userId);
-        Inventory inventory =  getInventory(productId);
+        Inventory inventory = getInventory(productId);
         Reservation reservation = this.reservationRepository.findActiveReservationByUserAndProduct(
                 userId, productId, LocalDateTime.now());
 
@@ -76,8 +97,8 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         int quantity = reservedQuantity - reservation.getReservedQuantity();
-        if (quantity > 0){
-            validateStockAvailability(quantity,totalReservation,inventory);
+        if (quantity > 0) {
+            validateStockAvailability(quantity, totalReservation, inventory);
         }
 
         reservation.setReservedQuantity(reservedQuantity);
@@ -90,17 +111,15 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void deleteReservation(Integer userId,Integer productId) {
+    public void deleteReservation(Integer userId, Integer productId) {
         validateUser(userId);
         Inventory inventory = getInventory(productId);
-        Reservation reservation = this.reservationRepository.findByUserIdAndInventoryId(userId,inventory.getId());
-        if(reservation == null){
+        Reservation reservation = this.reservationRepository.findByUserIdAndInventoryId(userId, inventory.getId());
+        if (reservation == null) {
             throw new ResourceNotFoundException(
                     String.format("Reservation not found or  of product: %s  for userId:%d",
                             inventory.getProduct().getProductName(),
-                            userId
-                    )
-            );
+                            userId));
 
         }
         this.reservationRepository.delete(reservation);
@@ -108,45 +127,45 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public int getTotalReservationByInventoryId(int inventoryId) {
-        return this.reservationRepository.getReservedQuantityByInventoryId(inventoryId,LocalDateTime.now());
+        return this.reservationRepository.getReservedQuantityByInventoryId(inventoryId, LocalDateTime.now());
     }
 
     @Override
     public int getTotalReservationByProductId(int productId) {
-        return this.reservationRepository.getReservedQuantityByProductId(productId,LocalDateTime.now());
+        return this.reservationRepository.getReservedQuantityByProductId(productId, LocalDateTime.now());
     }
 
-
-    //helper method
-    private Reservation updatingExistingReservation(Reservation reservation,int newQuantity){
+    // helper method
+    private Reservation updatingExistingReservation(Reservation reservation, int newQuantity) {
         reservation.setReservedQuantity(newQuantity);
         reservation.setReservedAt(LocalDateTime.now());
         reservation.setExpiresAt(LocalDateTime.now().plusWeeks(1));
         return reservationRepository.save(reservation);
     }
 
-    private Inventory getInventory(int productId){
+    private Inventory getInventory(int productId) {
         try {
             Inventory inventory = this.inventoryService.fetchInventoryWithLock(productId);
-            if(inventory != null){
+            if (inventory != null) {
                 return inventory;
             }
             throw new ResourceNotFoundException("Inventory not found");
-        }catch (LockTimeoutException | PessimisticLockException e){
-            throw new ServiceUnavailableException("System is busy with this product. Please try again in a few seconds.",e);
+        } catch (LockTimeoutException | PessimisticLockException e) {
+            throw new ServiceUnavailableException(
+                    "System is busy with this product. Please try again in a few seconds.", e);
         }
     }
 
-
-    private User validateUser(int userId){
+    private User validateUser(int userId) {
         User loggedInUser = authUtils.getLoggedInUser();
-        if(!loggedInUser.getUserId().equals(userId)){
+        if (!loggedInUser.getUserId().equals(userId)) {
             throw new AccessDeniedException("You are not allowed to access reservation service.");
         }
         return loggedInUser;
     }
-    private void validateStockAvailability(int reservedQuantity,int totalReservedQuantity,Inventory inventory){
-        if(inventory.getAvailableQuantity(totalReservedQuantity) < reservedQuantity){
+
+    private void validateStockAvailability(int reservedQuantity, int totalReservedQuantity, Inventory inventory) {
+        if (inventory.getAvailableQuantity(totalReservedQuantity) < reservedQuantity) {
             throw new InsufficientStockException(inventory.getProduct().getProductName() + " is not in stock.");
         }
     }

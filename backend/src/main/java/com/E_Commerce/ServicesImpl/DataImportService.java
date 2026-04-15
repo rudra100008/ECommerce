@@ -7,20 +7,17 @@ import com.E_Commerce.Entity.AddressDataSet.District;
 import com.E_Commerce.Entity.AddressDataSet.Municipality;
 import com.E_Commerce.Entity.AddressDataSet.Province;
 import com.E_Commerce.Repository.AddressDataSet.DistrictRepository;
-import com.E_Commerce.Repository.AddressDataSet.MunicipalityRepository;
 import com.E_Commerce.Repository.AddressDataSet.ProvinceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.core.parameters.P;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -184,13 +181,12 @@ public class DataImportService {
         }
     }
 
-    @PostConstruct
     @Transactional
-    public void init() {
+    public void importData() {
         try {
             // Check if data already exists
             if (provinceRepository.count() > 0) {
-                log.info("Address data already exists, skipping import");
+                log.info("Data already exists, skipping import");
                 return;
             }
 
@@ -217,7 +213,15 @@ public class DataImportService {
 
         } catch (Exception e) {
             log.error("Data import failed!", e);
-            throw new RuntimeException("Data import failed", e);
         }
+    }
+
+    @Async("threadPoolTaskExecutor")
+    public void importDataAsync(){
+        try {
+        importData();
+    } catch (Exception e) {
+        log.error("Async import failed", e);
+    }
     }
 }

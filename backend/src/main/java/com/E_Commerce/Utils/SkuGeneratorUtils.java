@@ -16,15 +16,9 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class SkuGeneratorUtils {
-
     private final ProductRepository productRepository;
 
-    /**
-     * Runs in its own transaction with a synchronized lock.
-     * REQUIRES_NEW = suspends the caller's transaction,
-     * so the SKU is committed before the product is saved.
-     */
-    // SkuGeneratorUtils.java
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public synchronized String generateUniqueSku(ProductDTO productDTO, Category category) {
         if (productDTO.getSku() != null && !productDTO.getSku().isBlank()) {
@@ -63,13 +57,11 @@ public class SkuGeneratorUtils {
         String categoryPart = normalize(category.getName());
         String productPart = normalize(productDTO.getProductName());
 
-        // Truncate to keep SKU readable and within DB column size
         if (categoryPart.length() > 20)
             categoryPart = categoryPart.substring(0, 20);
         if (productPart.length() > 30)
             productPart = productPart.substring(0, 30);
 
-        // Remove trailing underscore after truncation
         categoryPart = categoryPart.replaceAll("_$", "");
         productPart = productPart.replaceAll("_$", "");
 

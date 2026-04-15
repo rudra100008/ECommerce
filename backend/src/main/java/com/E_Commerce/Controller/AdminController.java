@@ -5,6 +5,8 @@ import com.E_Commerce.DTO.*;
 import com.E_Commerce.DTO.UserDTO.UserResponseDTO;
 import com.E_Commerce.Entity.Category;
 import com.E_Commerce.Entity.ProductImage;
+import com.E_Commerce.Entity.User;
+import com.E_Commerce.Mapper.UserMapper;
 import com.E_Commerce.Services.*;
 import com.E_Commerce.Utils.AuthUtils;
 
@@ -12,11 +14,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,14 +31,14 @@ public class AdminController {
     private final ImageService imageService;
     private final CategoryService categoryService;
     private final ProductImageService productImageService;
-    private final UserService userService;
     private AuthUtils authUtils;
+    private UserMapper userMapper;
 
     @GetMapping("/me")
     public ResponseEntity<?> currentAdmin(){
 
-        UserResponseDTO responseDTO = this.authUtils.resolveCurrentUser();
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        User user = this.authUtils.resolveCurrentUser();
+        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toUserResponseDTO(user));
     }
 
 
@@ -83,7 +80,7 @@ public class AdminController {
             for(MultipartFile imageFile : imageFiles){
                 if(imageFile != null && !imageFile.isEmpty()){
                     try{
-                        String imageUrl = this.imageService.uploadImage(foundProduct.getProductName(),imageFile);
+                        String imageUrl = this.imageService.uploadImage(foundProduct.getProductName().trim(),imageFile);
                         imageUrls.add(imageUrl);
                     }catch(IOException e){
                         Map<String, String> errorResponse = new HashMap<>();

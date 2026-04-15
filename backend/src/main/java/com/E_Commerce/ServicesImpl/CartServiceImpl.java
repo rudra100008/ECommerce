@@ -6,9 +6,7 @@ import com.E_Commerce.Entity.*;
 import com.E_Commerce.Exception.InsufficientStockException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Exception.ServiceUnavailableException;
-import com.E_Commerce.Mapper.CartItemMapper;
 import com.E_Commerce.Mapper.CartMapper;
-import com.E_Commerce.Repository.CartItemRepository;
 import com.E_Commerce.Repository.CartRepository;
 import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.InventoryService;
@@ -19,7 +17,6 @@ import com.E_Commerce.Utils.AuthUtils;
 import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.PessimisticLockException;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -34,10 +31,8 @@ import java.util.ArrayList;
 @Slf4j
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
     private final CartMapper cartMapper;
     private final AuthUtils authUtils;
-    private final CartItemMapper cartItemMapper;
     private final InventoryService inventoryService;
     private final ProductService productService;
     private final ReservationService reservationService;

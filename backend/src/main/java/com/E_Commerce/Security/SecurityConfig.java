@@ -3,6 +3,7 @@ package com.E_Commerce.Security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -56,6 +57,8 @@ public class SecurityConfig {
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
                                                 .requestMatchers("/login/oauth2/code/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET,"/api/product/**").permitAll()
+                                                .requestMatchers(HttpMethod.GET,"/api/category/**").permitAll()
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session

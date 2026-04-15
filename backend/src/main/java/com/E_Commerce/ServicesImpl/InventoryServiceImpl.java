@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository inventoryRepository;
-    private final ProductRepository productRepository;
     private final ProductService productService;
 
     @Override
@@ -41,7 +40,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(readOnly = true)
     public Inventory getProductDataInInventory(Integer productId) {
-        Product product = getProduct(productId);
+        Product product = this.productService.findProductEntityById(productId);
         return getInventory(product);
     }
 
@@ -52,10 +51,7 @@ public class InventoryServiceImpl implements InventoryService {
     public Inventory updateStockQuantity(Integer productId, Integer stockQuantity) {
         return null;
     }
-    private Product getProduct(Integer productId){
-        return this.productRepository.findById(productId)
-                .orElseThrow(()-> new ResourceNotFoundException("product not found."));
-    }
+   
     private Inventory getInventory(Product product){
         return  this.inventoryRepository.findByProduct(product)
                 .orElseThrow(()-> new ResourceNotFoundException("inventory not found by productId"));

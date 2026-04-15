@@ -15,7 +15,7 @@ public interface ProductMapper {
     @Mapping(source = "category.categoryId", target = "categoryId")
     @Mapping(source = "productImages", target = "imageUrls", qualifiedByName = "mapImagesToUrl")
     @Mapping(source = "inventory.stockQuantity", target = "stockQuantity")
-    @Mapping(source = "inventory.reservedQuantity", target = "reservedQuantity")
+    @Mapping(target = "reservedQuantity", ignore = true)
     @Mapping(target = "availableQuantity",ignore = true)
     @Mapping(target = "isInStock",ignore = true)
     @Mapping(target = "createdAt",source = "createdAt")

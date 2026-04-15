@@ -6,9 +6,10 @@ import com.E_Commerce.DTO.CartItemDTO;
 import com.E_Commerce.DTO.ProductDTO;
 import com.E_Commerce.Services.CartItemService;
 import com.E_Commerce.Services.CartService;
-import com.E_Commerce.Services.InventoryService;
 import com.E_Commerce.Services.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/cart")
+@Slf4j
 public class CartController {
     private final CartService cartService;
     private final CartItemService cartItemService;
@@ -77,9 +79,9 @@ public class CartController {
     public ResponseEntity<?> getSubTotal(
             @RequestBody List<CartItemDTO> cartItemDTOs
     ){
-        System.out.println("CartItemDTO: " +cartItemDTOs.toString());
+        log.debug("CartItemDTO: " +cartItemDTOs.toString());
         Double subTotal = this.cartItemService.getSubTotal(cartItemDTOs);
-        System.out.println("SubTotal: "+subTotal);
+        log.debug("SubTotal: "+subTotal);
         return ResponseEntity.status(HttpStatus.OK).body(subTotal);
     }
 }

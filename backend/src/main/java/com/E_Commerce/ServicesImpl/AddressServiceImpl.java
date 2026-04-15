@@ -6,17 +6,12 @@ import com.E_Commerce.Entity.User;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.AddressMapper;
 import com.E_Commerce.Repository.AddressRepository;
-import com.E_Commerce.Repository.UserRepository;
 import com.E_Commerce.Services.AddressService;
-import com.E_Commerce.Services.UserService;
 import com.E_Commerce.Utils.AuthUtils;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +19,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
-    private final UserService userService;
     private final AddressMapper addressMapper;
     private final AddressRepository addressRepository;
     private final AuthUtils authUtils;

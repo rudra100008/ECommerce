@@ -56,46 +56,46 @@ public class ProductServiceImpl implements ProductService {
     private final static List<String> ALLOWED_SORT_FIELDS = List.of("createdAt", "updatedAt", "productName", "price",
             "productId");
 
-   @Override
-@Transactional
-public ProductDTO createProductWithImages(
-        ProductDTO productDTO,
-        CategoryRequest categoryRequest,
-        List<MultipartFile> imageFiles) {
+    @Override
+    @Transactional
+    public ProductDTO createProductWithImages(
+            ProductDTO productDTO,
+            CategoryRequest categoryRequest,
+            List<MultipartFile> imageFiles) {
 
-    Category category = resolveCategory(categoryRequest);
-    String sku = skuGenerator.generateUniqueSku(productDTO, category);
-    productDTO.setSku(sku);
-    productDTO.setCategoryId(category.getCategoryId());
-    productDTO.setImageUrls(Collections.emptyList());
+        Category category = resolveCategory(categoryRequest);
+        String sku = skuGenerator.generateUniqueSku(productDTO, category);
+        productDTO.setSku(sku);
+        productDTO.setCategoryId(category.getCategoryId());
+        productDTO.setImageUrls(Collections.emptyList());
 
-    Product product = this.productMapper.toProduct(productDTO);
-    product.setCategory(category);
+        Product product = this.productMapper.toProduct(productDTO);
+        product.setCategory(category);
 
-    Product savedProduct;
-    try {
-        savedProduct = this.productRepository.save(product);
-        this.productRepository.flush(); // ✅ Force constraint check NOW, inside this method
-    } catch (DataIntegrityViolationException e) {
-        // Only SKU can conflict here — product name is not unique-constrained
-        throw new BusinessValidationException(
-            "A product with a similar name already exists. Try providing a custom SKU.");
+        Product savedProduct;
+        try {
+            savedProduct = this.productRepository.save(product);
+            this.productRepository.flush(); 
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessValidationException(
+                    "A product with a similar name already exists. Try providing a custom SKU.");
+        }
+
+    
+        List<String> uploadedPaths = uploadImages(productDTO.getProductName(), imageFiles);
+
+        for (String imagePath : uploadedPaths) {
+            ProductImage pi = ProductImage.builder()
+                    .imageUrl(imagePath)
+                    .product(savedProduct)
+                    .build();
+            savedProduct.getProductImages().add(pi);
+        }
+
+        Product finalProduct = this.productRepository.save(savedProduct);
+        return this.productMapper.toProductDTO(finalProduct);
     }
 
-    // Upload images only after confirmed DB save
-    List<String> uploadedPaths = uploadImages(productDTO.getProductName(), imageFiles);
-
-    for (String imagePath : uploadedPaths) {
-        ProductImage pi = ProductImage.builder()
-                .imageUrl(imagePath)
-                .product(savedProduct)
-                .build();
-        savedProduct.getProductImages().add(pi);
-    }
-
-    Product finalProduct = this.productRepository.save(savedProduct);
-    return this.productMapper.toProductDTO(finalProduct);
-}
     @Override
     @Transactional
     public ProductDTO createProduct(ProductDTO productDTO) {
@@ -296,9 +296,7 @@ public ProductDTO createProductWithImages(
         List<Integer> ids = productPage.getContent().stream().map(Product::getProductId).toList();
         Map<Integer, String> firstImages = getFirstImageUrlPerProduct(ids);
 
-
-
-         productDTOs.forEach(dto -> {
+        productDTOs.forEach(dto -> {
             String url = firstImages.get(dto.getProductId());
             dto.setImageUrls(url != null ? List.of(url) : Collections.emptyList());
         });
@@ -314,25 +312,26 @@ public ProductDTO createProductWithImages(
 
     // helper method
     private List<String> uploadImages(String productName, List<MultipartFile> imageFiles) {
-    List<String> uploadedPaths = new ArrayList<>();
-    try {
-        for (MultipartFile imageFile : imageFiles) {
-            if (imageFile != null && !imageFile.isEmpty()) {
-                String path = this.imageService.uploadImage(productName.trim(), imageFile);
-                uploadedPaths.add(path.trim());
+        List<String> uploadedPaths = new ArrayList<>();
+        try {
+            for (MultipartFile imageFile : imageFiles) {
+                if (imageFile != null && !imageFile.isEmpty()) {
+                    String path = this.imageService.uploadImage(productName.trim(), imageFile);
+                    uploadedPaths.add(path.trim());
+                }
             }
+        } catch (IOException e) {
+            cleanupImages(uploadedPaths); // Rollback disk writes
+            throw new ImageInvalidException("Image upload failed: " + e.getMessage());
         }
-    } catch (IOException e) {
-        cleanupImages(uploadedPaths); // Rollback disk writes
-        throw new ImageInvalidException("Image upload failed: " + e.getMessage());
+
+        if (uploadedPaths.isEmpty()) {
+            throw new ImageInvalidException("At least one valid image is required.");
+        }
+
+        return uploadedPaths;
     }
 
-    if (uploadedPaths.isEmpty()) {
-        throw new ImageInvalidException("At least one valid image is required.");
-    }
-
-    return uploadedPaths;
-}
     private Category resolveCategory(CategoryRequest categoryRequest) {
         if (categoryRequest.getCategoryId() != null) {
             return this.categoryService.findById(categoryRequest.getCategoryId());
