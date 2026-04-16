@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faUser } from '@fortawesome/free-regular-svg-icons';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
-import api from "../Component/axiosInterceptor"
+import api from "../component/axiosInterceptor"
 import baseURL from '../baseURl';
 export default function SignUpPage() {
     const router = useRouter();

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import api from "./axiosInterceptor";
-import { faL } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 
 export default function GetProductImage({ imageUrl }) {

@@ -1,4 +1,4 @@
-import api from "../../Component/axiosInterceptor";
+import api from "../../component/axiosInterceptor";
 import ShippingAddress from './../../order/shippingAddress/page';
 
 export const createOrder = async(orderRequest) => {

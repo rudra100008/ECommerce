@@ -1,4 +1,5 @@
-import api from "../../Component/axiosInterceptor"
+import api from "@/app/Component/axiosInterceptor";
+
 
 
 export const addToCart = async(cartId,cartItem)=>{

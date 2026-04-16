@@ -1,4 +1,4 @@
-import api from "../../Component/axiosInterceptor";
+import api from "../../component/axiosInterceptor";
 
 export const fetchAllOrderItems = async(orderItemIds = [])=>{
     try{

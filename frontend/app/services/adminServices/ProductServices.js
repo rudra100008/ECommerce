@@ -1,4 +1,4 @@
-import api from '../../Component/axiosInterceptor'
+import api from '../../component/axiosInterceptor'
 
 export const fetchProductsWithCategoryId = async (pageNumber = 0, pageSize = 10,categoryId = null) => {
     try {
@@ -62,7 +62,7 @@ export const fetchAllProducts = async(pageNumber = 0,pageSize = 5 , sortBy = "cr
         console.log("Response in fetchAllProducts() from ProductService:", response.data);
         return response.data;
     }catch(err){
-        console.log("Error in ProductService: ", error.response?.data);
+        console.log("Error in ProductService: ", err.response?.data);
         throw err;
     }
 }

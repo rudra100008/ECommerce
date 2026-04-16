@@ -1,218 +1,462 @@
 "use client";
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-} from "react";
+
+import { createContext, useCallback, useContext, useReducer } from "react";
+import { CartProvider } from "./CartContext";
 import { useNavigation } from "./NavigationContext";
 import { useNotification } from "./NotificationContext";
-import {
-  addToCart,
-  fetchProductInCart,
-  deleteCartItemFromCart,
-  updateQuantityOfItem,
-} from "../services/clientServices/CartService";
-import {
-  findProductById,
-  findProductsByIds,
-} from "../services/clientServices/ProductService";
+import { findProductsByIds } from "@/app/services/clientServices/ProductService";
+import { addToCart, fetchProductInCart } from "@/app/services/clientServices/CartService";
 
-const CartContext = createContext();
+const intitalState = {
+  items: [],
+  checkedItems: [],
+  cart: null,
+  loading: false,
+  error: null,
+};
+
+const CART_ACTIONS = {
+  SET_LOADING: "SET_LOADING",
+  SET_CART: "SET_CART",
+  SET_ERROR: "SET_ERROR",
+  UPDATE_ITEM_QUANTITY: "UPDATE_ITEM_QUANTITY",
+  REMOVE_ITEM: "REMOVE_ITEM",
+  TOGGLE_CHECKED: "TOGGLE_CHECKED",
+  CLEAR_CHECKED: "CLEAR_CHECKED",
+  RESET: "RESET",
+};
+
+function cartReducer(state, action) {
+  switch (action.type) {
+    case CART_ACTIONS.SET_LOADING:
+      return { ...state, loading: action.payload, error: null };
+
+    case CART_ACTIONS.SET_CART:
+      return {
+        ...state,
+        cart: action.payload.cart,
+        items: action.payload.items,
+        loading: false,
+      };
+
+    case CART_ACTIONS.SET_ERROR:
+      return { ...state, error: action.payload, loading: false };
+
+    case CART_ACTIONS.UPDATE_ITEM_QUANTITY:
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.cartItemId === action.payload.cartItemId
+            ? { ...item, quantity: action.payload.quantity }
+            : item,
+        ),
+        checkedItems: state.checkedItems.map((item) =>
+          item.cartItemId === action.payload.cartItemId
+            ? { ...item, quantity: action.payload.quantity }
+            : item,
+        ),
+      };
+
+    case CART_ACTIONS.REMOVE_ITEM:
+      return {
+        ...state,
+        items: state.items.filter((i) => i.cartItemId !== action.payload),
+        checkedItems: state.checkedItems.filter(
+          (i) => i.cartItemId !== action.payload,
+        ),
+      };
+
+    case CART_ACTIONS.TOGGLE_CHECKED: {
+      const exists = state.checkedItems.some(
+        (i) => i.cartItemId === action.payload.cartItemId,
+      );
+
+      return {
+        ...state,
+        checkedItems: exists
+          ? state.checkedItems.filter(
+              (i) => i.cartItemId !== action.payload.cartItemId,
+            )
+          : [...state.checkedItems, action.payload],
+      };
+    }
+
+    case CART_ACTIONS.CLEAR_CHECKED: {
+      return { ...state, checkedItems: [] };
+    }
+
+    case CART_ACTIONS.RESET:
+      return intitalState;
+
+    default:
+      return state;
+  }
+}
+
+const CartStateContext = createContext(null);
+const CartActionsContext = createContext(null);
 
 export function CartProvider({ children }) {
   const { userData } = useNavigation();
-  const { success, error: showError, clear } = useNotification();
-  const [cartItems, setCartItems] = useState([]);
-  const [checkedCartItems, setCheckedCartItems] = useState([]);
-  const [cart, setCart] = useState({});
-  const [loading, setLoading] = useState(false);
+  const { success, error: showError } = useNotification();
+  const [state, dispatch] = useReducer(cartReducer, intitalState);
 
   const fetchCartItems = useCallback(async () => {
-    if (!userData?.cartId) {
-      console.log("cartItem becomes empty->26");
-      setCartItems([]);
+    const cartId = userData?.cartId;
+    if (!cartId) {
+      dispatch({ type: CART_ACTIONS.RESET });
       return;
     }
 
+    dispatch({ type: CART_ACTIONS.SET_LOADING, payload: true });
+
     try {
-      setLoading(true);
-      const response = await fetchProductInCart(userData.cartId);
-      console.log("Cart", response.Cart);
-      const { Cart } = response;
-      setCart(Cart);
+      const response = await fetchProductInCart(cartId);
+      const cartData = response?.Cart;
 
-      if (Cart.cartItem && Cart.cartItem.length > 0) {
-        // const productPromises = Cart.cartItem.map(async (cartItem) => {
-        //   try {
-        //     const product = await findProductById(cartItem.productId);
-        //     return {
-        //       ...cartItem,
-        //       product: product,
-        //     };
-        //   } catch (err) {
-        //     console.log(`Error fetching product ${cartItem.productId}:`, err);
-        //     return {
-        //       ...cartItem,
-        //       product: null,
-        //     };
-        //   }
-        // });
-        //  const productWithDetails = await Promise.all(productPromises);
-
-        const productIds = Cart.cartItem.map((item) => item.productId);
-        if (productIds.length === 0) {
-          console.log("ProductIds is empty");
-          setCartItems([]);
-          return;
-        }
-        console.log("ProductIDs: ", productIds);
-        const products = await findProductsByIds(productIds);
-
-        const productWithDetails = Cart.cartItem.map((cartItem) => {
-          const product = products?.find(
-            (p) => p.productId === cartItem.productId
-          );
-          return {
-            ...cartItem,
-            product: product || null,
-          };
+      if (!cartData?.cartItem?.length) {
+        dispatch({
+          type: CART_ACTIONS.SET_CART,
+          payload: { items: [], cart: cartData },
         });
-        setCartItems(productWithDetails);
-      } else {
-        setCartItems([]);
+        return;
       }
+
+      const productIds = cartData.cartItem.map((item) => item.productId);
+      const products = await findProductsByIds(productIds);
+
+      const productMap = new Map(products.map((p) => [p.productId, p]));
+
+      const enrichedItems = cartData.cartItem.map((cartItem) => ({
+        ...cartItem,
+        product: productMap.get(cartItem.productId) ?? null,
+      }));
+
+      dispatch({
+        type: CART_ACTIONS.SET_CART,
+        payload: { items: enrichedItems, cart: cartData },
+      });
     } catch (err) {
-      console.log("Error in CartItem:", err);
-      console.log("Error message:", err.message);
-      console.log("Error stack:", err.stack);
-      showError("Failed to load cart items");
-      setCartItems([]);
-    } finally {
-      setLoading(false);
+      const message =
+        err?.response?.data?.message ?? "Failed to load cart items";
+      dispatch({ type: CART_ACTIONS.SET_ERROR, payload: message });
+      showError(message);
     }
-  }, [userData?.cartId, showError]);
+  },[userData?.cartId, showError]);
+
 
   const addItemToCart = useCallback(
     async (product) => {
-      if (!userData?.cartId) {
-        throw new Error("User cart not available");
-      }
-
+      if (!userData?.cartId) throw new Error("Cart not available");
+ 
       const cartItem = {
         quantity: 1,
         productId: product.productId,
         cartId: userData.cartId,
       };
-
+ 
       try {
         const data = await addToCart(userData.cartId, cartItem);
-        await fetchCartItems();
         success(data.message);
-        setTimeout(() => {
-          clear();
-        }, 4000);
-        return true;
+
+        await fetchCartItems();
       } catch (err) {
-        console.log("Error adding to cart:", err.response?.data);
-        throw err;
+        const message = err?.response?.data?.message ?? "Failed to add item";
+        showError(message);
+        throw err; 
       }
     },
-    [userData?.cartId, fetchCartItems]
+    [userData?.cartId, fetchCartItems, success, showError]
   );
+
 
   const removeItemFromCart = useCallback(
-    async (cartItemId) => {
+    async (cartItemId) =>{
+      dispatch({type:CART_ACTIONS.REMOVE_ITEM, payload: cartItemId});
+
+      try{
+         await deleteCartItemFromCart(cartItemId);
+      }catch(err){
+          await fetchCartItems();
+        showError("Failed to remove item. Please try again.");
+        throw err;
+      }
+
+    },[fetchCartItems, showError] )
+
+
+     const updateItemQuantity = useCallback(
+    async (cartItemId, quantity) => {
+      const safeQuantity = Math.max(1, quantity);
+ 
+      // Save previous for rollback
+      const previous = state.items.find((i) => i.cartItemId === cartItemId);
+ 
+      // Optimistic update
+      dispatch({
+        type: CART_ACTIONS.UPDATE_ITEM_QUANTITY,
+        payload: { cartItemId, quantity: safeQuantity },
+      });
+ 
       try {
-        await deleteCartItemFromCart(cartItemId);
-        await fetchCartItems();
+        await updateQuantityOfItem(cartItemId, safeQuantity);
       } catch (err) {
-        console.log("Error removing cart item:", err.response?.data);
+        // Rollback to previous quantity
+        if (previous) {
+          dispatch({
+            type: CART_ACTIONS.UPDATE_ITEM_QUANTITY,
+            payload: { cartItemId, quantity: previous.quantity },
+          });
+        }
+        const message = err?.response?.data?.message ?? "Failed to update quantity";
+        showError(message);
         throw err;
       }
     },
-    [fetchCartItems]
+    [state.items, showError]
   );
+ 
+  const toggleCheckedItem = useCallback((cartItem) => {
+    dispatch({ type: CART_ACTIONS.TOGGLE_CHECKED, payload: cartItem });
+  }, []);
+ 
+  const clearCheckedItems = useCallback(() => {
+    dispatch({ type: CART_ACTIONS.CLEAR_CHECKED });
+  }, []);
 
-  const updateItemQuantity = async (cartItemId, quantity) => {
-    if (quantity < 1) {
-      quantity = 1;
-    }
-    try {
-      const data = await updateQuantityOfItem(cartItemId, quantity);
-      console.log("CartItems: ", cartItems);
-      setCartItems((prev) =>
-        prev.map((item) =>
-          item.cartItemId === data.cartItemId
-            ? { ...item, quantity: data.quantity }
-            : item
-        )
-      );
-    } catch (err) {
-      console.log("Error updating quantity:", err.response?.data);
-      throw err;
-    }
-  };
 
-  useEffect(() => {
-    if (userData?.cartId) {
-      fetchCartItems();
-    } else {
-      setCartItems([]);
-    }
-  }, [userData?.cartId]);
 
-  const handleCheckBox = (cartItem) => {
-    setCheckedCartItems((prev) => {
-      const exists = prev.some(
-        (item) => item.cartItemId === cartItem.cartItemId
-      );
-      if (exists) {
-        return prev.filter((item) => item.cartItemId !== cartItem.cartItemId);
-      } else {
-        return [...prev, cartItem];
-      }
-    });
-  };
-  const clearCheckedCart = () => {
-    setCheckedCartItems([]);
-  };
+   useEffect(() => {
+    fetchCartItems();
+  }, [fetchCartItems]);
+ 
 
-  const value = useMemo(
+  // don't re-render on action changes
+  const stateValue = useMemo(
     () => ({
-      cartItems,
-      checkedCartItems,
-      setCheckedCartItems,
-      cart,
-      loading,
-      fetchCartItems,
-      addItemToCart,
-      removeItemFromCart,
-      updateItemQuantity,
-      handleCheckBox,
-      clearCheckedCart,
-      cartItemCount: cartItems?.length,
+      cartItems: state.items,
+      checkedCartItems: state.checkedItems,
+      cart: state.cart,
+      loading: state.loading,
+      error: state.error,
+      cartItemCount: state.items.length,
+      checkedCount: state.checkedItems.length,
     }),
-    [
-      cartItems,
-      cart,
-      loading,
-      fetchCartItems,
-      addItemToCart,
-      removeItemFromCart,
-      updateItemQuantity,
-    ]
+    [state]
   );
 
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+
+// never changes reference
+  const actionsValue = useMemo(
+    () => ({
+      fetchCartItems,
+      addItemToCart,
+      removeItemFromCart,
+      updateItemQuantity,
+      toggleCheckedItem,
+      clearCheckedItems,
+    }),
+    [fetchCartItems, addItemToCart, removeItemFromCart, updateItemQuantity, toggleCheckedItem, clearCheckedItems]
+  );
+ 
+  return (
+    <CartStateContext.Provider value={stateValue}>
+      <CartActionsContext.Provider value={actionsValue}>
+        {children}
+      </CartActionsContext.Provider>
+    </CartStateContext.Provider>
+  );
 }
 
-export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart must be used within CartProvider");
-  }
-  return context;
-};
+
+export function useCartState() {
+  const ctx = useContext(CartStateContext);
+  if (!ctx) throw new Error("useCartState must be used within <CartProvider>");
+  return ctx;
+}
+ 
+export function useCartActions() {
+  const ctx = useContext(CartActionsContext);
+  if (!ctx) throw new Error("useCartActions must be used within <CartProvider>");
+  return ctx;
+}
+ 
+// ─── Legacy compatibility hook (keeps existing components working) ─────────────
+export function useCart() {
+  return { ...useCartState(), ...useCartActions() };
+}
+
+// export function CartProvider({ children }) {
+//   const { userData } = useNavigation();
+//   const { success, error: showError, clear } = useNotification();
+
+//   const fetchCartItems = useCallback(async () => {
+//     if (!userData?.cartId) {
+//       console.log("cartItem becomes empty->26");
+//       setCartItems([]);
+//       return;
+//     }
+
+//     try {
+//       setLoading(true);
+//       const response = await fetchProductInCart(userData.cartId);
+//       console.log("Cart", response.Cart);
+//       const { Cart } = response;
+//       setCart(Cart);
+
+//       if (Cart.cartItem && Cart.cartItem.length > 0) {
+
+//         const productIds = Cart.cartItem.map((item) => item.productId);
+//         if (productIds.length === 0) {
+//           console.log("ProductIds is empty");
+//           setCartItems([]);
+//           return;
+//         }
+//         console.log("ProductIDs: ", productIds);
+//         const products = await findProductsByIds(productIds);
+
+//         const productWithDetails = Cart.cartItem.map((cartItem) => {
+//           const product = products?.find(
+//             (p) => p.productId === cartItem.productId
+//           );
+//           return {
+//             ...cartItem,
+//             product: product || null,
+//           };
+//         });
+//         setCartItems(productWithDetails);
+//       } else {
+//         setCartItems([]);
+//       }
+//     } catch (err) {
+//       console.log("Error in CartItem:", err);
+//       console.log("Error message:", err.message);
+//       console.log("Error stack:", err.stack);
+//       showError("Failed to load cart items");
+//       setCartItems([]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [userData?.cartId, showError]);
+
+//   const addItemToCart = useCallback(
+//     async (product) => {
+//       if (!userData?.cartId) {
+//         throw new Error("User cart not available");
+//       }
+
+//       const cartItem = {
+//         quantity: 1,
+//         productId: product.productId,
+//         cartId: userData.cartId,
+//       };
+
+//       try {
+//         const data = await addToCart(userData.cartId, cartItem);
+//         await fetchCartItems();
+//         success(data.message);
+//         setTimeout(() => {
+//           clear();
+//         }, 4000);
+//         return true;
+//       } catch (err) {
+//         console.log("Error adding to cart:", err.response?.data);
+//         throw err;
+//       }
+//     },
+//     [userData?.cartId, fetchCartItems]
+//   );
+
+//   const removeItemFromCart = useCallback(
+//     async (cartItemId) => {
+//       try {
+//         await deleteCartItemFromCart(cartItemId);
+//         await fetchCartItems();
+//       } catch (err) {
+//         console.log("Error removing cart item:", err.response?.data);
+//         throw err;
+//       }
+//     },
+//     [fetchCartItems]
+//   );
+
+//   const updateItemQuantity = async (cartItemId, quantity) => {
+//     if (quantity < 1) {
+//       quantity = 1;
+//     }
+//     try {
+//       const data = await updateQuantityOfItem(cartItemId, quantity);
+//       console.log("CartItems: ", cartItems);
+//       setCartItems((prev) =>
+//         prev.map((item) =>
+//           item.cartItemId === data.cartItemId
+//             ? { ...item, quantity: data.quantity }
+//             : item
+//         )
+//       );
+//     } catch (err) {
+//       console.log("Error updating quantity:", err.response?.data);
+//       throw err;
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (userData?.cartId) {
+//       fetchCartItems();
+//     } else {
+//       setCartItems([]);
+//     }
+//   }, [userData?.cartId]);
+
+//   const handleCheckBox = (cartItem) => {
+//     setCheckedCartItems((prev) => {
+//       const exists = prev.some(
+//         (item) => item.cartItemId === cartItem.cartItemId
+//       );
+//       if (exists) {
+//         return prev.filter((item) => item.cartItemId !== cartItem.cartItemId);
+//       } else {
+//         return [...prev, cartItem];
+//       }
+//     });
+//   };
+//   const clearCheckedCart = () => {
+//     setCheckedCartItems([]);
+//   };
+
+//   const value = useMemo(
+//     () => ({
+//       cartItems,
+//       checkedCartItems,
+//       setCheckedCartItems,
+//       cart,
+//       loading,
+//       fetchCartItems,
+//       addItemToCart,
+//       removeItemFromCart,
+//       updateItemQuantity,
+//       handleCheckBox,
+//       clearCheckedCart,
+//       cartItemCount: cartItems?.length,
+//     }),
+//     [
+//       cartItems,
+//       cart,
+//       loading,
+//       fetchCartItems,
+//       addItemToCart,
+//       removeItemFromCart,
+//       updateItemQuantity,
+//     ]
+//   );
+
+//   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+// }
+
+// export const useCart = () => {
+//   const context = useContext(CartContext);
+//   if (!context) {
+//     throw new Error("useCart must be used within CartProvider");
+//   }
+//   return context;
+// };

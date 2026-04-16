@@ -19,7 +19,7 @@ export function NavigationProvider({ children }) {
         profileImageUrl: '',
         roles: []
     })
-    const loadCurrentUser =useCallback( async () => {
+    const loadCurrentUser = useCallback( async () => {
         setUserLoading(true);
         try {
             const data = await fetchCurrentUser(success,error,router);
@@ -32,6 +32,8 @@ export function NavigationProvider({ children }) {
         };
 
     },[success,error,router])
+
+    
     const loadCurrentAdmin = async () =>{
         try{
             const data = await fetchCurrentAdmin(error);

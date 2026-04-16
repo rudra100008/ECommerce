@@ -6,13 +6,14 @@ import { RouteGuard } from "../Component/RouteGuard";
 import { useNavigation } from "../Context/NavigationContext";
 import style from "../CSS/mainContent.module.css";
 import OrderSummary from './../Component/OrderSummary';
+import { ROLES } from "../constant/role";
 export default function CartItems() {
   const {userData} = useNavigation();
   useEffect(()=>{
     console.log("UserData: ",userData)
   },[])
   return (
-    <RouteGuard requiredRole="ROLE_CUSTOMER">
+    <RouteGuard requiredRole={ROLES.CUSTOMER}>
       <div className={style.pageWrapper}>
         <Navbar />
         <div className={style.pageContainer}>

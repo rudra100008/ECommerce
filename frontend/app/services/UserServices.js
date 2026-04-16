@@ -1,5 +1,5 @@
 "use client";
-import api from "../Component/axiosInterceptor";
+import api from "../component/axiosInterceptor";
 import { useNotification } from "../Context/NotificationContext";
 import { logout } from "./LoginServices";
 

@@ -33,16 +33,14 @@ api.interceptors.response.use(
         //         window.location.href = "/login", 3000);
         // }
          if(error.response && error.response.status === 403){
-            const { message , redirectUrl} = err.response?.data;
+            const { message , redirectUrl} = error.response?.data;
             if(notify) notify(message);
             setTimeout(()=>
             window.location.href = redirectUrl , 3000);
 
         }else 
         if (error.code === 'ERR_NETWORK') {
-            const message = "Server is down or unreachable";
-            if (notify) notify(message);
-            setTimeout(() => window.location.href.repeat, 3000)
+            if (notify) notify("Server is down or unreachable");
         }
         return Promise.reject(error);
     }

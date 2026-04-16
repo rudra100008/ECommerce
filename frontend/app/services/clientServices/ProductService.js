@@ -1,4 +1,5 @@
-import api from "../../Component/axiosInterceptor";
+import api from "@/app/Component/axiosInterceptor";
+
 
 export const fetchRandomProduct = async ({ pageNumber = 0, pageSize = 9 }) => {
   try {

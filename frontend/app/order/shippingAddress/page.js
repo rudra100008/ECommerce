@@ -5,7 +5,7 @@ import { useAddressData } from "../../hooks/useAddressData";
 import { cancelOrder, saveShippingAddress } from "../../services/clientServices/OrderService";
 import { useRouter } from "next/navigation";
 import { useNavigation } from "@/app/Context/NavigationContext";
-import { RouteGuard } from "@/app/Component/RouteGuard";
+import { RouteGuard } from "@/app/component/RouteGuard";
 
 export default function ShippingAddress() {
   const [isMunicipalitySelected, setIsMunicipalitySelected] = useState(true);

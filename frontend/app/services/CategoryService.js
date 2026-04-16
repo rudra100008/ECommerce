@@ -1,4 +1,4 @@
-import api from '../Component/axiosInterceptor'
+import api from '../component/axiosInterceptor'
 
 export const fetchAllCategories = async (pageNumber = 0,pageSize = 5) => {
     try{

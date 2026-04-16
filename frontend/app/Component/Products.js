@@ -1,16 +1,14 @@
 'use client'
 import style from '../CSS/userSide/products.module.css'
 import Link from 'next/link'
-import { fetchAllCategories, fetchCategoryById } from '../services/CategoryService'
+import { fetchAllCategories } from '../services/CategoryService'
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons'
 import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons'
-import { addToCart } from '../services/clientServices/CartService'
 import { useNavigation } from "../Context/NavigationContext";
 import { useNotification } from '../Context/NotificationContext'
 import { useCart } from '../Context/CartContext'
-import { productDetailsInInventory } from '../services/clientServices/InventoryService'
 export default function Products({ products, setProducts }) {
     const { success, error, clear } = useNotification();
     const { userData } = useNavigation();

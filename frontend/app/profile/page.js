@@ -28,7 +28,7 @@ import {
 } from "../services/UserServices";
 import { useNotification } from "../Context/NotificationContext";
 import { logout } from "../services/LoginServices";
-import { RouteGuard } from "./../Component/RouteGuard";
+import { RouteGuard } from "./../component/RouteGuard";
 export default function Profile() {
   const { loadCurrentUser, userData, setUserData, userLoading } =
     useNavigation();
@@ -96,8 +96,8 @@ export default function Profile() {
       setFullName("");
 
       setIsEditImageButton(false);
-    } catch (errr) {
-      console.log("error in Profile page: ", e.response.data);
+    } catch (err) {
+      console.log("error in Profile page: ", err.response?.data);
     }
   };
   const handleCancelEdit = () => {

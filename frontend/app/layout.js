@@ -5,11 +5,11 @@ config.autoAddCss = false;
 
 import { ReactNode } from "react";
 import { NotificationProvider } from "./Context/NotificationContext";
-import AppInitializer from "./Component/AppInitializer";
+import AppInitializer from "./component/AppInitializer";
 import NotificationBar from "./NotificationBar";
 import { NavigationProvider } from "./Context/NavigationContext";
 import { CartProvider } from "./Context/CartContext";
-import { OrderFlowGuard } from "./Component/OrderFlowGuard";
+import { OrderFlowGuard } from "./component/OrderFlowGuard";
 import { OrderProvider } from './Context/OrderContext';
 interface RootLayoutProps {
   children: ReactNode;

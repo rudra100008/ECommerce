@@ -7,6 +7,7 @@ import Dashboard from "../AdminComponent/Dashboard";
 import Product from "../AdminComponent/Product";
 import Profile from "../AdminComponent/Profile";
 import { RouteGuard } from "../Component/RouteGuard";
+import { ROLES } from "../constant/role";
 
 export default function AdminPage() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(true);
@@ -32,7 +33,7 @@ export default function AdminPage() {
   }, []);
 
   return (
-    <RouteGuard requiredRole="ROLE_ADMIN">
+    <RouteGuard requiredRole={ROLES.ADMIN}>
       <div className={style.adminLayout}>
         <AdminSideNavbar
           isSideBarOpen={isSideBarOpen}

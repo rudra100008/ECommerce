@@ -5,6 +5,7 @@ import ProductForm from "../../AdminComponent/AddProductForm/ProductForm";
 import ProductImage from "../../AdminComponent/AddProductForm/ProductImage";
 import { addCategory } from "../../services/adminServices/ProductCategoryServices";
 import { RouteGuard } from "../../Component/RouteGuard";
+import { ROLES } from "../../constant/role";
 
 export default function AddProductPage() {
   const [currentState, setCurrentState] = useState("category");
@@ -53,7 +54,7 @@ export default function AddProductPage() {
     );
   } else if (currentState === "productImage") {
     return (
-      <RouteGuard requiredRole="ROLE_ADMIN">
+      <RouteGuard requiredRole={ROLES.ADMIN}>
         <div>
           <ProductImage
             setState={setCurrentState}

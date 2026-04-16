@@ -1,9 +1,9 @@
 "use client";
 import { useEffect } from "react";
-import Navbar from "./Component/Navbar";
+import Navbar from "./component/Navbar";
 import style from "./CSS/mainContent.module.css";
 import { useRouter } from "next/navigation";
-import { RouteGuard } from "./Component/RouteGuard";
+import { RouteGuard } from "./component/RouteGuard";
 export default function Home() {
   const router = useRouter();
   return (

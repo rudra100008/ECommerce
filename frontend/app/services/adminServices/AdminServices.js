@@ -1,4 +1,4 @@
-import api from "../../Component/axiosInterceptor";
+import api from "../../component/axiosInterceptor";
 import { logout } from "../LoginServices";
 
 export const fetchCurrentAdmin = async (error) =>{
