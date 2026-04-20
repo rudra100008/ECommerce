@@ -26,22 +26,20 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        // if (error.response && error.response.status === 401) {
-        //     const message = error.response.data?.message;
-        //     if (notify) notify(message);
-        //     setTimeout(() =>
-        //         window.location.href = "/login", 3000);
-        // }
-         if(error.response && error.response.status === 403){
+        // Handle forbidden access (403) - needs server-side redirect
+        if(error.response && error.response.status === 403){
             const { message , redirectUrl} = error.response?.data;
             if(notify) notify(message);
-            setTimeout(()=>
-            window.location.href = redirectUrl , 3000);
-
-        }else 
-        if (error.code === 'ERR_NETWORK') {
+            setTimeout(()=> {
+                window.location.href = redirectUrl;
+            }, 1000);
+        }
+        // Handle network errors
+        else if (error.code === 'ERR_NETWORK') {
             if (notify) notify("Server is down or unreachable");
         }
+        // 401 will be handled in NavigationContext, not here
+        // This prevents double-handling and infinite redirect loops
         return Promise.reject(error);
     }
 

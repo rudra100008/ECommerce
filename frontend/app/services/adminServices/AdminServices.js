@@ -1,5 +1,4 @@
 import api from "../../component/axiosInterceptor";
-import { logout } from "../LoginServices";
 
 export const fetchCurrentAdmin = async (error) =>{
     try{
@@ -11,9 +10,6 @@ export const fetchCurrentAdmin = async (error) =>{
          const { message, redirectUrl } = err.response?.data;
     if (err.response.data && err.response.status === 401) {
       error(message);
-      setTimeout(() => {
-        logout();
-      }, 3000)
     }
     else if (err.response.data && err.response.status === 403) {
       error(message)

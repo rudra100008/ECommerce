@@ -5,13 +5,12 @@ import { faBarsStaggered, faBell, faMagnifyingGlass } from '@fortawesome/free-so
 import {useNavigation} from '../Context/NavigationContext';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { logout } from './../services/LoginServices';
 import { useRouter } from 'next/navigation';
 import { useNotification } from '../Context/NotificationContext';
 
 export default function AdminNavbar({showSideBar,isSideBarOpen}) {
     const router = useRouter();
-    const {adminData, loadCurrentAdmin,loadCurrentUser} = useNavigation();
+    const {adminData, loadCurrentAdmin,loadCurrentUser,logout} = useNavigation();
     const {success} = useNotification();
     const profileClickRef = useRef();
     const [showProfileMenu,setShowProfileMenu] = useState(false);
@@ -79,7 +78,7 @@ export default function AdminNavbar({showSideBar,isSideBarOpen}) {
                         <div ref={profileClickRef} style={{position: 'relative'}}>
                             <div onClick={handleProfileClick} className={style.adminProfileContainer}>
                                 {
-                                    adminData.profileImageUrl ? (
+                                    adminData?.profileImageUrl ? (
                                         <div className={style.adminProfileSection}>
                                             <img
                                             src={getUrl(adminData.profileImageUrl)}

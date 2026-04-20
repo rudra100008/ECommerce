@@ -3,24 +3,25 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth";
 import { useEffect } from "react";
 import { useNavigation } from "../Context/NavigationContext";
+import LoadingSpinner from './LoadingSpinner';
 
 export const RouteGuard = ({ children, requiredRole }) => {
   const router = useRouter();
-  const {userData, userLoading} = useNavigation();
+  const {userData, userLoading, isRedirecting} = useNavigation();
 
   useEffect(() => {
-    if (userLoading) return;
+    // Don't check if we're already redirecting (prevents duplicate redirects)
+    if (userLoading || isRedirecting) return;
 
     if (!userData?.userId) {
       router.push("/login");
       return;
     }
 
-
     if(requiredRole && !userData.roles?.includes(requiredRole) ){
-      router.push(userData?.roles?.include("ROLE_ADMIN") ? "/admin" :"/");
+      router.push(userData?.roles?.includes("ROLE_ADMIN") ? "/admin" :"/");
     }
-  }, [userData,userLoading,requiredRole]);
+  }, [userData, userLoading, isRedirecting, requiredRole, router]);
 
 
   if(userLoading) return <LoadingSpinner />

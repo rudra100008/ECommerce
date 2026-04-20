@@ -27,13 +27,13 @@ import {
   updateUserImageAndFullName,
 } from "../services/UserServices";
 import { useNotification } from "../Context/NotificationContext";
-import { logout } from "../services/LoginServices";
 import { RouteGuard } from "./../component/RouteGuard";
 export default function Profile() {
   const { loadCurrentUser, userData, setUserData, userLoading } =
     useNavigation();
   const router = useRouter();
   const { success, error, clear } = useNotification();
+  const { logout } = useNavigation();
   const [isEditImageButton, setIsEditImageButton] = useState(false);
   const fileInputRef = useRef();
   const [fullName, setFullName] = useState("");

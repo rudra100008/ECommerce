@@ -7,7 +7,6 @@ import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faClipboard, faHeart } from "@fortawesome/free-regular-svg-icons";
 import { useNavigation } from "../Context/NavigationContext";
 import Link from "next/link";
-import { logout } from "../services/LoginServices";
 import { useEffect, useRef, useState } from "react";
 import { useNotification } from "../Context/NotificationContext";
 import Image from "next/image";
@@ -17,8 +16,7 @@ export default function Navbar() {
   const userBoxRef = useRef();
   const userImageRef = useRef();
   const [showUserBox, setShowUserBox] = useState(false);
-  const { userData, setUserData, loadCurrentUser, userLoading } =
-    useNavigation();
+  const { userData, setUserData, logout } = useNavigation();
   const pathName = usePathname();
   const router = useRouter();
 
@@ -74,9 +72,6 @@ export default function Navbar() {
     };
   }, [showUserBox]);
 
-  useEffect(() => {
-    loadCurrentUser();
-  }, []);
 
   const activeNavItem = getActiveItem();
 

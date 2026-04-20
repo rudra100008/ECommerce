@@ -1,7 +1,5 @@
 "use client";
 import api from "../component/axiosInterceptor";
-import { useNotification } from "../Context/NotificationContext";
-import { logout } from "./LoginServices";
 
 export const fetchCurrentUser = async (success, error, router) => {
   try {
@@ -16,22 +14,18 @@ export const fetchCurrentUser = async (success, error, router) => {
       throw err;
     }
     const { message, redirectUrl } = err.response?.data;
+    // 401 is handled in NavigationContext, not here (prevents double-handling)
     if (err.response.status === 401) {
-      console.log("Error in UserService: ", err.reponse?.data);
-      error(message);
-      setTimeout(() => {
-        logout(router, success);
-      }, 3000);
+      // Just throw, NavigationContext will handle it
+      throw err;
     } else if (err.response.status === 403) {
-      console.log("Error in UserService: ", err.reponse?.data);
+      console.log("Error in UserService: ", err.response?.data);
       error(message);
-      setTimeout(() => {
-        window.location.href = redirectUrl;
-      }, 3000);
+      throw err;
     } else {
-      error("Unexcepted error occured.");
+      error("Unexpected error occurred.");
+      throw err;
     }
-    throw err;
   }
 };
 
