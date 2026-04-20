@@ -75,13 +75,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
         List<Reservation> findExpiredActiveReservations(@Param("now") LocalDateTime now);
 
         @Modifying(flushAutomatically = true,clearAutomatically = true)
-        @Query("""
+        @Query(value = """
                             INSERT INTO reservations (user_id, inventory_id, reserved_quantity, reserved_at, expires_at, status)
                             VALUES (:userId, :inventoryId, :quantity, :now, :expires, 'ACTIVE')
                             ON CONFLICT (user_id, inventory_id, status) DO UPDATE
                             SET reserved_quantity = reservations.reserved_quantity + :quantity,
                                 expires_at = :expires
-                        """)
+                        """,nativeQuery = true)
         void upsertReservation(@Param("userId") Integer userId, @Param("inventoryId") Integer inventoryId,
                         @Param("quantity") int quantity, @Param("now") LocalDateTime now,
                         @Param("expires") LocalDateTime expires);

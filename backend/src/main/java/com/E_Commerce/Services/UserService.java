@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface UserService {
+
+    UserResponseDTO fetchCurrentUser();
     UserResponseDTO saveUser(UserRequestDTO requestDTO,Set<Role> roles);
     UserResponseDTO fetchById(Integer userId);
     User fetchUserEntityById(Integer userId);

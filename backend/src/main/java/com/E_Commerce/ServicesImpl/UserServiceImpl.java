@@ -79,6 +79,13 @@ public class UserServiceImpl implements UserService {
     // }
 
     @Override
+    @Transactional(readOnly = true)
+    public UserResponseDTO fetchCurrentUser() {
+        User user = this.authUtils.resolveCurrentUser();
+        return userMapper.toUserResponseDTO(user);
+    }
+
+    @Override
     @Transactional
     public UserResponseDTO saveUser(UserRequestDTO requestDTO, Set<Role> roles) {
         User user = this.userMapper.toUser(requestDTO);

@@ -2,12 +2,8 @@ package com.E_Commerce.Controller;
 
 import com.E_Commerce.DTO.UserDTO.UserResponseDTO;
 import com.E_Commerce.Entity.User;
-import com.E_Commerce.Mapper.UserMapper;
-import com.E_Commerce.Services.CartService;
 import com.E_Commerce.Services.ImageService;
 import com.E_Commerce.Services.UserService;
-import com.E_Commerce.Utils.AuthUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,16 +21,14 @@ import java.util.*;
 public class UserController {
     private final UserService userService;
     private final ImageService imageService;
-    private final AuthUtils authUtils;
-    private final UserMapper userMapper;
 
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
 
-        User user = this.authUtils.resolveCurrentUser();
+        UserResponseDTO userResponseDTO = this.userService.fetchCurrentUser();
 
-        return ResponseEntity.ok(userMapper.toUserResponseDTO(user));
+        return ResponseEntity.ok(userResponseDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

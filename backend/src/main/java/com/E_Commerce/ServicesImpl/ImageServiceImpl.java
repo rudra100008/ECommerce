@@ -39,6 +39,7 @@ public class ImageServiceImpl implements ImageService {
         String uniqueName = UUID.randomUUID().toString() + "_" + originalFileName;
         Path basicPath = Path.of(basicDir);
         Path imageFilePath = basicPath.resolve(imageDir);
+        Files.createDirectories(imageFilePath);
         Path  completePath = imageFilePath.resolve(uniqueName);
 
         Path normalizePath = completePath.normalize();

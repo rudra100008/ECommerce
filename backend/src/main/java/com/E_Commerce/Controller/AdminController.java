@@ -31,14 +31,13 @@ public class AdminController {
     private final ImageService imageService;
     private final CategoryService categoryService;
     private final ProductImageService productImageService;
-    private AuthUtils authUtils;
-    private UserMapper userMapper;
+    private final UserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<?> currentAdmin(){
 
-        User user = this.authUtils.resolveCurrentUser();
-        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toUserResponseDTO(user));
+        UserResponseDTO responseDTO = this.userService.fetchCurrentUser();
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
 
