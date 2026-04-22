@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { fetchCurrentUser } from "../services/UserServices";
 import { useNotification } from "./NotificationContext";
 import { fetchCurrentAdmin } from './../services/adminServices/AdminServices';
@@ -8,8 +8,7 @@ import api from "../component/axiosInterceptor";
 
 const NavigationContext = createContext();
 
-// Define public routes that don't need authentication
-const PUBLIC_ROUTES = ['/login', '/signup', '/register', '/forgot-password'];
+const PUBLIC_ROUTES = ['/login', '/signup', '/forgot-password'];
 
 export function NavigationProvider({ children }) {
     const router = useRouter();
@@ -26,6 +25,9 @@ export function NavigationProvider({ children }) {
         userId: null,
         cartId: null
     });
+    const lastPathnameRef = useRef(pathname);
+    const hasLoadedAdminRef = useRef(false);
+    const hasLoadedUserRef = useRef(false);
 
     const loadCurrentUser = useCallback(async () => {
         // Prevent multiple simultaneous auth checks
@@ -39,7 +41,9 @@ export function NavigationProvider({ children }) {
                 if (data.userId) {
                     localStorage.setItem("userId", data.userId);
                 }
+                hasLoadedUserRef.current = true;
             }
+
         } catch (err) {
             console.error('Error loading user:', err);
             
@@ -55,7 +59,8 @@ export function NavigationProvider({ children }) {
                     cartId: null
                 });
                 localStorage.removeItem('userId');
-                // Use Next.js client-side navigation instead of hard reload
+
+                error("UnAuthorized Access")
                 setTimeout(() => {
                     router.push('/login');
                 }, 500);
@@ -76,32 +81,70 @@ export function NavigationProvider({ children }) {
     }, [success, error, router, isRedirecting]);
 
     const loadCurrentAdmin = useCallback(async () => {
+
+         if (!userData?.roles?.includes('ROLE_ADMIN')) {
+            setAdminData(null);
+            return;
+        }
+        
+    
+        if (hasLoadedAdminRef.current) {
+            return;
+        }
+
         try {
             const data = await fetchCurrentAdmin(error);
             setAdminData(data);
+            hasLoadedAdminRef.current = true
         } catch (err) {
             console.log("Error loading admin:", err?.response?.data || err);
             setAdminData(null);
         }
-    }, [error]);
+    }, [error,userData?.roles]);
 
-    // Check if current route is public
+
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
 
-    // Reload user auth state on every protected route visit (handles JWT expiration)
+
+    useEffect(()=>{
+        const wasPublicRoute = PUBLIC_ROUTES.includes(lastPathnameRef.current);
+        const isNowPublicRoute = PUBLIC_ROUTES.includes(pathname);
+        if(wasPublicRoute && !isNowPublicRoute){
+            hasLoadedUserRef.current = false;
+            hasLoadedAdminRef.current = false;
+        }
+
+        lastPathnameRef.current = pathname;
+    })
+
+
     useEffect(() => {
-        // Skip loading user on public routes
         if (isPublicRoute) {
             setUserLoading(false);
             return;
         }
         
-        loadCurrentUser();
+        if(!hasLoadedUserRef.current){
+            loadCurrentUser();
+        }else{
+            setUserLoading(false);
+        }
     }, [pathname, isPublicRoute, loadCurrentUser]);
+
+
+     useEffect(() => {
+        if (userData?.roles?.includes('ROLE_ADMIN') && 
+            !isPublicRoute && 
+            !hasLoadedAdminRef.current && 
+            !userLoading) {
+            loadCurrentAdmin();
+        }
+    }, [userData?.roles, loadCurrentAdmin, isPublicRoute, userLoading]);
+
     
     const logout = useCallback(async  () => {
         try{
-            await api.get(`/api/auth/logout`);
+            await api.post(`/api/auth/logout`);
             success('Logged out successfully.');
             setUserData({username :'', email: '', profileImageUrl:'', roles:[],userId: null, cartId:  null});
             localStorage.removeItem('userId');

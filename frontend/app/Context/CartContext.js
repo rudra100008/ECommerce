@@ -3,8 +3,20 @@
 import { useNavigation } from "./NavigationContext";
 import { useNotification } from "./NotificationContext";
 import { findProductsByIds } from "@/app/services/clientServices/ProductService";
-import { addToCart, fetchProductInCart } from "@/app/services/clientServices/CartService";
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
+import {
+  addToCart,
+  fetchProductInCart,
+  deleteCartItemFromCart,
+  updateQuantityOfItem,
+} from "@/app/services/clientServices/CartService";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
 
 const intitalState = {
   items: [],
@@ -96,7 +108,6 @@ const CartStateContext = createContext(null);
 const CartActionsContext = createContext(null);
 
 export function CartProvider({ children }) {
-
   const { userData } = useNavigation();
   const { success, error: showError } = useNotification();
   const [state, dispatch] = useReducer(cartReducer, intitalState);
@@ -142,19 +153,18 @@ export function CartProvider({ children }) {
       dispatch({ type: CART_ACTIONS.SET_ERROR, payload: message });
       showError(message);
     }
-  },[userData?.cartId, showError]);
-
+  }, [userData?.cartId, showError]);
 
   const addItemToCart = useCallback(
     async (product) => {
       if (!userData?.cartId) throw new Error("Cart not available");
- 
+
       const cartItem = {
         quantity: 1,
         productId: product.productId,
         cartId: userData.cartId,
       };
- 
+
       try {
         const data = await addToCart(userData.cartId, cartItem);
         success(data.message);
@@ -163,41 +173,40 @@ export function CartProvider({ children }) {
       } catch (err) {
         const message = err?.response?.data?.message ?? "Failed to add item";
         showError(message);
-        throw err; 
+        throw err;
       }
     },
-    [userData?.cartId, fetchCartItems, success, showError]
+    [userData?.cartId, fetchCartItems, success, showError],
   );
 
-
   const removeItemFromCart = useCallback(
-    async (cartItemId) =>{
-      dispatch({type:CART_ACTIONS.REMOVE_ITEM, payload: cartItemId});
+    async (cartItemId) => {
+      dispatch({ type: CART_ACTIONS.REMOVE_ITEM, payload: cartItemId });
 
-      try{
-         await deleteCartItemFromCart(cartItemId);
-      }catch(err){
-          await fetchCartItems();
+      try {
+        await deleteCartItemFromCart(cartItemId);
+      } catch (err) {
+        await fetchCartItems();
         showError("Failed to remove item. Please try again.");
         throw err;
       }
+    },
+    [fetchCartItems, showError],
+  );
 
-    },[fetchCartItems, showError] )
-
-
-     const updateItemQuantity = useCallback(
+  const updateItemQuantity = useCallback(
     async (cartItemId, quantity) => {
       const safeQuantity = Math.max(1, quantity);
- 
+
       // Save previous for rollback
       const previous = state.items.find((i) => i.cartItemId === cartItemId);
- 
+
       // Optimistic update
       dispatch({
         type: CART_ACTIONS.UPDATE_ITEM_QUANTITY,
         payload: { cartItemId, quantity: safeQuantity },
       });
- 
+
       try {
         await updateQuantityOfItem(cartItemId, safeQuantity);
       } catch (err) {
@@ -208,28 +217,26 @@ export function CartProvider({ children }) {
             payload: { cartItemId, quantity: previous.quantity },
           });
         }
-        const message = err?.response?.data?.message ?? "Failed to update quantity";
+        const message =
+          err?.response?.data?.message ?? "Failed to update quantity";
         showError(message);
         throw err;
       }
     },
-    [state.items, showError]
+    [state.items, showError],
   );
- 
+
   const toggleCheckedItem = useCallback((cartItem) => {
     dispatch({ type: CART_ACTIONS.TOGGLE_CHECKED, payload: cartItem });
   }, []);
- 
+
   const clearCheckedItems = useCallback(() => {
     dispatch({ type: CART_ACTIONS.CLEAR_CHECKED });
   }, []);
 
-
-
-   useEffect(() => {
+  useEffect(() => {
     fetchCartItems();
   }, [fetchCartItems]);
- 
 
   // don't re-render on action changes
   const stateValue = useMemo(
@@ -242,11 +249,10 @@ export function CartProvider({ children }) {
       cartItemCount: state.items.length,
       checkedCount: state.checkedItems.length,
     }),
-    [state]
+    [state],
   );
 
-
-// never changes reference
+  // never changes reference
   const actionsValue = useMemo(
     () => ({
       fetchCartItems,
@@ -256,9 +262,16 @@ export function CartProvider({ children }) {
       toggleCheckedItem,
       clearCheckedItems,
     }),
-    [fetchCartItems, addItemToCart, removeItemFromCart, updateItemQuantity, toggleCheckedItem, clearCheckedItems]
+    [
+      fetchCartItems,
+      addItemToCart,
+      removeItemFromCart,
+      updateItemQuantity,
+      toggleCheckedItem,
+      clearCheckedItems,
+    ],
   );
- 
+
   return (
     <CartStateContext.Provider value={stateValue}>
       <CartActionsContext.Provider value={actionsValue}>
@@ -268,21 +281,20 @@ export function CartProvider({ children }) {
   );
 }
 
-
 export function useCartState() {
   const ctx = useContext(CartStateContext);
   if (!ctx) throw new Error("useCartState must be used within <CartProvider>");
   return ctx;
 }
- 
+
 export function useCartActions() {
   const ctx = useContext(CartActionsContext);
-  if (!ctx) throw new Error("useCartActions must be used within <CartProvider>");
+  if (!ctx)
+    throw new Error("useCartActions must be used within <CartProvider>");
   return ctx;
 }
- 
+
 // ─── Legacy compatibility hook (keeps existing components working) ─────────────
 export function useCart() {
   return { ...useCartState(), ...useCartActions() };
 }
-

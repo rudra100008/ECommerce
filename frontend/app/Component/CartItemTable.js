@@ -17,13 +17,15 @@ export default function CartItemTable() {
     fetchCartItems,
     checkedCartItems,
     setCheckedCartItems,
-    handleCheckBox,
+    toggleCheckedItem,
   } = useCart();
 
 
   const [updatingItems, setUpdatingItems] = useState(new Set());
 
   const handleShowImage = (productId) => {};
+
+
   const handleQuantityChange = async (cartItemId, itemQuantity) => {
     if (itemQuantity < 1) return;
 
@@ -37,9 +39,9 @@ export default function CartItemTable() {
         )
       );
     } catch (err) {
-      console.log("Error", err.response.data);
-      const { message } = err.response.data;
-      if (err.response.data.status === 400) {
+      console.log("Error", err.response?.data);
+      const { message } = err.response?.data;
+      if (err.response?.data.status === 400) {
         error(message);
       }
       fetchCartItems();
@@ -155,7 +157,7 @@ export default function CartItemTable() {
                     <td className={style.checkBoxSection}>
                       <input
                         type="checkbox"
-                        onChange={(e) => handleCheckBox(item)}
+                        onChange={(e) => toggleCheckedItem(item)}
                         className={style.checkBox}
                         checked={checkedCartItems.some(
                           (checked) => checked.cartItemId === item.cartItemId

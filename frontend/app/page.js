@@ -1,5 +1,5 @@
-"use client";
-import { useEffect } from "react";
+
+
 import Navbar from "./component/Navbar";
 import style from "./CSS/mainContent.module.css";
 import { RouteGuard } from "./component/RouteGuard";

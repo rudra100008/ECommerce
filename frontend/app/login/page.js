@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGooglePlusG } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
-import api from "../Component/axiosInterceptor";
 import baseURL from "../baseURl";
 import { useRouter } from "next/navigation";
 import {useNotification} from '../Context/NotificationContext';
+import api from "../component/axiosInterceptor";
+
+
 export default function LoginPage() {
     const {error,success} = useNotification();
     const router = useRouter();
@@ -36,18 +38,16 @@ export default function LoginPage() {
                 password: ''
             });
             success(response.data.message);
-            setTimeout(()=>{
-                 router.push(redirectUrl);
-            },3000)
+            router.push(redirectUrl)
         } catch (err) {
             console.log("Login Error: ", err)
-            if (err.response.data && err.response.status === 400) {
+            if (err.response?.data && err.response?.status === 400) {
                 const data = err.response.data;
                 if (typeof data === 'object') {
                     setValidateUser(user => ({ ...user, ...data }))
                 }
             }
-            if(err.response.data && err.response.status === 401){
+            if(err.response?.data && err.response?.status === 401){
                 const{ message }= err.response.data;
                 error(message);
             }

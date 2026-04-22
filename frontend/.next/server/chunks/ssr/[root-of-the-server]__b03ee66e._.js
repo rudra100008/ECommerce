@@ -285,11 +285,9 @@ const fetchCurrentUser = async (success, error, router)=>{
             throw err;
         }
         const { message, redirectUrl } = err.response?.data;
-        // 401 is handled in NavigationContext, not here (prevents double-handling)
-        if (err.response.status === 401) {
-            // Just throw, NavigationContext will handle it
+        if (err?.response && err.response?.status === 401) {
             throw err;
-        } else if (err.response.status === 403) {
+        } else if (err?.response && err.response.status === 403) {
             console.log("Error in UserService: ", err.response?.data);
             error(message);
             throw err;
@@ -408,11 +406,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$axiosInt
 ;
 ;
 const NavigationContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createContext"])();
-// Define public routes that don't need authentication
 const PUBLIC_ROUTES = [
     '/login',
     '/signup',
-    '/register',
     '/forgot-password'
 ];
 function NavigationProvider({ children }) {
@@ -430,6 +426,9 @@ function NavigationProvider({ children }) {
         userId: null,
         cartId: null
     });
+    const lastPathnameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(pathname);
+    const hasLoadedAdminRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(false);
+    const hasLoadedUserRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(false);
     const loadCurrentUser = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async ()=>{
         // Prevent multiple simultaneous auth checks
         if (isRedirecting) return;
@@ -441,6 +440,7 @@ function NavigationProvider({ children }) {
                 if (data.userId) {
                     localStorage.setItem("userId", data.userId);
                 }
+                hasLoadedUserRef.current = true;
             }
         } catch (err) {
             console.error('Error loading user:', err);
@@ -456,7 +456,7 @@ function NavigationProvider({ children }) {
                     cartId: null
                 });
                 localStorage.removeItem('userId');
-                // Use Next.js client-side navigation instead of hard reload
+                error("UnAuthorized Access");
                 setTimeout(()=>{
                     router.push('/login');
                 }, 500);
@@ -481,34 +481,63 @@ function NavigationProvider({ children }) {
         isRedirecting
     ]);
     const loadCurrentAdmin = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async ()=>{
+        if (!userData?.roles?.includes('ROLE_ADMIN')) {
+            setAdminData(null);
+            return;
+        }
+        if (hasLoadedAdminRef.current) {
+            return;
+        }
         try {
             const data = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$adminServices$2f$AdminServices$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fetchCurrentAdmin"])(error);
             setAdminData(data);
+            hasLoadedAdminRef.current = true;
         } catch (err) {
             console.log("Error loading admin:", err?.response?.data || err);
             setAdminData(null);
         }
     }, [
-        error
+        error,
+        userData?.roles
     ]);
-    // Check if current route is public
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
-    // Reload user auth state on every protected route visit (handles JWT expiration)
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        // Skip loading user on public routes
+        const wasPublicRoute = PUBLIC_ROUTES.includes(lastPathnameRef.current);
+        const isNowPublicRoute = PUBLIC_ROUTES.includes(pathname);
+        if (wasPublicRoute && !isNowPublicRoute) {
+            hasLoadedUserRef.current = false;
+            hasLoadedAdminRef.current = false;
+        }
+        lastPathnameRef.current = pathname;
+    });
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (isPublicRoute) {
             setUserLoading(false);
             return;
         }
-        loadCurrentUser();
+        if (!hasLoadedUserRef.current) {
+            loadCurrentUser();
+        } else {
+            setUserLoading(false);
+        }
     }, [
         pathname,
         isPublicRoute,
         loadCurrentUser
     ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (userData?.roles?.includes('ROLE_ADMIN') && !isPublicRoute && !hasLoadedAdminRef.current && !userLoading) {
+            loadCurrentAdmin();
+        }
+    }, [
+        userData?.roles,
+        loadCurrentAdmin,
+        isPublicRoute,
+        userLoading
+    ]);
     const logout = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async ()=>{
         try {
-            await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get(`/api/auth/logout`);
+            await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$axiosInterceptor$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].post(`/api/auth/logout`);
             success('Logged out successfully.');
             setUserData({
                 username: '',
@@ -557,7 +586,7 @@ function NavigationProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/app/Context/NavigationContext.js",
-        lineNumber: 137,
+        lineNumber: 180,
         columnNumber: 9
     }, this);
 }
@@ -935,7 +964,7 @@ function CartProvider({ children }) {
             payload: cartItemId
         });
         try {
-            await deleteCartItemFromCart(cartItemId);
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["deleteCartItemFromCart"])(cartItemId);
         } catch (err) {
             await fetchCartItems();
             showError("Failed to remove item. Please try again.");
@@ -958,7 +987,7 @@ function CartProvider({ children }) {
             }
         });
         try {
-            await updateQuantityOfItem(cartItemId, safeQuantity);
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["updateQuantityOfItem"])(cartItemId, safeQuantity);
         } catch (err) {
             // Rollback to previous quantity
             if (previous) {
@@ -1029,12 +1058,12 @@ function CartProvider({ children }) {
             children: children
         }, void 0, false, {
             fileName: "[project]/app/Context/CartContext.js",
-            lineNumber: 264,
+            lineNumber: 277,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/Context/CartContext.js",
-        lineNumber: 263,
+        lineNumber: 276,
         columnNumber: 5
     }, this);
 }
@@ -1335,6 +1364,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$LoadingS
 const RouteGuard = ({ children, requiredRole })=>{
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const { userData, userLoading, isRedirecting } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useNavigation"])();
+    const [isAuthenticated, setIsAuthenticated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         // Don't check if we're already redirecting (prevents duplicate redirects)
         if (userLoading || isRedirecting) return;
@@ -1345,6 +1375,7 @@ const RouteGuard = ({ children, requiredRole })=>{
         if (requiredRole && !userData.roles?.includes(requiredRole)) {
             router.push(userData?.roles?.includes("ROLE_ADMIN") ? "/admin" : "/");
         }
+        setIsAuthenticated(true);
     }, [
         userData,
         userLoading,
@@ -1352,10 +1383,10 @@ const RouteGuard = ({ children, requiredRole })=>{
         requiredRole,
         router
     ]);
-    if (userLoading) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$LoadingSpinner$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+    if (userLoading || !isAuthenticated) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$LoadingSpinner$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
         fileName: "[project]/app/component/RouteGuard.js",
-        lineNumber: 27,
-        columnNumber: 26
+        lineNumber: 30,
+        columnNumber: 47
     }, ("TURBOPACK compile-time value", void 0));
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
         children: children
@@ -2297,15 +2328,14 @@ const OrderProvider = ({ children })=>{
         setOrderItems,
         setShippingAddress,
         setOrderData,
-        fetchOrderDetails,
-        fetchAllOrderItems: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderItemService$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["fetchAllOrderItems"]
+        fetchOrderDetails
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(OrderContext.Provider, {
         value: value,
         children: children
     }, void 0, false, {
         fileName: "[project]/app/Context/OrderContext.js",
-        lineNumber: 63,
+        lineNumber: 62,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

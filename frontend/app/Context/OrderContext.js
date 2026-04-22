@@ -57,7 +57,6 @@ export const OrderProvider = ({ children }) => {
     setShippingAddress,
     setOrderData,
     fetchOrderDetails,
-    fetchAllOrderItems
   };
   return (
     <OrderContext.Provider value={value}>{children}</OrderContext.Provider>

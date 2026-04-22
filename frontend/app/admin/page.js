@@ -6,8 +6,8 @@ import style from "../CSS/adminNavbar/adminPage.module.css";
 import Dashboard from "../AdminComponent/Dashboard";
 import Product from "../AdminComponent/Product";
 import Profile from "../AdminComponent/Profile";
-import { RouteGuard } from "../Component/RouteGuard";
 import { ROLES } from "../constant/role";
+import { RouteGuard } from './../component/RouteGuard';
 
 export default function AdminPage() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(true);

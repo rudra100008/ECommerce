@@ -18,11 +18,11 @@ export default function Products({ products, setProducts }) {
     const [cartItem, setCartItem] = useState([]);
 
 
-    console.log("CartProvider - userData:", userData);
+    //console.log("CartProvider - userData:", userData);
 
     const getCategories = async () => {
         try {
-            const response = await fetchAllCategories({ pageNumber: 0, pageSize: 100000 });
+            const response = await fetchAllCategories({ pageNumber: 0, pageSize: 100 });
             const categories = response.data.data;
             setCategories(categories);
         } catch (err) {

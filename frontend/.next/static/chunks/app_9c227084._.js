@@ -258,20 +258,18 @@ const fetchCurrentUser = async (success, error, router)=>{
         const data = response.data;
         return data;
     } catch (err) {
-        var _err_response;
+        var _err_response, _err_response1;
         if (!err.response) {
             console.error("Network error or server not reachable:", err.message);
             error("Unable to connect to server. Please check your connection.");
             throw err;
         }
         const { message, redirectUrl } = (_err_response = err.response) === null || _err_response === void 0 ? void 0 : _err_response.data;
-        // 401 is handled in NavigationContext, not here (prevents double-handling)
-        if (err.response.status === 401) {
-            // Just throw, NavigationContext will handle it
+        if ((err === null || err === void 0 ? void 0 : err.response) && ((_err_response1 = err.response) === null || _err_response1 === void 0 ? void 0 : _err_response1.status) === 401) {
             throw err;
-        } else if (err.response.status === 403) {
-            var _err_response1;
-            console.log("Error in UserService: ", (_err_response1 = err.response) === null || _err_response1 === void 0 ? void 0 : _err_response1.data);
+        } else if ((err === null || err === void 0 ? void 0 : err.response) && err.response.status === 403) {
+            var _err_response2;
+            console.log("Error in UserService: ", (_err_response2 = err.response) === null || _err_response2 === void 0 ? void 0 : _err_response2.data);
             error(message);
             throw err;
         } else {
@@ -380,11 +378,9 @@ var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.sign
 ;
 ;
 const NavigationContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createContext"])();
-// Define public routes that don't need authentication
 const PUBLIC_ROUTES = [
     '/login',
     '/signup',
-    '/register',
     '/forgot-password'
 ];
 function NavigationProvider(param) {
@@ -404,6 +400,9 @@ function NavigationProvider(param) {
         userId: null,
         cartId: null
     });
+    const lastPathnameRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(pathname);
+    const hasLoadedAdminRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
+    const hasLoadedUserRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
     const loadCurrentUser = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "NavigationProvider.useCallback[loadCurrentUser]": async ()=>{
             // Prevent multiple simultaneous auth checks
@@ -416,6 +415,7 @@ function NavigationProvider(param) {
                     if (data.userId) {
                         localStorage.setItem("userId", data.userId);
                     }
+                    hasLoadedUserRef.current = true;
                 }
             } catch (err) {
                 var _err_response;
@@ -432,7 +432,7 @@ function NavigationProvider(param) {
                         cartId: null
                     });
                     localStorage.removeItem('userId');
-                    // Use Next.js client-side navigation instead of hard reload
+                    error("UnAuthorized Access");
                     setTimeout({
                         "NavigationProvider.useCallback[loadCurrentUser]": ()=>{
                             router.push('/login');
@@ -461,9 +461,18 @@ function NavigationProvider(param) {
     ]);
     const loadCurrentAdmin = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "NavigationProvider.useCallback[loadCurrentAdmin]": async ()=>{
+            var _userData_roles;
+            if (!(userData === null || userData === void 0 ? void 0 : (_userData_roles = userData.roles) === null || _userData_roles === void 0 ? void 0 : _userData_roles.includes('ROLE_ADMIN'))) {
+                setAdminData(null);
+                return;
+            }
+            if (hasLoadedAdminRef.current) {
+                return;
+            }
             try {
                 const data = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$adminServices$2f$AdminServices$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["fetchCurrentAdmin"])(error);
                 setAdminData(data);
+                hasLoadedAdminRef.current = true;
             } catch (err) {
                 var _err_response;
                 console.log("Error loading admin:", (err === null || err === void 0 ? void 0 : (_err_response = err.response) === null || _err_response === void 0 ? void 0 : _err_response.data) || err);
@@ -471,29 +480,55 @@ function NavigationProvider(param) {
             }
         }
     }["NavigationProvider.useCallback[loadCurrentAdmin]"], [
-        error
+        error,
+        userData === null || userData === void 0 ? void 0 : userData.roles
     ]);
-    // Check if current route is public
     const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
-    // Reload user auth state on every protected route visit (handles JWT expiration)
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "NavigationProvider.useEffect": ()=>{
-            // Skip loading user on public routes
+            const wasPublicRoute = PUBLIC_ROUTES.includes(lastPathnameRef.current);
+            const isNowPublicRoute = PUBLIC_ROUTES.includes(pathname);
+            if (wasPublicRoute && !isNowPublicRoute) {
+                hasLoadedUserRef.current = false;
+                hasLoadedAdminRef.current = false;
+            }
+            lastPathnameRef.current = pathname;
+        }
+    }["NavigationProvider.useEffect"]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "NavigationProvider.useEffect": ()=>{
             if (isPublicRoute) {
                 setUserLoading(false);
                 return;
             }
-            loadCurrentUser();
+            if (!hasLoadedUserRef.current) {
+                loadCurrentUser();
+            } else {
+                setUserLoading(false);
+            }
         }
     }["NavigationProvider.useEffect"], [
         pathname,
         isPublicRoute,
         loadCurrentUser
     ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "NavigationProvider.useEffect": ()=>{
+            var _userData_roles;
+            if ((userData === null || userData === void 0 ? void 0 : (_userData_roles = userData.roles) === null || _userData_roles === void 0 ? void 0 : _userData_roles.includes('ROLE_ADMIN')) && !isPublicRoute && !hasLoadedAdminRef.current && !userLoading) {
+                loadCurrentAdmin();
+            }
+        }
+    }["NavigationProvider.useEffect"], [
+        userData === null || userData === void 0 ? void 0 : userData.roles,
+        loadCurrentAdmin,
+        isPublicRoute,
+        userLoading
+    ]);
     const logout = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "NavigationProvider.useCallback[logout]": async ()=>{
             try {
-                await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get("/api/auth/logout");
+                await __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$axiosInterceptor$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post("/api/auth/logout");
                 success('Logged out successfully.');
                 setUserData({
                     username: '',
@@ -546,11 +581,11 @@ function NavigationProvider(param) {
         children: children
     }, void 0, false, {
         fileName: "[project]/app/Context/NavigationContext.js",
-        lineNumber: 137,
+        lineNumber: 180,
         columnNumber: 9
     }, this);
 }
-_s(NavigationProvider, "TWH/MUh+CL6NwNQt2iINANFzu4U=", false, function() {
+_s(NavigationProvider, "DgslrV81IkCI0BCkvgAkvoeIvbo=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"],
@@ -979,7 +1014,7 @@ function CartProvider(param) {
                 payload: cartItemId
             });
             try {
-                await deleteCartItemFromCart(cartItemId);
+                await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["deleteCartItemFromCart"])(cartItemId);
             } catch (err) {
                 await fetchCartItems();
                 showError("Failed to remove item. Please try again.");
@@ -1006,7 +1041,7 @@ function CartProvider(param) {
                 }
             });
             try {
-                await updateQuantityOfItem(cartItemId, safeQuantity);
+                await (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$CartService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["updateQuantityOfItem"])(cartItemId, safeQuantity);
             } catch (err) {
                 var _err_response_data, _err_response;
                 // Rollback to previous quantity
@@ -1090,12 +1125,12 @@ function CartProvider(param) {
             children: children
         }, void 0, false, {
             fileName: "[project]/app/Context/CartContext.js",
-            lineNumber: 264,
+            lineNumber: 277,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/Context/CartContext.js",
-        lineNumber: 263,
+        lineNumber: 276,
         columnNumber: 5
     }, this);
 }
@@ -1458,6 +1493,7 @@ const RouteGuard = (param)=>{
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const { userData, userLoading, isRedirecting } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNavigation"])();
+    const [isAuthenticated, setIsAuthenticated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "RouteGuard.useEffect": ()=>{
             var _userData_roles;
@@ -1471,6 +1507,7 @@ const RouteGuard = (param)=>{
                 var _userData_roles1;
                 router.push((userData === null || userData === void 0 ? void 0 : (_userData_roles1 = userData.roles) === null || _userData_roles1 === void 0 ? void 0 : _userData_roles1.includes("ROLE_ADMIN")) ? "/admin" : "/");
             }
+            setIsAuthenticated(true);
         }
     }["RouteGuard.useEffect"], [
         userData,
@@ -1479,16 +1516,16 @@ const RouteGuard = (param)=>{
         requiredRole,
         router
     ]);
-    if (userLoading) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$LoadingSpinner$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+    if (userLoading || !isAuthenticated) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$component$2f$LoadingSpinner$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
         fileName: "[project]/app/component/RouteGuard.js",
-        lineNumber: 27,
-        columnNumber: 26
+        lineNumber: 30,
+        columnNumber: 47
     }, ("TURBOPACK compile-time value", void 0));
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: children
     }, void 0, false);
 };
-_s(RouteGuard, "Sn1L3ZpspOrvcy9cwy7vzEgLby8=", false, function() {
+_s(RouteGuard, "IJ/i79KklWXY0zJserCHBamTNNo=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
         __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$Context$2f$NavigationContext$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNavigation"]
@@ -2513,15 +2550,14 @@ const OrderProvider = (param)=>{
         setOrderItems,
         setShippingAddress,
         setOrderData,
-        fetchOrderDetails,
-        fetchAllOrderItems: __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$services$2f$clientServices$2f$OrderItemService$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["fetchAllOrderItems"]
+        fetchOrderDetails
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(OrderContext.Provider, {
         value: value,
         children: children
     }, void 0, false, {
         fileName: "[project]/app/Context/OrderContext.js",
-        lineNumber: 63,
+        lineNumber: 62,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

@@ -14,11 +14,9 @@ export const fetchCurrentUser = async (success, error, router) => {
       throw err;
     }
     const { message, redirectUrl } = err.response?.data;
-    // 401 is handled in NavigationContext, not here (prevents double-handling)
-    if (err.response.status === 401) {
-      // Just throw, NavigationContext will handle it
+    if (err?.response && err.response?.status === 401) {
       throw err;
-    } else if (err.response.status === 403) {
+    } else if (err?.response && err.response.status === 403) {
       console.log("Error in UserService: ", err.response?.data);
       error(message);
       throw err;

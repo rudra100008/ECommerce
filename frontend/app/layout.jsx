@@ -10,13 +10,20 @@ import { NavigationProvider } from "./Context/NavigationContext";
 import { CartProvider } from "./Context/CartContext";
 import { OrderFlowGuard } from "./component/OrderFlowGuard";
 import { OrderProvider } from './Context/OrderContext';
+import { title } from "process";
 
+export const metadata = {
+  title: 'ShopEase - Best Online Shopping Store',
+  description: 'Shop millions of products at best prices.',
+  openGraph:{
+    title: 'ShopEase - Best Online Shopping Store',
+    description: 'Shop millions of products at best prices'
+  }
+}
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <title>ShopEase</title>
-      </head>
+      
       <body>
         <div id="portal-root">
           <NotificationProvider>
