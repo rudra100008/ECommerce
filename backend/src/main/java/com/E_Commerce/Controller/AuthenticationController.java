@@ -104,15 +104,5 @@ public class AuthenticationController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("token", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // Immediately expire
-        response.addCookie(cookie);
-        return ResponseEntity.ok().body(Map.of("message", "Logged out successfully"));
-    }
 
 }

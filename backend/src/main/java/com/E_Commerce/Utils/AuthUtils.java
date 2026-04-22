@@ -26,8 +26,8 @@ public class AuthUtils {
     public User resolveCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null && !authentication.isAuthenticated()
-                && authentication instanceof AnonymousAuthenticationToken) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
             throw new AccessDeniedException("Not authenticated");
         }
 

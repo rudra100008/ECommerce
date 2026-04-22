@@ -30,6 +30,9 @@ public class ProductController {
     private final ProductService productService;
     private final ImageService imageService;
     private final ProductImageService productImageService;
+    private static final String API_PRODUCT = "/api/product/";
+    private  static final String IMAGE = "/image/";
+
 
 
     @GetMapping(value = "/imageUrl/{productId}",produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -40,9 +43,9 @@ public class ProductController {
         List<ProductImage >productImages = this.productImageService.getProductImageByProductId(productId);
         List<String> imageUrls = new ArrayList<>();
             for (ProductImage p : productImages) {
-                String imageUrl = "/api/product/" + productDTO.getProductId() + "/image/" + p.getId();
+                String imageUrl =  API_PRODUCT + productDTO.getProductId() + IMAGE + p.getId();
                 imageUrls.add(imageUrl);
-                System.out.println("ImageUrls: " + imageUrl);
+                log.info("ImageUrls: {}", imageUrl);
             }
 
         Map<String, Object> response = new HashMap<>();
@@ -86,7 +89,6 @@ public class ProductController {
         if(result.hasErrors()){
             Map<String,Object>  errRes = new HashMap<>();
             result.getFieldErrors()
-                    .stream()
                     .forEach(f -> errRes.put(f.getField(),f.getDefaultMessage()));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errRes);
         }
@@ -147,7 +149,7 @@ public class ProductController {
             @Valid @RequestBody ProductDTO productDTO,
             BindingResult result
     ){
-        System.out.println("ProductDTO: "+productDTO.toString());
+        log.info("ProductDTO: {}",productDTO.toString());
         if(result.hasErrors()){
             Map<String,Object> errorResponse = new HashMap<>();
             for (FieldError fieldError : result.getFieldErrors()) {
@@ -165,28 +167,6 @@ public class ProductController {
         ));
     }
 
-    // createImageUrl for first product imageUrl
-    private ProductDTO setFirstImageUrl(ProductDTO productDTO){
-        List<ProductImage> productImageList = this.productImageService.getProductImageByProductId(productDTO.getProductId());
-
-        if(!productImageList.isEmpty()) {
-            ProductImage productImage = productImageList.get(0);
-            String imageUrl = "/api/product/" + productDTO.getProductId() + "/image/" + productImage.getId();
-            productDTO.setImageUrls(List.of(imageUrl));
-        }
-        return  productDTO;
-    }
-    private List<String> getImageUrls(ProductDTO productDTO){
-        List<ProductImage> productImages = this.productImageService.getProductImageByProductId(productDTO.getProductId());
-        List<String> imageUrls = new ArrayList<>();
-        if(!productImages.isEmpty()){
-            for(ProductImage productImage : productImages){
-               String imageUrl = "/api/product/" + productDTO.getProductId() + "/image/" + productImage.getId();
-               imageUrls.add(imageUrl);
-            }
-        }
-        return imageUrls;
-    }
 
 
 }

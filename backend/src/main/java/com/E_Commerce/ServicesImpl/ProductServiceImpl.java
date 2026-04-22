@@ -14,7 +14,6 @@ import com.E_Commerce.Exception.ImageInvalidException;
 import com.E_Commerce.Exception.ResourceNotFoundException;
 import com.E_Commerce.Mapper.ProductMapper;
 import com.E_Commerce.Repository.CategoryRepository;
-import com.E_Commerce.Repository.ProductImageRepository;
 import com.E_Commerce.Repository.ProductRepository;
 import com.E_Commerce.Services.CategoryService;
 import com.E_Commerce.Services.ImageService;
@@ -33,7 +32,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -137,8 +135,11 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     @Cacheable(value = "products", key = "#productId")
     public ProductDTO findByProductId(Integer productId) {
+        if(productId == null){
+            throw new IllegalArgumentException("Product ID cannot be null");
+        }
         Product product = this.productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("product not found in server"));
+                .orElseThrow(() -> new ResourceNotFoundException("product not found"));
         ProductDTO productDTO = productMapper.toProductDTO(product);
 
         productDTO.setImageUrls(getImageUrlsForProduct(productId));

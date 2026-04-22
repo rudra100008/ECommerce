@@ -49,7 +49,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Inventory updateStockQuantity(Integer productId, Integer stockQuantity) {
-        return null;
+        throw new UnsupportedOperationException("Not yet implemented");
     }
    
     private Inventory getInventory(Product product){

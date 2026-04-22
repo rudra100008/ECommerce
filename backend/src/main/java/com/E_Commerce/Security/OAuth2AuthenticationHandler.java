@@ -48,7 +48,6 @@ public class OAuth2AuthenticationHandler implements AuthenticationSuccessHandler
 
 
         User user = saveUser(name,email,googleImageUrl,googleId);
-        this.cartService.createCartForUser(user);
 
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(user.getEmail());
 

@@ -3,6 +3,7 @@ package com.E_Commerce.Exception;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalException {
@@ -40,7 +42,7 @@ public class GlobalException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e, WebRequest request) {
-        e.printStackTrace();
+        log.error("Unexpected error",e);
         return errorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexcepted error occurred: " + e.getMessage(),
@@ -154,13 +156,6 @@ public class GlobalException {
                 request);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> handleRunTimeException(RuntimeException e, WebRequest request) {
-        return errorResponse(
-                HttpStatus.BAD_REQUEST,
-                e.getMessage(),
-                request);
-    }
 
     // GlobalExceptionHandler
     @ExceptionHandler(DataIntegrityViolationException.class)
